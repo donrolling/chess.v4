@@ -6,4 +6,8 @@
     <RootNamespace>chess.v4.engine</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="utility\" />
+  </ItemGroup>
+
 </Project>
