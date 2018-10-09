@@ -1,4 +1,4 @@
-﻿namespace chess.v4.engine.enums {
+﻿namespace chess.v4.engine.enumeration {
 	public enum Direction {
 		Invalid,
 		RowUp,
