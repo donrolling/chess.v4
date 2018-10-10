@@ -73,7 +73,7 @@ namespace chess.v4.engine.service {
 			return matrix;
 		}
 
-		public string CreateNewFENFromBoard(GameState gameState, List<Square> matrix, int piecePosition, int newPiecePosition) {
+		public string CreateNewFENFromGameState(GameState gameState, List<Square> matrix, int piecePosition, int newPiecePosition) {
 			//"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 			string position = createNewPositionFromMatrix(matrix);
 			string castlingAvailability = getCastlingAvailability(matrix, gameState.CastlingAvailability, piecePosition, newPiecePosition);

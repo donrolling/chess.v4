@@ -10,8 +10,8 @@ namespace Chess.ServiceLayer {
 
 	public class CoordinateService : ICoordinateService {
 		public const string Files = "abcdefgh";
-		public List<DiagonalDirection> DiagonalLines = new List<DiagonalDirection> { DiagonalDirection.UpLeft, DiagonalDirection.UpRight, DiagonalDirection.DownLeft, DiagonalDirection.DownRight };
-		public List<Direction> OrthogonalLines = new List<Direction> { Direction.RowUp, Direction.RowDown, Direction.FileUp, Direction.FileDown };
+		public List<DiagonalDirection> DiagonalLines { get; } = new List<DiagonalDirection> { DiagonalDirection.UpLeft, DiagonalDirection.UpRight, DiagonalDirection.DownLeft, DiagonalDirection.DownRight };
+		public List<Direction> OrthogonalLines { get; } = new List<Direction> { Direction.RowUp, Direction.RowDown, Direction.FileUp, Direction.FileDown };
 
 		public IAttackService AttackService { get; }
 

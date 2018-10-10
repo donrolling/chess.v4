@@ -18,5 +18,7 @@ namespace chess.v4.engine.model {
 		public int FullmoveNumber { get; set; }
 
 		public List<Square> Squares { get; set; }
+		public string PGN { get; set; }
+		public List<History> History { get; set; }
 	}
 }

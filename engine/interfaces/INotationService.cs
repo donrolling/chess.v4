@@ -12,6 +12,6 @@ namespace chess.v4.engine.interfaces {
 
 		List<Square> CreateMatrixFromFEN(string fen);
 
-		string CreateNewFENFromBoard(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition);
+		string CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition);
 	}
 }

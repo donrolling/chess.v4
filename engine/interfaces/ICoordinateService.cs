@@ -5,6 +5,9 @@ using System.Collections.Generic;
 namespace chess.v4.engine.interfaces {
 
 	public interface ICoordinateService {
+		List<DiagonalDirection> DiagonalLines { get; }
+		List<Direction> OrthogonalLines { get; }
+
 		int AbsDiff(int piecePos, int newPiecePos);
 		bool BreakAfterAction(bool ignoreKing, char blockingPiece, Color pieceColor);
 		bool CanAttackPiece(Color pieceColor, char attackedPiece);

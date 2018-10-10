@@ -8,7 +8,7 @@ namespace chess.v4.engine.interfaces {
 
 		GameState SetStartPosition(string fen);
 
-		GameState UpdateGameState(GameState gameState, Color color, int piecePosition, int newPiecePosition, string pgnMove, List<History> History);
+		GameState UpdateGameState(GameState gameState, Color color, int piecePosition, int newPiecePosition, string pgnMove);
 
 		GameState UpdateGameStateWithError(GameState gameState, string errorMessage);
 	}
