@@ -17,10 +17,10 @@ namespace chess.v4.engine.service {
 			CoordinateService = coordinateService;
 		}
 
-		public Tuple<PieceType, Color> GetChessTypeFromChar(char piece) {
+		public (PieceType, Color) GetChessTypeFromChar(char piece) {
 			var pieceType = CoordinateService.GetPieceTypeFromChar(piece);
 			var pieceColor = CoordinateService.GetColorFromChar(piece);
-			return Tuple.Create<PieceType, Color>(pieceType, pieceColor);
+			return (pieceType, pieceColor);
 		}
 
 		public IEnumerable<Square> GetPieceAttacks(string fen, Square square, bool ignoreKing = false) {
