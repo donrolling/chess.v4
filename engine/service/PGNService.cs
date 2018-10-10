@@ -11,7 +11,7 @@ namespace chess.v4.engine.service {
 	// "e8=Q". If the move is a checking move, the plus sign "+" is also appended;
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
 	// kingside castling is indicated by the sequence "O-O"; queenside castling is indicated by the sequence "O-O-O"
-	public class PGNService {
+	public class PGNService : IPGNService {
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
