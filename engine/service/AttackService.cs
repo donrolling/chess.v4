@@ -124,7 +124,7 @@ namespace chess.v4.engine.service {
 
 		private IEnumerable<AttackedSquare> getQueenAttacks(List<Square> squares, int position, Color pieceColor, bool ignoreKing) {
 			var square = squares.GetSquare(position);
-			var attacks = 
+			var attacks =
 				CoordinateService.GetOrthogonals(squares, position, pieceColor, ignoreKing)
 				.Concat(
 					CoordinateService.GetDiagonals(squares, position, pieceColor, ignoreKing)
@@ -236,35 +236,35 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private void removeKingChecksFromKingMoves(string fen, List<AttackedSquare> kingAttacks, Color pieceColor, List<Square> squares) {
-			var oppositePieceColor = CoordinateService.GetOppositeColor(pieceColor);
-			var pieceAttacks = GetAttacks(oppositePieceColor, fen, true);
-
-			var conflictingAttacks = from p in pieceAttacks
-									 join k in kingAttacks on p.Index equals k.Index
-									 select p;
+		private void removeKingChecksFromKingMoves(string fen, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {
+			var oppositePieceColor = CoordinateService.Reverse(color);
+			//var allAttacks = GetAttacks(oppositePieceColor, fen, true).Where(a => a.Square.Occupied && a.Square.Piece.PieceType == PieceType.King);
+			var allAttacksExceptKing = GetAttacks(oppositePieceColor, fen, true);
+			var conflictingAttacks = from a in allAttacksExceptKing
+									 join k in kingAttacks on a.Index equals k.Index
+									 select a;
 
 			foreach (var conflictingAttack in conflictingAttacks) {
-				bool removeAttack = true;
-				var attackedSquares = pieceAttacks.Where(a => a.Index == conflictingAttack.Index);
-				if (attackedSquares != null && attackedSquares.Any()) {
-					if (attackedSquares.Count() == 1) {
-						//if there are more, it's not possible that we'd need to keep the attack
-						var square = attackedSquares.First();
-						if (square.Occupied) {
-							var piece = square.Piece;
-							//this code is here to remove the possibility that the king is said to be in check by an enemy pawn when he is directly in front of the pawn
-							if (piece.PieceType == PieceType.Pawn) {
-								var directionIndicator = pieceColor == Color.White ? -1 : 1; //make this backwards of normal
-								var onSameFile = square.Index + (directionIndicator * 8) == conflictingAttack.Index ? true : false;
-								if (onSameFile) {
-									removeAttack = false;
-								}
-							}
-						}
+				var attackedSquares = allAttacksExceptKing.Where(a => a.Index == conflictingAttack.Index);
+				if (attackedSquares != null && attackedSquares.Any() && attackedSquares.Count() < 2) {
+					//if there are more than two square attacking here, then it's not possible that we'd need to keep the attack
+					var attackedSquare = attackedSquares.First();
+					if (!attackedSquare.Occupied) {
+						throw new Exception("This is the square that is supposed to have a king on it, why is it empty?");
 					}
-				}
-				if (removeAttack) {
+					var piece = attackedSquare.Piece;
+					//this code is here to remove the possibility that the king is said to be in check by
+					//an enemy pawn when he is directly in front of the pawn
+					if (piece.PieceType == PieceType.Pawn) {
+						var directionIndicator = color == Color.White ? -1 : 1; //make this backwards of normal
+						var onSameFile = attackedSquare.Index + (directionIndicator * 8) == conflictingAttack.Index ? true : false;
+						if (!onSameFile) {
+							kingAttacks.Remove(conflictingAttack);
+						}
+					} else {
+						kingAttacks.Remove(conflictingAttack);
+					}
+				} else {
 					kingAttacks.Remove(conflictingAttack);
 				}
 			}

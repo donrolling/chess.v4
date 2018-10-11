@@ -8,6 +8,5 @@ namespace chess.v4.engine.model {
 		public int Index { get; set; }
 		public bool Occupied { get { return this.Piece != null; } }
 		public Piece Piece { get; set; }
-		public List<int> Attacks { get; set; }
 	}
 }

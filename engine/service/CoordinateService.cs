@@ -48,7 +48,7 @@ namespace Chess.ServiceLayer {
 			return activeColor == 'w' ? 'b' : 'w';
 		}
 
-		public Color GetOppositeColor(Color pieceColor) {
+		public Color Reverse(Color pieceColor) {
 			return pieceColor == Color.White ? Color.Black : Color.White;
 		}
 

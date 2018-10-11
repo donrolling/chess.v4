@@ -81,7 +81,7 @@ namespace chess.v4.engine.service {
 			string halfmoveClock = gethalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
 			string fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
 
-			var fenParams = new string[6] { position, CoordinateService.GetOppositeColor(gameState.ActiveColor).ToString(), castlingAvailability, enPassantCoord, halfmoveClock, fullmoveNumber };
+			var fenParams = new string[6] { position, CoordinateService.Reverse(gameState.ActiveColor).ToString(), castlingAvailability, enPassantCoord, halfmoveClock, fullmoveNumber };
 			string fen = string.Join(" ", fenParams);
 			return fen;
 		}

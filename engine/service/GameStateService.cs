@@ -2,6 +2,7 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +22,12 @@ namespace chess.v4.engine.service {
 			AttackService = attackService;
 		}
 
-		public GameState SetStartPosition(string fen) {
+		public ResultOuput<GameState> SetStartPosition(string fen) {
 			return getNewGameState(fen, string.Empty, false, string.Empty);
 		}
 
 		//Positions should be numbered 0-63 where a1 is 0
-		public GameState UpdateGameState(GameState gameState, Color color, int piecePosition, int newPiecePosition, string pgnMove) {
+		public ResultOuput<GameState> UpdateGameState(GameState gameState, Color color, int piecePosition, int newPiecePosition, string pgnMove) {
 			NotationService.UpdateMatrix(gameState.Squares, piecePosition, newPiecePosition);
 			var squares = gameState.Squares;
 			var square = squares.GetSquare(newPiecePosition);
@@ -35,9 +36,7 @@ namespace chess.v4.engine.service {
 			var isCastle = MoveService.IsCastle(piece, piecePosition, newPiecePosition);
 			if (isCastle) { //if is castle, update matrix again
 				if (gameState.IsCheck) {
-					var errorMessage = "Can't castle out of check.";
-					var invalidGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
-					return invalidGameState;
+					return ResultOuput<GameState>.Error("Can't castle out of check.");
 				}
 
 				var rookPosition = getRookPositionsForCastle(color, piecePosition, newPiecePosition);
@@ -47,9 +46,7 @@ namespace chess.v4.engine.service {
 				if (!isCastleThroughCheck) {
 					NotationService.UpdateMatrix(squares, rookPosition.Item1, rookPosition.Item2);
 				} else {
-					var errorMessage = "Can't castle through check.";
-					var invalidGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
-					return invalidGameState;
+					return ResultOuput<GameState>.Error("Can't castle through check.");
 				}
 			}
 
@@ -75,26 +72,37 @@ namespace chess.v4.engine.service {
 			var newFEN = NotationService.CreateNewFENFromGameState(gameState, squares, piecePosition, newPiecePosition);
 			var hasThreefoldRepition = this.hasThreefoldRepition(color, gameState, newFEN);
 			var newGameState = getNewGameState(newFEN, gameState.PGN, hasThreefoldRepition, pgnMove);
-
-			var putsOwnKingInCheck = (gameState.ActiveColor == Color.White && newGameState.IsWhiteCheck) || (gameState.ActiveColor == Color.Black && newGameState.IsBlackCheck);
+			if (newGameState.Failure) {
+				return newGameState;
+			}
+			var putsOwnKingInCheck = (
+					gameState.ActiveColor == Color.White 
+					&& newGameState.Output.IsWhiteCheck
+				) || (
+					gameState.ActiveColor == Color.Black 
+					&& newGameState.Output.IsBlackCheck
+				);
 			if (putsOwnKingInCheck) {
 				var checkedOwnKingGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, "You must move out of check, or at the very least, not move into check.");
 				return checkedOwnKingGameState;
 			}
-
 			return newGameState;
 		}
 
-		public GameState UpdateGameStateWithError(GameState gameState, string errorMessage) {
+		public ResultOuput<GameState> UpdateGameStateWithError(GameState gameState, string errorMessage) {
 			var newGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
 			return newGameState;
 		}
 
-		private GameState getNewGameState(string fen, string pgn, bool hasThreefoldRepition, string pgnMove, string errorMessage = null) {
+		private ResultOuput<GameState> getNewGameState(string fen, string pgn, bool hasThreefoldRepition, string pgnMove, string errorMessage = null) {
+			if (!string.IsNullOrEmpty(errorMessage)) {
+				return ResultOuput<GameState>.Error(errorMessage);
+			}
+
 			var gameState = new GameState();
 
-			bool isResign = false;
-			bool isDraw = false;
+			var isResign = false;
+			var isDraw = false;
 
 			gameState.FEN = fen;
 			gameState.HasThreefoldRepition = hasThreefoldRepition;
@@ -119,19 +127,19 @@ namespace chess.v4.engine.service {
 			var blackKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.Black).Single();
 
 			//todo: refactor this so that the piece contains its own attacks?
-			var attacksThatCheckWhite = blackAttacks.Where(a => a.Index.Value.Contains(whiteKingSquare));
-			var attacksThatCheckBlack = whiteAttacks.Where(a => a.Value.Contains(blackKingSquare));
+			var attacksThatCheckWhite = blackAttacks.Where(a => a.Index == whiteKingSquare.Index);
+			var attacksThatCheckBlack = whiteAttacks.Where(a => a.Index == blackKingSquare.Index);
 
-			bool isCheck = false;
-			gameState.IsWhiteCheck = isRealCheck(gameState.Squares, attacksThatCheckWhite, gameState.ActiveColor, whiteKingSquare);
-			gameState.IsBlackCheck = isRealCheck(gameState.Squares, attacksThatCheckBlack, gameState.ActiveColor, blackKingSquare);
+			var isCheck = false;
+			gameState.IsWhiteCheck = isRealCheck(gameState.Squares, attacksThatCheckWhite, gameState.ActiveColor, whiteKingSquare.Index);
+			gameState.IsBlackCheck = isRealCheck(gameState.Squares, attacksThatCheckBlack, gameState.ActiveColor, blackKingSquare.Index);
 
 			if (!string.IsNullOrEmpty(pgnMove)) {
 				bool isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
 				if (isPawnPromotion && isCheck) {
 					pgnMove = string.Concat(pgnMove, '#');
 				}
-				var pgnNumbering = (gameState.ActiveColor == 'b' ? gameState.FullmoveNumber.ToString() + ". " : string.Empty);
+				var pgnNumbering = (gameState.ActiveColor == Color.Black ? gameState.FullmoveNumber.ToString() + ". " : string.Empty);
 				var nextPGNMove = string.Concat(pgnNumbering, pgnMove, ' ');
 				gameState.PGN = pgn + nextPGNMove;
 			} else { gameState.PGN = pgn; }
@@ -139,7 +147,7 @@ namespace chess.v4.engine.service {
 			if (gameState.IsCheck) {
 				var checkedKing = gameState.ActiveColor == Color.White ? whiteKingSquare : blackKingSquare; //trust me this is right
 				var checkedColor = gameState.ActiveColor == Color.White ? Color.White : Color.Black; //trust me this is right
-				gameState.IsCheckmate = isCheckmate(checkedColor, gameState.Squares, checkedKing, gameState.WhiteAttacks, gameState.BlackAttacks);
+				gameState.IsCheckmate = isCheckmate(checkedColor, gameState.Squares, checkedKing.Index, whiteAttacks, blackAttacks);
 				if (gameState.IsCheckmate) {
 					var score = string.Concat(" ", gameState.ActiveColor == Color.White ? "1-0" : "0-1");
 					gameState.PGN += score;
@@ -156,34 +164,25 @@ namespace chess.v4.engine.service {
 					}
 				}
 			}
-
-			if (!string.IsNullOrEmpty(errorMessage)) {
-				gameState.MoveFailureMessage = errorMessage;
-				gameState.MoveSuccess = false;
-			} else {
-				gameState.MoveSuccess = true;
-			}
-
-			return gameState;
+			return ResultOuput<GameState>.Ok(gameState);
 		}
 
-		private bool isRealCheck(Dictionary<int, char> matrix, IEnumerable<KeyValuePair<int, List<int>>> attacksThatCheck, Color ActiveColor, int kingSquare) {
-			bool isRealCheck = false;
-			if (attacksThatCheck != null && attacksThatCheck.Any()) {
-				isRealCheck = true;
-				if (attacksThatCheck.Count() == 1) { //if there are more, it's not possible that we'd need to remove the attack
-					var key = attacksThatCheck.First().Key;
-					var attackingPiece = matrix[key];
-					//this code is here to remove the possibility that the king is said to be in check by an enemy pawn when he is directly in front of the pawn
-					if (char.ToUpper(attackingPiece) == 'P') {
-						var onSameFile = (key % 8) == (kingSquare % 8) ? true : false;
-						if (onSameFile) {
-							isRealCheck = false;
-						}
-					}
-				}
+		private bool isRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheck, Color ActiveColor, int kingSquare) {
+			if (attacksThatCheck == null || !attacksThatCheck.Any()) {
+				return false;
 			}
-			return isRealCheck;
+			if (attacksThatCheck.Count() > 1) {
+				//if there are more than one, then this is real
+				return true;
+			}
+			var key = attacksThatCheck.First().Index;
+			var attackingPiece = squares.GetPiece(key);
+			//this code is here to remove the possibility that the king is said to be in check by an enemy pawn when he is directly in front of the pawn
+			if (attackingPiece.PieceType == PieceType.Pawn) {
+				var onSameFile = (key % 8) == (kingSquare % 8) ? true : false;
+				return !onSameFile;
+			}
+			return true;
 		}
 
 		private bool isValidPawnMove(GameState gameState, Color color, int currentPosition, int newPiecePosition, bool isEnPassant) {
@@ -250,7 +249,7 @@ namespace chess.v4.engine.service {
 			return false;
 		}
 
-		private bool isCheckmate(Color activeColor, List<Square> squares, int enemyKingPosition, List<Square> whiteAttacks, List<Square> blackAttacks) {
+		private bool isCheckmate(Color activeColor, List<Square> squares, int enemyKingPosition, IEnumerable<Square> whiteAttacks, IEnumerable<Square> blackAttacks) {
 			var kingIsBeingAttacked = whiteAttacks.Any(a => a.Index == enemyKingPosition) || blackAttacks.Any(a => a.Index == enemyKingPosition);
 			if (!kingIsBeingAttacked) {
 				return false;

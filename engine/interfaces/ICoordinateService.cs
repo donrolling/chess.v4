@@ -25,7 +25,7 @@ namespace chess.v4.engine.interfaces {
 		List<int> GetEntireRank(int rank);
 		int[] GetKingPositionsDuringCastle(int kingPos, int rookPos);
 		char GetOppositeColor(char activeColor);
-		Color GetOppositeColor(Color pieceColor);
+		Color Reverse(Color pieceColor);
 		List<Square> GetOrthogonalLine(List<Square> squares, int position, Direction direction, Color pieceColor, bool ignoreKing);
 		List<Square> GetOrthogonals(List<Square> squares, int position, Color pieceColor, bool ignoreKing = false);
 		PieceType GetPieceTypeFromChar(char piece);
