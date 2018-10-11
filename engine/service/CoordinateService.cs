@@ -13,11 +13,7 @@ namespace Chess.ServiceLayer {
 		public List<DiagonalDirection> DiagonalLines { get; } = new List<DiagonalDirection> { DiagonalDirection.UpLeft, DiagonalDirection.UpRight, DiagonalDirection.DownLeft, DiagonalDirection.DownRight };
 		public List<Direction> OrthogonalLines { get; } = new List<Direction> { Direction.RowUp, Direction.RowDown, Direction.FileUp, Direction.FileDown };
 
-		public IAttackService AttackService { get; }
-
-		public CoordinateService(IAttackService attackService) {
-			AttackService = attackService;
-		}
+		public CoordinateService() {}
 
 		public int CoordinatePairToPosition(int file, int rank) {
 			var fileChar = IntToFile(file);
