@@ -17,8 +17,8 @@ namespace chess.v4.engine.model {
 		//The number of the full move. It starts at 1, and is incremented after Black's move.
 		public int FullmoveNumber { get; set; }
 
-		public List<Square> Squares { get; set; }
+		public List<Square> Squares { get; set; } = new List<Square>();
 		public string PGN { get; set; }
-		public List<History> History { get; set; }
+		public List<History> History { get; set; } = new List<History>();
 	}
 }

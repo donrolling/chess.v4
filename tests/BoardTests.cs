@@ -1,12 +1,12 @@
 ﻿using chess.v4.engine.enumeration;
+using chess.v4.engine.extensions;
 using chess.v4.engine.model;
-using chess.v4.engine.service;
 using chess.v4.engine.reference;
+using chess.v4.engine.service;
 using Chess.ServiceLayer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using chess.v4.engine.extensions;
 
 namespace tests {
 
@@ -30,6 +30,7 @@ namespace tests {
 		public void UpdateTest() {
 			//set up default position and test that it is correct
 			var gamestateResult = GameStateService.SetStartPosition(FEN.StartingPosition);
+			Assert.AreEqual(64, gamestateResult.Output.Squares.Count());
 			AssertStartingPosition(gamestateResult.Output.Squares);
 			//now change the board and test if the change took place
 			//testing position
@@ -103,41 +104,50 @@ namespace tests {
 		}
 
 		private void AssertStartingPosition(List<Square> squares) {
-			Assert.IsTrue(squares.GetPiece(56).Identity == 'r');
-			Assert.IsTrue(squares.GetPiece(57).Identity == 'n');
-			Assert.IsTrue(squares.GetPiece(58).Identity == 'b');
-			Assert.IsTrue(squares.GetPiece(59).Identity == 'q');
-			Assert.IsTrue(squares.GetPiece(60).Identity == 'k');
-			Assert.IsTrue(squares.GetPiece(61).Identity == 'b');
-			Assert.IsTrue(squares.GetPiece(62).Identity == 'n');
-			Assert.IsTrue(squares.GetPiece(63).Identity == 'r');
+			//make sure we have the right number of pieces
+			var thePieces = squares.Where(a => a.Index <= 15 || a.Index >= 48);
+			Assert.AreEqual(32, thePieces.Count());
 
-			Assert.IsTrue(squares.GetPiece(48).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(49).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(50).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(51).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(52).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(53).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(54).Identity == 'p');
-			Assert.IsTrue(squares.GetPiece(55).Identity == 'p');
+			//make sure we have the right number of empty squares
+			var allOthers = squares.Where(a => a.Index > 15 && a.Index < 48);
+			Assert.AreEqual(32, allOthers.Count());
 
-			Assert.IsTrue(squares.GetPiece(0).Identity == 'R');
-			Assert.IsTrue(squares.GetPiece(1).Identity == 'N');
-			Assert.IsTrue(squares.GetPiece(2).Identity == 'B');
-			Assert.IsTrue(squares.GetPiece(3).Identity == 'Q');
-			Assert.IsTrue(squares.GetPiece(4).Identity == 'K');
-			Assert.IsTrue(squares.GetPiece(5).Identity == 'B');
-			Assert.IsTrue(squares.GetPiece(6).Identity == 'N');
-			Assert.IsTrue(squares.GetPiece(7).Identity == 'R');
+			//make sure the right pieces are on the right squares
+			Assert.AreEqual('r', squares.GetPiece(56).Identity);
+			Assert.AreEqual('n', squares.GetPiece(57).Identity);
+			Assert.AreEqual('b', squares.GetPiece(58).Identity);
+			Assert.AreEqual('q', squares.GetPiece(59).Identity);
+			Assert.AreEqual('k', squares.GetPiece(60).Identity);
+			Assert.AreEqual('b', squares.GetPiece(61).Identity);
+			Assert.AreEqual('n', squares.GetPiece(62).Identity);
+			Assert.AreEqual('r', squares.GetPiece(63).Identity);
 
-			Assert.IsTrue(squares.GetPiece(8).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(9).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(10).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(11).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(12).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(13).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(14).Identity == 'P');
-			Assert.IsTrue(squares.GetPiece(15).Identity == 'P');
+			Assert.AreEqual('p', squares.GetPiece(48).Identity);
+			Assert.AreEqual('p', squares.GetPiece(49).Identity);
+			Assert.AreEqual('p', squares.GetPiece(50).Identity);
+			Assert.AreEqual('p', squares.GetPiece(51).Identity);
+			Assert.AreEqual('p', squares.GetPiece(52).Identity);
+			Assert.AreEqual('p', squares.GetPiece(53).Identity);
+			Assert.AreEqual('p', squares.GetPiece(54).Identity);
+			Assert.AreEqual('p', squares.GetPiece(55).Identity);
+
+			Assert.AreEqual('R', squares.GetPiece(0).Identity);
+			Assert.AreEqual('N', squares.GetPiece(1).Identity);
+			Assert.AreEqual('B', squares.GetPiece(2).Identity);
+			Assert.AreEqual('Q', squares.GetPiece(3).Identity);
+			Assert.AreEqual('K', squares.GetPiece(4).Identity);
+			Assert.AreEqual('B', squares.GetPiece(5).Identity);
+			Assert.AreEqual('N', squares.GetPiece(6).Identity);
+			Assert.AreEqual('R', squares.GetPiece(7).Identity);
+
+			Assert.AreEqual('P', squares.GetPiece(8).Identity);
+			Assert.AreEqual('P', squares.GetPiece(9).Identity);
+			Assert.AreEqual('P', squares.GetPiece(10).Identity);
+			Assert.AreEqual('P', squares.GetPiece(11).Identity);
+			Assert.AreEqual('P', squares.GetPiece(12).Identity);
+			Assert.AreEqual('P', squares.GetPiece(13).Identity);
+			Assert.AreEqual('P', squares.GetPiece(14).Identity);
+			Assert.AreEqual('P', squares.GetPiece(15).Identity);
 		}
 	}
 }

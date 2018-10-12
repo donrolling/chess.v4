@@ -17,12 +17,6 @@ namespace chess.v4.engine.service {
 			CoordinateService = coordinateService;
 		}
 
-		public (PieceType, Color) GetChessTypeFromChar(char piece) {
-			var pieceType = CoordinateService.GetPieceTypeFromChar(piece);
-			var pieceColor = CoordinateService.GetColorFromChar(piece);
-			return (pieceType, pieceColor);
-		}
-
 		private IEnumerable<AttackedSquare> getPieceAttacks(string fen, Square square, bool ignoreKing = false) {
 			var position = square.Index;
 			var piece = square.Piece;
@@ -48,7 +42,6 @@ namespace chess.v4.engine.service {
 					var castleAvailability = fen.Split(' ')[2];
 					return GetKingAttacks(fen, position, piece.Color, castleAvailability);
 
-				case PieceType.Invalid:
 				default:
 					return new List<AttackedSquare>();
 			}

@@ -2,6 +2,6 @@
 
 namespace chess.v4.engine.interfaces {
 	public interface IMoveService {
-		bool IsCastle(Piece piece, int piecePosition, int newPiecePosition);
+		bool IsCastle(Square square, int destination);
 	}
 }

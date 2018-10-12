@@ -28,7 +28,6 @@ namespace chess.v4.engine.interfaces {
 		Color Reverse(Color pieceColor);
 		List<Square> GetOrthogonalLine(List<Square> squares, int position, Direction direction, Color pieceColor, bool ignoreKing);
 		List<Square> GetOrthogonals(List<Square> squares, int position, Color pieceColor, bool ignoreKing = false);
-		PieceType GetPieceTypeFromChar(char piece);
 		char IntToFile(int file);
 		bool IsDiagonalMove(int startPosition, int endPosition);
 		bool IsOpposingKing(char piece, Color pieceColor);

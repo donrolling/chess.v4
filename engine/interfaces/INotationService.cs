@@ -5,8 +5,7 @@ using System.Collections.Generic;
 namespace chess.v4.engine.interfaces {
 
 	public interface INotationService {
-
-		void UpdateMatrix(List<Square> squares, int piecePosition, int newPiecePosition);
+		List<Square> ApplyMoveToSquares(List<Square> squares, int piecePosition, int newPiecePosition);
 
 		void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo);
 

@@ -7,10 +7,13 @@ namespace chess.v4.engine.service {
 
 	public class MoveService : IMoveService {
 
-		public bool IsCastle(Piece piece, int piecePosition, int newPiecePosition) {
+		public bool IsCastle(Square square, int destination) {
+			if (!square.Occupied) {
+				return false;
+			}
 			return
-				piece.PieceType == PieceType.King
-				&& Math.Abs(piecePosition - newPiecePosition) == 2;
+				square.Piece.PieceType == PieceType.King
+				&& Math.Abs(square.Index - destination) == 2;
 		}
 	}
 }

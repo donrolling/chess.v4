@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="utility\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Common\common.csproj" />
   </ItemGroup>
 

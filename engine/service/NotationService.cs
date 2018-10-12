@@ -2,6 +2,7 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using chess.v4.engine.utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,10 @@ namespace chess.v4.engine.service {
 			CoordinateService = coordinateService;
 		}
 
-		public void UpdateMatrix(List<Square> squares, int piecePosition, int newPiecePosition) {
-			var square = squares.GetSquare(piecePosition);
-			var newSquare = squares.Where(a => a.Index == newPiecePosition).First();
+		public List<Square> ApplyMoveToSquares(List<Square> squares, int piecePosition, int newPiecePosition) {
+			var xs = squares.Clone();
+			var square = xs.GetSquare(piecePosition);
+			var newSquare = xs.Where(a => a.Index == newPiecePosition).First();
 			var piece = square.Piece;
 			square.Piece = null;
 			newSquare.Piece = new Piece {
@@ -28,6 +30,7 @@ namespace chess.v4.engine.service {
 				PieceType = piece.PieceType,
 				Color = piece.Color
 			};
+			return xs;
 		}
 
 		public void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo) {
@@ -42,48 +45,53 @@ namespace chess.v4.engine.service {
 		}
 
 		public List<Square> CreateMatrixFromFEN(string fen) {
-			var matrix = new List<Square>();
+			var squares = new List<Square>();
 			var fenPosition = fen.Split(' ');
 			var rows = fenPosition[0].Split('/');
 			for (int i = 0; i < 8; i++) {
 				int rowIndex = 7 - i;
+				//leftSideIndex is the left side of the board, in numbers: 0 8 16 24 32 40 48 56
 				int leftSideIndex = 8 * (rowIndex);
-
 				int charIndex = 0;
-				string row = rows[i];
+				var row = rows[i];
 				foreach (char c in row) {
 					if (char.IsNumber(c)) {
-						int number = 0;
-						Int32.TryParse(c.ToString(), out number);
-						charIndex = charIndex + number;
+						int advanceSquare = 0;
+						Int32.TryParse(c.ToString(), out advanceSquare);
+						//gotta make empty squares
+						for (int j = 0; j < advanceSquare; j++) {
+							squares.Add(
+								new Square {
+									Index = leftSideIndex + charIndex + j
+								}
+							);
+						}
+						//in FEN we move ahead the number of squares that the number says
+						charIndex = charIndex + advanceSquare;
 					} else {
-						int index = leftSideIndex + charIndex;
-						var square = new Square {
-							Index = index,
-							Piece = new Piece {
-								Identity = c,
+						var index = leftSideIndex + charIndex;
+						squares.Add(
+							new Square {
+								Index = index,
+								Piece = NotationUtility.GetPieceFromCharacter(c)
 							}
-						};
-						matrix.Add(square);
+						);
 						charIndex++;
 					}
 				}
 			}
-
-			return matrix;
+			return squares.OrderBy(a => a.Index).ToList();
 		}
 
-		public string CreateNewFENFromGameState(GameState gameState, List<Square> matrix, int piecePosition, int newPiecePosition) {
+		public string CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
 			//"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-			string position = createNewPositionFromMatrix(matrix);
-			string castlingAvailability = getCastlingAvailability(matrix, gameState.CastlingAvailability, piecePosition, newPiecePosition);
-			string enPassantCoord = getEnPassantCoord(matrix, gameState.ActiveColor, piecePosition, newPiecePosition);
-			string halfmoveClock = gethalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
-			string fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
-
+			var position = createNewPositionFromMatrix(squares);
+			var castlingAvailability = getCastlingAvailability(squares, gameState.CastlingAvailability, piecePosition, newPiecePosition);
+			var enPassantCoord = getEnPassantCoord(squares, gameState.ActiveColor, piecePosition, newPiecePosition);
+			var halfmoveClock = gethalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
+			var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
 			var fenParams = new string[6] { position, CoordinateService.Reverse(gameState.ActiveColor).ToString(), castlingAvailability, enPassantCoord, halfmoveClock, fullmoveNumber };
-			string fen = string.Join(" ", fenParams);
-			return fen;
+			return string.Join(" ", fenParams);
 		}
 
 		private string getCastlingAvailability(List<Square> matrix, string castlingAvailability, int piecePosition, int newPiecePosition) {
@@ -169,13 +177,14 @@ namespace chess.v4.engine.service {
 					int missingPieceCount = 0;
 					for (int j = 0; j < 8; j++) {
 						var index = leftSideIndex + j;
-						var piece = squares.Where(a => a.Index == index).FirstOrDefault();
+						var square = squares.GetSquare(index);
+						var piece = square.Piece;
 						if (piece != null) {
 							if (missingPieceCount > 0) {
 								position.Append(missingPieceCount.ToString());
 								missingPieceCount = 0;
 							}
-							position.Append(piece);
+							position.Append(piece.Identity);
 						} else {
 							missingPieceCount += 1;
 						}

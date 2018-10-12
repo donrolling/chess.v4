@@ -6,6 +6,10 @@ using System.Text;
 
 namespace chess.v4.engine.extensions {
 	public static class SquareExtensions {
+		public static List<T> Clone<T>(this IList<T> listToClone) where T : ICloneable {
+			return listToClone.Select(item => (T)item.Clone()).ToList();
+		}
+
 		public static Square GetSquare(this List<Square> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First();
 		}

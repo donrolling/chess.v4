@@ -333,29 +333,7 @@ namespace Chess.ServiceLayer {
 			return 'I';
 		}
 
-		public PieceType GetPieceTypeFromChar(char piece) {
-			char indicator = piece.ToString().ToUpper()[0];
-			switch (indicator) {
-				case 'K':
-					return PieceType.King;
-
-				case 'Q':
-					return PieceType.Queen;
-
-				case 'B':
-					return PieceType.Bishop;
-
-				case 'N':
-					return PieceType.Knight;
-
-				case 'R':
-					return PieceType.Rook;
-
-				case 'P':
-					return PieceType.Pawn;
-			}
-			return PieceType.Invalid;
-		}
+		
 
 		public Color GetColorFromChar(char piece) {
 			if (char.IsLower(piece)) {
