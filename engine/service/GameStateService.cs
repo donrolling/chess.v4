@@ -109,8 +109,11 @@ namespace chess.v4.engine.service {
 			applyGameData(gameState);
 
 			gameState.Squares = NotationService.CreateMatrixFromFEN(gameState.FEN);
-			var whiteAttacks = AttackService.GetAttacks(Color.White, fen);
-			var blackAttacks = AttackService.GetAttacks(Color.Black, fen);
+
+			//having problems on the 2nd time through
+			var allAttacks = AttackService.GetAttacks(gameState.Squares, fen);
+			var whiteAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.White);
+			var blackAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.Black);
 
 			var whiteKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.White).Single();
 			var blackKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.Black).Single();

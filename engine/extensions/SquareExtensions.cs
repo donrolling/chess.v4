@@ -10,6 +10,10 @@ namespace chess.v4.engine.extensions {
 			return listToClone.Select(item => (T)item.Clone()).ToList();
 		}
 
+		public static IEnumerable<Square> Occupied(this List<Square> squares) {
+			return squares.Where(a => a.Piece != null);
+		}
+
 		public static Square GetSquare(this List<Square> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First();
 		}

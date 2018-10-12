@@ -16,35 +16,25 @@ namespace chess.v4.engine.service {
 			NotationService = notationService;
 			CoordinateService = coordinateService;
 		}
-
-		private IEnumerable<AttackedSquare> getPieceAttacks(string fen, Square square, bool ignoreKing = false) {
-			var position = square.Index;
-			var piece = square.Piece;
-			var squares = NotationService.CreateMatrixFromFEN(fen);
-			switch (piece.PieceType) {
-				case PieceType.Pawn:
-					var enPassantPosition = CoordinateService.CoordinateToPosition(fen.Split(' ')[3]);
-					return getPawnAttacks(squares, position, piece.Color, enPassantPosition);
-
-				case PieceType.Knight:
-					return getKnightAttacks(squares, position, piece.Color);
-
-				case PieceType.Bishop:
-					return getBishopAttacks(squares, position, piece.Color, ignoreKing);
-
-				case PieceType.Rook:
-					return getRookAttacks(squares, position, piece.Color, ignoreKing);
-
-				case PieceType.Queen:
-					return getQueenAttacks(squares, position, piece.Color, ignoreKing);
-
-				case PieceType.King:
-					var castleAvailability = fen.Split(' ')[2];
-					return GetKingAttacks(fen, position, piece.Color, castleAvailability);
-
-				default:
-					return new List<AttackedSquare>();
+		
+		public IEnumerable<AttackedSquare> GetAttacks(List<Square> squares, string fen, bool ignoreKing = false) {
+			var allAttacks = new List<AttackedSquare>();
+			foreach (var occupiedSquare in squares.Occupied()) {
+				var list = this.getPieceAttacks(squares, occupiedSquare, fen, ignoreKing);
+				allAttacks.AddRange(list);
 			}
+			return allAttacks;
+		}
+
+		public IEnumerable<AttackedSquare> GetAttacks(Color color, string fen, bool ignoreKing = false) {
+			var allAttacks = new List<AttackedSquare>();
+			var squares = NotationService.CreateMatrixFromFEN(fen);
+			var occupiedSquaresOfOneColor = getOccupiedSquaresOfOneColor(color, squares, ignoreKing);
+			foreach (var occupiedSquare in occupiedSquaresOfOneColor) {
+				var list = this.getPieceAttacks(squares, occupiedSquare, fen, ignoreKing);
+				allAttacks.AddRange(list);
+			}
+			return allAttacks;
 		}
 
 		public IEnumerable<AttackedSquare> GetKingAttacks(string fen, int position, Color pieceColor, string castleAvailability) {
@@ -113,6 +103,35 @@ namespace chess.v4.engine.service {
 
 			this.removeKingChecksFromKingMoves(fen, attacks, pieceColor, squares);
 			return attacks;
+		}
+
+		private IEnumerable<AttackedSquare> getPieceAttacks(List<Square> squares, Square square, string fen, bool ignoreKing = false) {
+			var position = square.Index;
+			var piece = square.Piece;
+			switch (piece.PieceType) {
+				case PieceType.Pawn:
+					var enPassantPosition = CoordinateService.CoordinateToPosition(fen.Split(' ')[3]);
+					return getPawnAttacks(squares, position, piece.Color, enPassantPosition);
+
+				case PieceType.Knight:
+					return getKnightAttacks(squares, position, piece.Color);
+
+				case PieceType.Bishop:
+					return getBishopAttacks(squares, position, piece.Color, ignoreKing);
+
+				case PieceType.Rook:
+					return getRookAttacks(squares, position, piece.Color, ignoreKing);
+
+				case PieceType.Queen:
+					return getQueenAttacks(squares, position, piece.Color, ignoreKing);
+
+				case PieceType.King:
+					var castleAvailability = fen.Split(' ')[2];
+					return GetKingAttacks(fen, position, piece.Color, castleAvailability);
+
+				default:
+					return new List<AttackedSquare>();
+			}
 		}
 
 		private IEnumerable<AttackedSquare> getQueenAttacks(List<Square> squares, int position, Color pieceColor, bool ignoreKing) {
@@ -208,17 +227,6 @@ namespace chess.v4.engine.service {
 			}
 
 			return attacks.Select(a => new AttackedSquare(square, a));
-		}
-
-		public IEnumerable<AttackedSquare> GetAttacks(Color color, string fen, bool ignoreKing = false) {
-			var allAttacks = new List<AttackedSquare>();
-			var squares = NotationService.CreateMatrixFromFEN(fen);
-			var occupiedSquaresOfOneColor = getOccupiedSquaresOfOneColor(color, squares, ignoreKing);
-			foreach (var occupiedSquare in occupiedSquaresOfOneColor) {
-				var list = this.getPieceAttacks(fen, occupiedSquare, ignoreKing);
-				allAttacks.AddRange(list);
-			}
-			return allAttacks;
 		}
 
 		private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing = false) {

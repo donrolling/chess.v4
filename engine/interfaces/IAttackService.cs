@@ -9,5 +9,7 @@ namespace chess.v4.engine.interfaces {
 		IEnumerable<AttackedSquare> GetAttacks(Color color, string fen, bool ignoreKing = false);
 
 		IEnumerable<AttackedSquare> GetKingAttacks(string fen, int position, Color pieceColor, string castleAvailability);
+		
+		IEnumerable<AttackedSquare> GetAttacks(List<Square> squares, string fen, bool ignoreKing = false);
 	}
 }
