@@ -38,23 +38,24 @@ namespace Chess.ServiceLayer {
 			return (int)(file - 97);
 		}
 
-		public List<Square> GetDiagonalLine(List<Square> squares, int position, DiagonalDirection direction, Color pieceColor, bool ignoreKing) {
+		public List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing) {
 			var attacks = new List<Square>();
-			int diagonalLine = getIteratorByDirectionEnum(direction);
-			var newPosition = position;
+			var diagonalLine = getIteratorByDirectionEnum(direction);
+			var position = square.Index;
+			var newPosition = square.Index;
 			do {
-				if (CanDoDiagonalsFromStartPosition(position, diagonalLine)) {
+				if (canDoDiagonalsFromStartPosition(position, diagonalLine)) {
 					newPosition = position + diagonalLine;
 					if (!IsValidCoordinate(newPosition)) {
 						break;
 					}
-					var square = squares.GetSquare(newPosition);
-					if (square.Occupied) {
-						var blockingPiece = square.Piece;
-						if (GeneralUtility.CanAttackPiece(pieceColor, blockingPiece)) {
+					var newSquare = gameState.Squares.GetSquare(newPosition);
+					if (newSquare.Occupied) {
+						var blockingPiece = newSquare.Piece;
+						if (GeneralUtility.CanAttackPiece(newSquare.Piece.Color, blockingPiece)) {
 							attacks.Add(square);
 						}
-						var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece.Identity, pieceColor);
+						var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece.Identity, newSquare.Piece.Color);
 						if (breakAfterAction) {
 							break;
 						}
@@ -66,20 +67,12 @@ namespace Chess.ServiceLayer {
 			return attacks;
 		}
 
-		public List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing) {
-			throw new NotImplementedException();
-		}
-
-		public List<Square> GetDiagonals(List<Square> squares, int position, Color pieceColor, bool ignoreKing = false) {
+		public List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false) {
 			var attacks = new List<Square>();
 			foreach (var direction in GeneralReference.DiagonalLines) {
-				attacks.AddRange(GetDiagonalLine(squares, position, direction, pieceColor, ignoreKing));
+				attacks.AddRange(GetDiagonalLine(gameState, square, direction, ignoreKing));
 			}
 			return attacks;
-		}
-
-		public List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false) {
-			throw new NotImplementedException();
 		}
 
 		public List<int> GetEntireFile(int file) {
@@ -192,7 +185,7 @@ namespace Chess.ServiceLayer {
 			return pieceColor == Color.White ? Color.Black : Color.White;
 		}
 
-		private bool CanDoDiagonalsFromStartPosition(int startPosition, int direction) {
+		private bool canDoDiagonalsFromStartPosition(int startPosition, int direction) {
 			bool isLeftSide = startPosition % 8 == 0;
 			bool isRightSide = startPosition % 8 == 7;
 
