@@ -2,6 +2,8 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using chess.v4.engine.reference;
+using chess.v4.engine.utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,52 @@ namespace chess.v4.engine.service {
 				}
 			}
 			return allAttacks;
+		}
+
+		public IEnumerable<Square> GetKingAttack(AttackedSquare attackedSquare, GameState gameState, Square enemyKing) {
+			var theAttack = new List<Square>();
+			switch (attackedSquare.AttackerSquare.Piece.PieceType) {
+				case PieceType.Pawn | PieceType.Knight | PieceType.King: //you can't interpose a pawn or a knight attack, also a king cannot attack a king
+					break;
+
+				case PieceType.Bishop:
+					foreach (var direction in GeneralReference.DiagonalLines) {
+						var potentialAttack = CoordinateService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					break;
+
+				case PieceType.Rook:
+					foreach (var direction in GeneralReference.OrthogonalLines) {
+						var potentialAttack = CoordinateService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					break;
+
+				case PieceType.Queen:
+					foreach (var direction in GeneralReference.DiagonalLines) {
+						var potentialAttack = CoordinateService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					foreach (var direction in GeneralReference.OrthogonalLines) {
+						var potentialAttack = CoordinateService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					break;
+			}
+			return theAttack;
 		}
 
 		public IEnumerable<AttackedSquare> GetKingAttacks(GameState gameState, Square square) {
@@ -100,7 +148,7 @@ namespace chess.v4.engine.service {
 		private bool determineCheck(List<Square> squares, List<int> proposedAttacks, Color pieceColor) {
 			//can't be more than one king
 			//has to be at least two kings
-			var king = CoordinateService.FindPiece(squares, PieceType.King, pieceColor).First();
+			var king = squares.FindPiece(PieceType.King, pieceColor);
 			return proposedAttacks.Contains(king.Index);
 		}
 
@@ -256,7 +304,7 @@ namespace chess.v4.engine.service {
 				return true;
 			}
 			var blockingPiece = square.Piece;
-			if (CoordinateService.CanAttackPiece(pieceColor, blockingPiece)) {
+			if (GeneralUtility.CanAttackPiece(pieceColor, blockingPiece)) {
 				return true;
 			} else {
 				return false;

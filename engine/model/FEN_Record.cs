@@ -68,9 +68,13 @@ namespace chess.v4.engine.model {
 			this.FullmoveNumber = fullmoveNumber;
 		}
 
+		public static string ConvertToString(FEN_Record fenRecord) {
+			var activeColor = fenRecord.ActiveColor == Color.White ? "w" : "b";
+			return $"{ fenRecord.PiecePlacement } { activeColor } { fenRecord.CastlingAvailability } { fenRecord.EnPassantTargetSquare } { fenRecord.HalfmoveClock } { fenRecord.FullmoveNumber }";
+		}
+
 		public override string ToString() {
-			var activeColor = this.ActiveColor == Color.White ? "w" : "b";
-			return $"{ this.PiecePlacement } { activeColor } { this.CastlingAvailability } { this.EnPassantTargetSquare } { this.HalfmoveClock } { this.FullmoveNumber }";
+			return ConvertToString(this);
 		}
 	}
 }

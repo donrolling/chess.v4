@@ -29,7 +29,7 @@ namespace chess.v4.engine.model {
 		}
 
 		public override string ToString() {
-			return ((FEN_Record)this).ToString();
+			return FEN_Record.ConvertToString(this);
 		}
 	}
 }

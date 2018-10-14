@@ -2,6 +2,8 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using chess.v4.engine.reference;
+using chess.v4.engine.utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,43 +11,8 @@ using System.Linq;
 namespace Chess.ServiceLayer {
 
 	public class CoordinateService : ICoordinateService {
-		public List<DiagonalDirection> DiagonalLines { get; } = new List<DiagonalDirection> { DiagonalDirection.UpLeft, DiagonalDirection.UpRight, DiagonalDirection.DownLeft, DiagonalDirection.DownRight };
-		public List<Direction> OrthogonalLines { get; } = new List<Direction> { Direction.RowUp, Direction.RowDown, Direction.FileUp, Direction.FileDown };
-		public const string Files = "abcdefgh";
 
 		public CoordinateService() {
-		}
-
-		public bool BreakAfterAction(bool ignoreKing, char blockingPiece, Color pieceColor) {
-			//if ignoreKing is true, then we won't break after we hit the king
-			//because we're trying to determine if the king will be in check if he moves to one of these squares.
-			bool breakAfterAction = false;
-			if (ignoreKing) {
-				bool isOpposingKing = IsOpposingKing(blockingPiece, pieceColor);
-				if (!isOpposingKing) {
-					breakAfterAction = true;
-				}
-			} else {
-				breakAfterAction = true;
-			}
-			return breakAfterAction;
-		}
-
-		public bool CanAttackPiece(Color pieceColor, char attackedPiece) {
-			if (pieceColor == Color.White && char.IsLower(attackedPiece)) {
-				return true;
-			}
-			if (pieceColor == Color.Black && char.IsUpper(attackedPiece)) {
-				return true;
-			}
-			return false;
-		}
-
-		public bool CanAttackPiece(Color pieceColor, Piece attackedPiece) {
-			if (attackedPiece == null) {
-				return true;
-			}
-			return attackedPiece.Color != pieceColor;
 		}
 
 		public int CoordinatePairToPosition(int file, int rank) {
@@ -67,55 +34,8 @@ namespace Chess.ServiceLayer {
 			return position;
 		}
 
-		public bool DetermineCastleThroughCheck(List<Square> matrix, List<Square> enemyAttacks, string fen, Color color, int kingPos, int rookPos) {
-			var oppositeColor = color == Color.White ? Color.Black : Color.White;
-			//var enemyAttacks = this.PieceService.GetAttacks(oppositeColor, fen).SelectMany(a => a.Value);
-			var positions = this.GetKingPositionsDuringCastle(kingPos, rookPos);
-			var arePositionsAttacked = positions.Intersect<int>(enemyAttacks.Select(a => a.Index)).Any();
-			return arePositionsAttacked;
-		}
-
-		public bool DetermineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos) {
-			throw new NotImplementedException();
-		}
-
 		public int FileToInt(char file) {
 			return (int)(file - 97);
-		}
-
-		public IEnumerable<Square> FindPiece(List<Square> squares, PieceType pieceType, Color color) {
-			var pieceChar = GetCharFromPieceType(pieceType, color);
-			return squares.Where(a => a.Piece != null && a.Piece.Identity == pieceChar);
-		}
-
-		public char GetCharFromPieceType(PieceType pieceType, Color color) {
-			switch (pieceType) {
-				case PieceType.King:
-					return color == Color.White ? 'K' : 'k';
-
-				case PieceType.Queen:
-					return color == Color.White ? 'Q' : 'q';
-
-				case PieceType.Bishop:
-					return color == Color.White ? 'B' : 'b';
-
-				case PieceType.Knight:
-					return color == Color.White ? 'N' : 'n';
-
-				case PieceType.Rook:
-					return color == Color.White ? 'R' : 'r';
-
-				case PieceType.Pawn:
-					return color == Color.White ? 'P' : 'p';
-			}
-			return 'I';
-		}
-
-		public Color GetColorFromChar(char piece) {
-			if (char.IsLower(piece)) {
-				return Color.Black;
-			}
-			return Color.White;
 		}
 
 		public List<Square> GetDiagonalLine(List<Square> squares, int position, DiagonalDirection direction, Color pieceColor, bool ignoreKing) {
@@ -131,10 +51,10 @@ namespace Chess.ServiceLayer {
 					var square = squares.GetSquare(newPosition);
 					if (square.Occupied) {
 						var blockingPiece = square.Piece;
-						if (CanAttackPiece(pieceColor, blockingPiece)) {
+						if (GeneralUtility.CanAttackPiece(pieceColor, blockingPiece)) {
 							attacks.Add(square);
 						}
-						var breakAfterAction = BreakAfterAction(ignoreKing, blockingPiece.Identity, pieceColor);
+						var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece.Identity, pieceColor);
 						if (breakAfterAction) {
 							break;
 						}
@@ -152,7 +72,7 @@ namespace Chess.ServiceLayer {
 
 		public List<Square> GetDiagonals(List<Square> squares, int position, Color pieceColor, bool ignoreKing = false) {
 			var attacks = new List<Square>();
-			foreach (var direction in DiagonalLines) {
+			foreach (var direction in GeneralReference.DiagonalLines) {
 				attacks.AddRange(GetDiagonalLine(squares, position, direction, pieceColor, ignoreKing));
 			}
 			return attacks;
@@ -186,32 +106,19 @@ namespace Chess.ServiceLayer {
 			return attacks;
 		}
 
-		public int[] GetKingPositionsDuringCastle(int kingPos, int rookPos) {
-			int direction = kingPos < rookPos ? 1 : -1;
-			int[] result = new int[2];
-			for (int i = 0; i < 2; i++) {
-				result[i] = kingPos + (direction * (i + 1));
-			}
-			return result;
-		}
-
-		public char GetOppositeColor(char activeColor) {
-			return activeColor == 'w' ? 'b' : 'w';
-		}
-
-		public List<Square> GetOrthogonalLine(List<Square> squares, int currentPosition, Direction direction, Color pieceColor, bool ignoreKing) {
-			int endCondition = getEndCondition(direction, currentPosition);
+		public List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false) {
+			var currentPosition = square.Index;
+			var endCondition = getEndCondition(direction, currentPosition);
 			var attacks = new List<Square>();
 			var iterator = getIteratorByDirectionEnum(direction);
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
 				if (!IsValidCoordinate(position)) { break; }
-				var square = squares.GetSquare(position);
 				if (square.Occupied) {
-					var blockingPiece = squares.GetPiece(position);
-					if (CanAttackPiece(pieceColor, blockingPiece.Identity)) {
+					var blockingPiece = gameState.Squares.GetPiece(position);
+					if (GeneralUtility.CanAttackPiece(square.Piece.Color, blockingPiece.Identity)) {
 						attacks.Add(square);
 					}
-					bool breakAfterAction = BreakAfterAction(ignoreKing, blockingPiece.Identity, pieceColor);
+					var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece.Identity, square.Piece.Color);
 					if (breakAfterAction) {
 						break;
 					}
@@ -222,23 +129,15 @@ namespace Chess.ServiceLayer {
 			return attacks;
 		}
 
-		public List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false) {
-			throw new NotImplementedException();
-		}
-
-		public List<Square> GetOrthogonals(List<Square> squares, int position, Color pieceColor, bool ignoreKing = false) {
+		public List<Square> GetOrthogonals(GameState gameState, Square square, bool ignoreKing = false) {
 			var attacks = new List<Square>();
-			foreach (var orthogonalLine in OrthogonalLines) {
-				var line = GetOrthogonalLine(squares, position, orthogonalLine, pieceColor, ignoreKing);
+			foreach (var orthogonalLine in GeneralReference.OrthogonalLines) {
+				var line = GetOrthogonalLine(gameState, square, orthogonalLine, ignoreKing);
 				if (line != null && line.Any()) {
 					attacks.AddRange(line);
 				}
 			}
 			return attacks;
-		}
-
-		public List<Square> GetOrthogonals(GameState gameState, Square square, bool ignoreKing = false) {
-			throw new NotImplementedException();
 		}
 
 		public char IntToFile(int file) {
@@ -257,16 +156,6 @@ namespace Chess.ServiceLayer {
 				return true;
 			}
 			return false;
-		}
-
-		/// <summary>
-		/// Determines if the char passed in is the king for the color opposite of the color passed in.
-		/// </summary>
-		/// <param name="piece">The piece that might be your opponent's king.</param>
-		/// <param name="pieceColor">The color of the current player.</param>
-		/// <returns></returns>
-		public bool IsOpposingKing(char piece, Color pieceColor) {
-			return pieceColor == Color.White ? (piece == 'k' ? true : false) : (piece == 'K' ? true : false);
 		}
 
 		public bool IsValidCoordinate(int position) {
