@@ -19,22 +19,18 @@ namespace chess.v4.engine.service {
 		
 		public IEnumerable<AttackedSquare> GetAttacks(List<Square> squares, string fen, bool ignoreKing = false) {
 			var allAttacks = new List<AttackedSquare>();
+			var castleAvailability = fen.Split(' ')[2];
+			var enPassantPosition = CoordinateService.CoordinateToPosition(fen.Split(' ')[3]);
 			foreach (var occupiedSquare in squares.Occupied()) {
-				var list = this.getPieceAttacks(squares, occupiedSquare, fen, ignoreKing);
+				var list = this.getPieceAttacks(squares, occupiedSquare, fen, castleAvailability, enPassantPosition, ignoreKing);
 				allAttacks.AddRange(list);
 			}
 			return allAttacks;
 		}
 
 		public IEnumerable<AttackedSquare> GetAttacks(Color color, string fen, bool ignoreKing = false) {
-			var allAttacks = new List<AttackedSquare>();
 			var squares = NotationService.CreateMatrixFromFEN(fen);
-			var occupiedSquaresOfOneColor = getOccupiedSquaresOfOneColor(color, squares, ignoreKing);
-			foreach (var occupiedSquare in occupiedSquaresOfOneColor) {
-				var list = this.getPieceAttacks(squares, occupiedSquare, fen, ignoreKing);
-				allAttacks.AddRange(list);
-			}
-			return allAttacks;
+			return this.GetAttacks(squares, fen, ignoreKing);
 		}
 
 		public IEnumerable<AttackedSquare> GetKingAttacks(string fen, int position, Color pieceColor, string castleAvailability) {
@@ -105,57 +101,39 @@ namespace chess.v4.engine.service {
 			return attacks;
 		}
 
-		private IEnumerable<AttackedSquare> getPieceAttacks(List<Square> squares, Square square, string fen, bool ignoreKing = false) {
-			var position = square.Index;
-			var piece = square.Piece;
-			switch (piece.PieceType) {
+		private IEnumerable<AttackedSquare> getPieceAttacks(List<Square> squares, Square square, string fen, string castleAvailability, int enPassantPosition, bool ignoreKing = false) {
+			switch (square.Piece.PieceType) {
 				case PieceType.Pawn:
-					var enPassantPosition = CoordinateService.CoordinateToPosition(fen.Split(' ')[3]);
-					return getPawnAttacks(squares, position, piece.Color, enPassantPosition);
+					return getPawnAttacks(squares, square, enPassantPosition);
 
 				case PieceType.Knight:
-					return getKnightAttacks(squares, position, piece.Color);
+					return getKnightAttacks(squares, square);
 
 				case PieceType.Bishop:
-					return getBishopAttacks(squares, position, piece.Color, ignoreKing);
+					return CoordinateService.GetDiagonals(squares, square.Index, square.Piece.Color, ignoreKing).Select(a => new AttackedSquare(square, a));
 
 				case PieceType.Rook:
-					return getRookAttacks(squares, position, piece.Color, ignoreKing);
+					return CoordinateService.GetOrthogonals(squares, square.Index, square.Piece.Color, ignoreKing).Select(a => new AttackedSquare(square, a));
 
 				case PieceType.Queen:
-					return getQueenAttacks(squares, position, piece.Color, ignoreKing);
+					var attacks =
+							CoordinateService.GetOrthogonals(squares, square.Index, square.Piece.Color, ignoreKing)
+							.Concat(
+								CoordinateService.GetDiagonals(squares, square.Index, square.Piece.Color, ignoreKing)
+							);
+					return attacks.Select(a => new AttackedSquare(square, a));
 
 				case PieceType.King:
-					var castleAvailability = fen.Split(' ')[2];
-					return GetKingAttacks(fen, position, piece.Color, castleAvailability);
+					return GetKingAttacks(fen, square.Index, square.Piece.Color, castleAvailability);
 
 				default:
-					return new List<AttackedSquare>();
+					throw new Exception("Mismatched Enum!");
 			}
 		}
 
-		private IEnumerable<AttackedSquare> getQueenAttacks(List<Square> squares, int position, Color pieceColor, bool ignoreKing) {
-			var square = squares.GetSquare(position);
-			var attacks =
-				CoordinateService.GetOrthogonals(squares, position, pieceColor, ignoreKing)
-				.Concat(
-					CoordinateService.GetDiagonals(squares, position, pieceColor, ignoreKing)
-				);
-			return attacks.Select(a => new AttackedSquare(square, a));
-		}
-
-		private IEnumerable<AttackedSquare> getRookAttacks(List<Square> squares, int position, Color pieceColor, bool ignoreKing) {
-			var square = squares.GetSquare(position);
-			return CoordinateService.GetOrthogonals(squares, position, pieceColor, ignoreKing).Select(a => new AttackedSquare(square, a));
-		}
-
-		private IEnumerable<AttackedSquare> getBishopAttacks(List<Square> squares, int position, Color pieceColor, bool ignoreKing) {
-			var square = squares.GetSquare(position);
-			return CoordinateService.GetDiagonals(squares, position, pieceColor, ignoreKing).Select(a => new AttackedSquare(square, a));
-		}
-
-		private IEnumerable<AttackedSquare> getKnightAttacks(List<Square> squares, int currentPosition, Color pieceColor) {
-			var square = squares.GetSquare(currentPosition);
+		private IEnumerable<AttackedSquare> getKnightAttacks(List<Square> squares, Square square){
+			var currentPosition = square.Index;
+			var pieceColor = square.Piece.Color;
 			var attacks = new List<Square>();
 			var coord = CoordinateService.PositionToCoordinate(currentPosition);
 			var file = CoordinateService.FileToInt(coord[0]);
@@ -182,8 +160,9 @@ namespace chess.v4.engine.service {
 			return attacks.Select(a => new AttackedSquare(square, a));
 		}
 
-		private IEnumerable<AttackedSquare> getPawnAttacks(List<Square> squares, int position, Color pieceColor, int enPassantPosition) {
-			var square = squares.GetSquare(position);
+		private IEnumerable<AttackedSquare> getPawnAttacks(List<Square> squares, Square square, int enPassantPosition) {
+			var position = square.Index;
+			var pieceColor = square.Piece.Color;
 			var attacks = new List<Square>();
 			var coord = CoordinateService.PositionToCoordinate(position);
 			int file = CoordinateService.FileToInt(coord[0]);
