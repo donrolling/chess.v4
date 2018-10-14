@@ -21,8 +21,8 @@ namespace chess.v4.engine.service {
 
 		public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false) {
 			var allAttacks = new List<AttackedSquare>();
-			foreach (var squares in gameState.Squares) {
-				var list = this.getPieceAttacks(gameState, squares, ignoreKing);
+			foreach (var square in gameState.Squares) {
+				var list = this.getPieceAttacks(gameState, square, ignoreKing);
 				if (list.Any()) {
 					allAttacks.AddRange(list);
 				}
@@ -141,7 +141,7 @@ namespace chess.v4.engine.service {
 				}
 			}
 
-			this.removeKingChecksFromKingMoves(gameState, attacks, pieceColor, squares);
+			//this.removeKingChecksFromKingMoves(gameState, attacks, pieceColor, squares);
 			return attacks;
 		}
 
@@ -266,6 +266,9 @@ namespace chess.v4.engine.service {
 					return attacks.Select(a => new AttackedSquare(square, a));
 
 				case PieceType.King:
+					if (ignoreKing) {
+						return new List<AttackedSquare>();
+					}
 					return GetKingAttacks(gameState, square);
 
 				default:
