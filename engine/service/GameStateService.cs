@@ -29,11 +29,12 @@ namespace chess.v4.engine.service {
 		}
 
 		//Positions should be numbered 0-63 where a1 is 0
-		public ResultOuput<GameState> UpdateGameState(GameState gameState, Color color, int piecePosition, int newPiecePosition, string pgnMove) {
+		public ResultOuput<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, string pgnMove) {
 			var newSquares = NotationService.ApplyMoveToSquares(gameState.Squares, piecePosition, newPiecePosition);
 			var oldSquares = gameState.Squares;
 			var square = oldSquares.GetSquare(piecePosition);
 			var piece = square.Piece;
+			var color = gameState.ActiveColor;
 
 			var isCastle = MoveService.IsCastle(square, newPiecePosition);
 			if (isCastle) { //if is castle, update matrix again
@@ -93,6 +94,12 @@ namespace chess.v4.engine.service {
 				return checkedOwnKingGameState;
 			}
 			return newGameState;
+		}
+
+		public ResultOuput<GameState> MakeMove(GameState gameState, string beginning, string destination) {
+			var pos1 = CoordinateService.CoordinateToPosition("e2");
+			var pos2 = CoordinateService.CoordinateToPosition("e4");
+			return this.MakeMove(gameState, pos1, pos2, string.Empty);
 		}
 
 		public ResultOuput<GameState> UpdateGameStateWithError(GameState gameState, string errorMessage) {

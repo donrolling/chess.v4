@@ -8,7 +8,9 @@ namespace chess.v4.engine.interfaces {
 
 		ResultOuput<GameState> SetStartPosition(string fen);
 
-		ResultOuput<GameState> UpdateGameState(GameState gameState, Color color, int piecePosition, int newPiecePosition, string pgnMove);
+		ResultOuput<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, string pgnMove);
+
+		ResultOuput<GameState> MakeMove(GameState gameState, string beginning, string destination);
 
 		ResultOuput<GameState> UpdateGameStateWithError(GameState gameState, string errorMessage);
 	}

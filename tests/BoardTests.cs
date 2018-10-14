@@ -27,83 +27,13 @@ namespace tests {
 		}
 
 		[TestMethod]
-		public void UpdateTest() {
+		public void Given_StartPosition_AssertThat_AllPositions_AreCorrect() {
 			//set up default position and test that it is correct
 			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
+			Assert.IsTrue(gamestateResult.Sucess);
 			Assert.AreEqual(64, gamestateResult.Output.Squares.Count());
-			AssertStartingPosition(gamestateResult.Output.Squares);
-			//now change the board and test if the change took place
-			//testing position
-			//testing en passant target square
-			//1. e4
-			var pos1 = CoordinateService.CoordinateToPosition("e2");
-			var pos2 = CoordinateService.CoordinateToPosition("e4");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.White, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(28).Identity == 'P');
-			Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", gamestateResult.Output.ToString());
-			//1. e4 c5
-			//testing position
-			//testing en passant target square
-			//testing fullmove number
-			pos1 = CoordinateService.CoordinateToPosition("c7");
-			pos2 = CoordinateService.CoordinateToPosition("c5");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.Black, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(34).Identity == 'p');
-			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3
-			//testing the halfmove clock
-			pos1 = CoordinateService.CoordinateToPosition("b1");
-			pos2 = CoordinateService.CoordinateToPosition("c3");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.White, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(18).Identity == 'N');
-			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2", gamestateResult.ToString());
+			var squares = gamestateResult.Output.Squares;
 
-			//testing castle availability
-			//1. e4 c5 2. Nc3 b5
-			pos1 = CoordinateService.CoordinateToPosition("b7");
-			pos2 = CoordinateService.CoordinateToPosition("b5");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.Black, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq b6 0 3", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3 b5 3. b3
-			pos1 = CoordinateService.CoordinateToPosition("b2");
-			pos2 = CoordinateService.CoordinateToPosition("b3");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.White, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR b KQkq - 0 3", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3 b5 3. b3 Nc6
-			pos1 = CoordinateService.CoordinateToPosition("b8");
-			pos2 = CoordinateService.CoordinateToPosition("c6");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.Black, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3
-			pos1 = CoordinateService.CoordinateToPosition("c1");
-			pos2 = CoordinateService.CoordinateToPosition("a3");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.White, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR b KQkq - 2 4", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6
-			pos1 = CoordinateService.CoordinateToPosition("c8");
-			pos2 = CoordinateService.CoordinateToPosition("a6");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.Black, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR w KQkq - 3 5", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1
-			pos1 = CoordinateService.CoordinateToPosition("a1");
-			pos2 = CoordinateService.CoordinateToPosition("b1");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.White, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR b Kkq - 4 5", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1 Rb8
-			pos1 = CoordinateService.CoordinateToPosition("a8");
-			pos2 = CoordinateService.CoordinateToPosition("b8");
-			gamestateResult = GameStateService.UpdateGameState(gamestateResult.Output, Color.Black, pos1, pos2, string.Empty);
-			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
-			Assert.AreEqual("1r1qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR w Kk - 5 6", gamestateResult.ToString());
-		}
-
-		private void AssertStartingPosition(List<Square> squares) {
 			//make sure we have the right number of pieces
 			var thePieces = squares.Where(a => a.Index <= 15 || a.Index >= 48);
 			Assert.AreEqual(32, thePieces.Count());
@@ -148,6 +78,63 @@ namespace tests {
 			Assert.AreEqual('P', squares.GetPiece(13).Identity);
 			Assert.AreEqual('P', squares.GetPiece(14).Identity);
 			Assert.AreEqual('P', squares.GetPiece(15).Identity);
+		}
+
+		[TestMethod]
+		public void Given_StartPosition_AssertThat_WhenMakeMove_FEN_MatchesExpectation_EnPassantTargetSquare_IsCorrect() {
+			//testing en passant target square
+			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
+			Assert.IsTrue(gamestateResult.Sucess);
+			//1. e4
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "e2", "e4");
+			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(28).Identity == 'P');
+			Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", gamestateResult.Output.ToString());
+			//1. e4 c5
+			//testing fullmove number
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "c7", "c5");
+			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(34).Identity == 'p');
+			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3
+			//testing the halfmove clock
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b1", "c3");
+			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(18).Identity == 'N');
+			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2", gamestateResult.ToString());
+		}
+
+		[TestMethod]
+		public void Given_StartPosition_AssertThat_WhenMakeMove_FEN_MatchesExpectation_CastleAvailability_IsCorrect() {
+			var fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2";
+			var gamestateResult = GameStateService.SetStartPosition(fen);
+			Assert.IsTrue(gamestateResult.Sucess);
+			//testing castle availability
+			//1. e4 c5 2. Nc3 b5
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b7", "b5");
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq b6 0 3", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3 b5 3. b3
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b2", "b3");
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR b KQkq - 0 3", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3 b5 3. b3 Nc6
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b8", "c6");
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "c1", "a3");
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR b KQkq - 2 4", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "c8", "a6");
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR w KQkq - 3 5", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "a1", "b1");			
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR b Kkq - 4 5", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1 Rb8
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "a8", "b8");
+			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
+			Assert.AreEqual("1r1qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR w Kk - 5 6", gamestateResult.ToString());
 		}
 	}
 }
