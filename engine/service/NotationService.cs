@@ -44,10 +44,9 @@ namespace chess.v4.engine.service {
 			};
 		}
 
-		public List<Square> CreateMatrixFromFEN(string fen) {
+		public List<Square> GetSquaresFromFEN_Record(FEN_Record fen) {
 			var squares = new List<Square>();
-			var fenPosition = fen.Split(' ');
-			var rows = fenPosition[0].Split('/');
+			var rows = fen.PiecePlacement.Split('/');
 			for (int i = 0; i < 8; i++) {
 				int rowIndex = 7 - i;
 				//leftSideIndex is the left side of the board, in numbers: 0 8 16 24 32 40 48 56
@@ -83,7 +82,7 @@ namespace chess.v4.engine.service {
 			return squares.OrderBy(a => a.Index).ToList();
 		}
 
-		public string CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
+		public FEN_Record CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
 			//"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 			var position = createNewPositionFromMatrix(squares);
 			var castlingAvailability = getCastlingAvailability(squares, gameState.CastlingAvailability, piecePosition, newPiecePosition);
@@ -91,7 +90,8 @@ namespace chess.v4.engine.service {
 			var halfmoveClock = gethalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
 			var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
 			var fenParams = new string[6] { position, CoordinateService.Reverse(gameState.ActiveColor).ToString(), castlingAvailability, enPassantCoord, halfmoveClock, fullmoveNumber };
-			return string.Join(" ", fenParams);
+			var fen = string.Join(" ", fenParams);
+			return new FEN_Record(fen);
 		}
 
 		private string getCastlingAvailability(List<Square> matrix, string castlingAvailability, int piecePosition, int newPiecePosition) {

@@ -9,35 +9,31 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class AttackService : IAttackService {
-		public INotationService NotationService { get; }
 		public ICoordinateService CoordinateService { get; }
+		public INotationService NotationService { get; }
 
 		public AttackService(INotationService notationService, ICoordinateService coordinateService) {
 			NotationService = notationService;
 			CoordinateService = coordinateService;
 		}
-		
-		public IEnumerable<AttackedSquare> GetAttacks(List<Square> squares, string fen, bool ignoreKing = false) {
+
+		public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false) {
 			var allAttacks = new List<AttackedSquare>();
-			var castleAvailability = fen.Split(' ')[2];
-			var enPassantPosition = CoordinateService.CoordinateToPosition(fen.Split(' ')[3]);
-			foreach (var occupiedSquare in squares.Occupied()) {
-				var list = this.getPieceAttacks(squares, occupiedSquare, fen, castleAvailability, enPassantPosition, ignoreKing);
-				allAttacks.AddRange(list);
+			foreach (var squares in gameState.Squares) {
+				var list = this.getPieceAttacks(gameState, squares, ignoreKing);
+				if (list.Any()) {
+					allAttacks.AddRange(list);
+				}
 			}
 			return allAttacks;
 		}
 
-		public IEnumerable<AttackedSquare> GetAttacks(Color color, string fen, bool ignoreKing = false) {
-			var squares = NotationService.CreateMatrixFromFEN(fen);
-			return this.GetAttacks(squares, fen, ignoreKing);
-		}
-
-		public IEnumerable<AttackedSquare> GetKingAttacks(string fen, int position, Color pieceColor, string castleAvailability) {
+		public IEnumerable<AttackedSquare> GetKingAttacks(GameState gameState, Square square) {
 			var attacks = new List<AttackedSquare>();
-			var squares = NotationService.CreateMatrixFromFEN(fen);
-			var square = squares.GetSquare(position);
-
+			var squares = gameState.Squares;
+			var position = square.Index;
+			var pieceColor = square.Piece.Color;
+			var castleAvailability = gameState.CastlingAvailability;
 			var positionList = new List<int> { -9, -8, -7, -1, 1, 7, 8, 9 };
 
 			if ( //make sure castle is available
@@ -97,41 +93,19 @@ namespace chess.v4.engine.service {
 				}
 			}
 
-			this.removeKingChecksFromKingMoves(fen, attacks, pieceColor, squares);
+			this.removeKingChecksFromKingMoves(gameState, attacks, pieceColor, squares);
 			return attacks;
 		}
 
-		private IEnumerable<AttackedSquare> getPieceAttacks(List<Square> squares, Square square, string fen, string castleAvailability, int enPassantPosition, bool ignoreKing = false) {
-			switch (square.Piece.PieceType) {
-				case PieceType.Pawn:
-					return getPawnAttacks(squares, square, enPassantPosition);
-
-				case PieceType.Knight:
-					return getKnightAttacks(squares, square);
-
-				case PieceType.Bishop:
-					return CoordinateService.GetDiagonals(squares, square.Index, square.Piece.Color, ignoreKing).Select(a => new AttackedSquare(square, a));
-
-				case PieceType.Rook:
-					return CoordinateService.GetOrthogonals(squares, square.Index, square.Piece.Color, ignoreKing).Select(a => new AttackedSquare(square, a));
-
-				case PieceType.Queen:
-					var attacks =
-							CoordinateService.GetOrthogonals(squares, square.Index, square.Piece.Color, ignoreKing)
-							.Concat(
-								CoordinateService.GetDiagonals(squares, square.Index, square.Piece.Color, ignoreKing)
-							);
-					return attacks.Select(a => new AttackedSquare(square, a));
-
-				case PieceType.King:
-					return GetKingAttacks(fen, square.Index, square.Piece.Color, castleAvailability);
-
-				default:
-					throw new Exception("Mismatched Enum!");
-			}
+		private bool determineCheck(List<Square> squares, List<int> proposedAttacks, Color pieceColor) {
+			//can't be more than one king
+			//has to be at least two kings
+			var king = CoordinateService.FindPiece(squares, PieceType.King, pieceColor).First();
+			return proposedAttacks.Contains(king.Index);
 		}
 
-		private IEnumerable<AttackedSquare> getKnightAttacks(List<Square> squares, Square square){
+		private IEnumerable<AttackedSquare> getKnightAttacks(GameState gameState, Square square) {
+			var squares = gameState.Squares;
 			var currentPosition = square.Index;
 			var pieceColor = square.Piece.Color;
 			var attacks = new List<Square>();
@@ -160,7 +134,16 @@ namespace chess.v4.engine.service {
 			return attacks.Select(a => new AttackedSquare(square, a));
 		}
 
-		private IEnumerable<AttackedSquare> getPawnAttacks(List<Square> squares, Square square, int enPassantPosition) {
+		private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing = false) {
+			if (ignoreKing) {
+				return squares.Where(a => a.Piece != null && a.Piece.Color == color && a.Piece.PieceType != PieceType.King);
+			} else {
+				return squares.Where(a => a.Piece != null && a.Piece.Color == color); ;
+			}
+		}
+
+		private IEnumerable<AttackedSquare> getPawnAttacks(GameState gameState, Square square) {
+			var squares = gameState.Squares;
 			var position = square.Index;
 			var pieceColor = square.Piece.Color;
 			var attacks = new List<Square>();
@@ -197,29 +180,106 @@ namespace chess.v4.engine.service {
 			}
 
 			//add en passant position
-			if (enPassantPosition > -1) {
+			if (gameState.EnPassantTargetPosition > -1) {
 				var leftPos = CoordinateService.CoordinatePairToPosition(file - 1, nextRank);
 				var rightPos = CoordinateService.CoordinatePairToPosition(file + 1, nextRank);
-				if (enPassantPosition == leftPos || enPassantPosition == rightPos) {
-					attacks.Add(squares.GetSquare(enPassantPosition));
+				if (gameState.EnPassantTargetPosition == leftPos || gameState.EnPassantTargetPosition == rightPos) {
+					attacks.Add(squares.GetSquare(gameState.EnPassantTargetPosition));
 				}
 			}
 
 			return attacks.Select(a => new AttackedSquare(square, a));
 		}
 
-		private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing = false) {
-			if (ignoreKing) {
-				return squares.Where(a => a.Piece != null && a.Piece.Color == color && a.Piece.PieceType != PieceType.King);
-			} else {
-				return squares.Where(a => a.Piece != null && a.Piece.Color == color); ;
+		private IEnumerable<AttackedSquare> getPieceAttacks(GameState gameState, Square square, bool ignoreKing = false) {
+			if (!square.Occupied) {
+				return new List<AttackedSquare>();
+			}
+
+			switch (square.Piece.PieceType) {
+				case PieceType.Pawn:
+					return getPawnAttacks(gameState, square);
+
+				case PieceType.Knight:
+					return getKnightAttacks(gameState, square);
+
+				case PieceType.Bishop:
+					return CoordinateService.GetDiagonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
+
+				case PieceType.Rook:
+					return CoordinateService.GetOrthogonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
+
+				case PieceType.Queen:
+					var attacks =
+							CoordinateService.GetOrthogonals(gameState, square, ignoreKing)
+							.Concat(
+								CoordinateService.GetDiagonals(gameState, square, ignoreKing)
+							);
+					return attacks.Select(a => new AttackedSquare(square, a));
+
+				case PieceType.King:
+					return GetKingAttacks(gameState, square);
+
+				default:
+					throw new Exception("Mismatched Enum!");
 			}
 		}
 
-		private void removeKingChecksFromKingMoves(string fen, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {
+		private bool isValidKnightMove(int position, int tempPosition, int file, int rank) {
+			var tempCoord = CoordinateService.PositionToCoordinate(tempPosition);
+			var tempFile = CoordinateService.FileToInt(tempCoord[0]);
+			var tempRank = (int)tempCoord[1];
+
+			var fileDiff = Math.Abs(tempFile - file);
+			var rankDiff = Math.Abs(tempRank - rank);
+
+			if (fileDiff > 2 || fileDiff < 1) {
+				return false;
+			}
+			if (rankDiff > 2 || rankDiff < 1) {
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool isValidMove(List<Square> squares, int position, Color pieceColor) {
+			var isValidCoordinate = CoordinateService.IsValidCoordinate(position);
+			if (!isValidCoordinate) {
+				return false;
+			}
+			if (!squares.Intersects(position)) {
+				return false;
+			}
+			var square = squares.GetSquare(position);
+			if (!square.Occupied) {
+				return true;
+			}
+			var blockingPiece = square.Piece;
+			if (CoordinateService.CanAttackPiece(pieceColor, blockingPiece)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		private bool isValidPawnAttack(List<Square> matrix, int position, Color pieceColor) {
+			if (CoordinateService.IsValidCoordinate(position)) {
+				return true;
+				//if (matrix.Select(a => a.Key).Contains(position)) {
+				//var blockingPiece = matrix.Where(a => a.Key == position).First();
+				//if (CoordinateService.CanAttackPiece(pieceColor, blockingPiece.Value)) {
+				//	return true;
+				//}
+				//}
+			}
+			return false;
+		}
+
+		private void removeKingChecksFromKingMoves(GameState gameState, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {
 			var oppositePieceColor = CoordinateService.Reverse(color);
 			//var allAttacks = GetAttacks(oppositePieceColor, fen, true).Where(a => a.Square.Occupied && a.Square.Piece.PieceType == PieceType.King);
-			var allAttacksExceptKing = GetAttacks(oppositePieceColor, fen, true);
+			var allAttacksExceptKing = GetAttacks(gameState, true);
 			var conflictingAttacks = from a in allAttacksExceptKing
 									 join k in kingAttacks on a.Index equals k.Index
 									 select a;
@@ -247,64 +307,6 @@ namespace chess.v4.engine.service {
 				} else {
 					kingAttacks.Remove(conflictingAttack);
 				}
-			}
-		}
-
-		private bool determineCheck(List<Square> squares, List<int> proposedAttacks, Color pieceColor) {
-			//can't be more than one king
-			//has to be at least two kings
-			var king = CoordinateService.FindPiece(squares, PieceType.King, pieceColor).First();
-			return proposedAttacks.Contains(king.Index);
-		}
-
-		private bool isValidKnightMove(int position, int tempPosition, int file, int rank) {
-			var tempCoord = CoordinateService.PositionToCoordinate(tempPosition);
-			var tempFile = CoordinateService.FileToInt(tempCoord[0]);
-			var tempRank = (int)tempCoord[1];
-
-			var fileDiff = Math.Abs(tempFile - file);
-			var rankDiff = Math.Abs(tempRank - rank);
-
-			if (fileDiff > 2 || fileDiff < 1) {
-				return false;
-			}
-			if (rankDiff > 2 || rankDiff < 1) {
-				return false;
-			}
-
-			return true;
-		}
-
-		private bool isValidPawnAttack(List<Square> matrix, int position, Color pieceColor) {
-			if (CoordinateService.IsValidCoordinate(position)) {
-				return true;
-				//if (matrix.Select(a => a.Key).Contains(position)) {
-				//var blockingPiece = matrix.Where(a => a.Key == position).First();
-				//if (CoordinateService.CanAttackPiece(pieceColor, blockingPiece.Value)) {
-				//	return true;
-				//}
-				//}
-			}
-			return false;
-		}
-
-		private bool isValidMove(List<Square> squares, int position, Color pieceColor) {
-			var isValidCoordinate = CoordinateService.IsValidCoordinate(position);
-			if (!isValidCoordinate) {
-				return false;
-			}
-			if (!squares.Intersects(position)) {
-				return false;
-			}
-			var square = squares.GetSquare(position);
-			if (!square.Occupied) {
-				return true;
-			}
-			var blockingPiece = square.Piece;
-			if (CoordinateService.CanAttackPiece(pieceColor, blockingPiece)) {
-				return true;
-			} else {
-				return false;
 			}
 		}
 	}

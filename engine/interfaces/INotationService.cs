@@ -9,8 +9,8 @@ namespace chess.v4.engine.interfaces {
 
 		void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo);
 
-		List<Square> CreateMatrixFromFEN(string fen);
+		List<Square> GetSquaresFromFEN_Record(FEN_Record fen);
 
-		string CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition);
+		FEN_Record CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition);
 	}
 }

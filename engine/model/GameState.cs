@@ -1,24 +1,35 @@
-﻿using chess.v4.engine.enumeration;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace chess.v4.engine.model {
 
-	public class GameState : History {
-		public Color ActiveColor { get; set; }
+	public class GameState : FEN_Record {
 		public bool HasThreefoldRepition { get; set; }
+		public List<FEN_Record> FEN_Records { get; set; } = new List<FEN_Record>();
 		public bool IsBlackCheck { get; set; }
 		public bool IsCheck { get { return IsWhiteCheck || IsBlackCheck; } }
 		public bool IsCheckmate { get; set; }
 		public bool IsWhiteCheck { get; set; }
-
-		//This is the number of halfmoves since the last pawn advance or capture. This is used to determine if a draw can be claimed under the fifty-move rule.
-		public int HalfmoveClock { get; set; }
-
-		//The number of the full move. It starts at 1, and is incremented after Black's move.
-		public int FullmoveNumber { get; set; }
-
-		public List<Square> Squares { get; set; } = new List<Square>();
 		public string PGN { get; set; }
-		public List<History> History { get; set; } = new List<History>();
+		public List<Square> Squares { get; set; } = new List<Square>();
+
+		public GameState() {
+
+		}
+		
+		public GameState(string fen): base(fen) {
+		}
+
+		public GameState(FEN_Record fenRecord) {
+			this.PiecePlacement = fenRecord.PiecePlacement;
+			this.ActiveColor = fenRecord.ActiveColor;
+			this.CastlingAvailability = fenRecord.CastlingAvailability;
+			this.EnPassantTargetSquare = fenRecord.EnPassantTargetSquare;
+			this.HalfmoveClock = fenRecord.HalfmoveClock;
+			this.FullmoveNumber = fenRecord.FullmoveNumber;
+		}
+
+		public override string ToString() {
+			return ((FEN_Record)this).ToString();
+		}
 	}
 }

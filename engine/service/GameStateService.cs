@@ -10,10 +10,10 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class GameStateService : IGameStateService {
-		public INotationService NotationService { get; }
+		public IAttackService AttackService { get; }
 		public ICoordinateService CoordinateService { get; }
 		public IMoveService MoveService { get; }
-		public IAttackService AttackService { get; }
+		public INotationService NotationService { get; }
 
 		public GameStateService(INotationService notationService, ICoordinateService coordinateService, IMoveService moveService, IAttackService attackService) {
 			NotationService = notationService;
@@ -23,7 +23,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public ResultOuput<GameState> SetStartPosition(string fen) {
-			return getNewGameState(fen, string.Empty, false, string.Empty);
+			return getNewGameState(new FEN_Record(fen), string.Empty, false, string.Empty);
 		}
 
 		//Positions should be numbered 0-63 where a1 is 0
@@ -42,7 +42,7 @@ namespace chess.v4.engine.service {
 				var rookPosition = getRookPositionsForCastle(color, piecePosition, newPiecePosition);
 				//todo: enemyAttacks
 				var enemyAttacks = new List<Square>();
-				bool isCastleThroughCheck = CoordinateService.DetermineCastleThroughCheck(gameState.Squares, enemyAttacks, gameState.FEN, color, piecePosition, rookPosition.Item1);
+				var isCastleThroughCheck = CoordinateService.DetermineCastleThroughCheck(gameState, enemyAttacks, piecePosition, rookPosition.Item1);
 				if (!isCastleThroughCheck) {
 					//make the second move here
 					newSquares = NotationService.ApplyMoveToSquares(newSquares, rookPosition.Item1, rookPosition.Item2);
@@ -67,12 +67,12 @@ namespace chess.v4.engine.service {
 				var _isValidPawnMove = isValidPawnMove(square, oldSquares, color, piecePosition, newPiecePosition, isEnPassant);
 				if (!_isValidPawnMove) {
 					var errorMessage = "Invalid move.";
-					var invalidGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
+					var invalidGameState = getNewGameState(gameState, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
 					return invalidGameState;
 				}
 			}
 
-			gameState.History.Add(gameState);
+			gameState.FEN_Records.Add(gameState);
 			var newFEN = NotationService.CreateNewFENFromGameState(gameState, newSquares, piecePosition, newPiecePosition);
 			var newGameState = getNewGameState(newFEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty);
 			if (newGameState.Failure) {
@@ -87,31 +87,75 @@ namespace chess.v4.engine.service {
 					&& newGameState.Output.IsBlackCheck
 				);
 			if (putsOwnKingInCheck) {
-				var checkedOwnKingGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, "You must move out of check, or at the very least, not move into check.");
+				var checkedOwnKingGameState = getNewGameState(gameState, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, "You must move out of check, or at the very least, not move into check.");
 				return checkedOwnKingGameState;
 			}
 			return newGameState;
 		}
 
 		public ResultOuput<GameState> UpdateGameStateWithError(GameState gameState, string errorMessage) {
-			var newGameState = getNewGameState(gameState.FEN, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
+			var newGameState = getNewGameState(gameState, gameState.PGN, gameState.HasThreefoldRepition, string.Empty, errorMessage);
 			return newGameState;
 		}
 
-		private ResultOuput<GameState> getNewGameState(string fen, string pgn, bool hasThreefoldRepition, string pgnMove, string errorMessage = null) {
+		private List<Square> getAttack(AttackedSquare attackedSquare, GameState gamesState, Square enemyKing) {
+			var theAttack = new List<Square>();
+			switch (attackedSquare.AttackerSquare.Piece.PieceType) {
+				case PieceType.Pawn | PieceType.Knight | PieceType.King: //you can't interpose a pawn or a knight attack, also a king cannot attack a king
+					break;
+
+				case PieceType.Bishop:
+					foreach (var direction in CoordinateService.DiagonalLines) {
+						var potentialAttack = CoordinateService.GetDiagonalLine(gamesState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					break;
+
+				case PieceType.Rook:
+					foreach (var direction in CoordinateService.OrthogonalLines) {
+						var potentialAttack = CoordinateService.GetOrthogonalLine(gamesState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					break;
+
+				case PieceType.Queen:
+					foreach (var direction in CoordinateService.DiagonalLines) {
+						var potentialAttack = CoordinateService.GetDiagonalLine(gamesState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					foreach (var direction in CoordinateService.OrthogonalLines) {
+						var potentialAttack = CoordinateService.GetOrthogonalLine(gamesState, attackedSquare.AttackerSquare, direction, true);
+						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+							theAttack.AddRange(potentialAttack);
+							break;
+						}
+					}
+					break;
+			}
+			return theAttack;
+		}
+
+		private ResultOuput<GameState> getNewGameState(FEN_Record fenRecord, string pgn, bool hasThreefoldRepition, string pgnMove, string errorMessage = null) {
 			if (!string.IsNullOrEmpty(errorMessage)) {
 				return ResultOuput<GameState>.Error(errorMessage);
 			}
 
-			var gameState = new GameState();
-			gameState.FEN = fen;
+			var gameState = new GameState(fenRecord);
 			gameState.HasThreefoldRepition = hasThreefoldRepition;
-			applyGameData(gameState);
 
-			gameState.Squares = NotationService.CreateMatrixFromFEN(gameState.FEN);
+			gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
 
 			//having problems on the 2nd time through
-			var allAttacks = AttackService.GetAttacks(gameState.Squares, fen);
+			var allAttacks = AttackService.GetAttacks(gameState, false);
 			var whiteAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.White);
 			var blackAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.Black);
 
@@ -138,8 +182,7 @@ namespace chess.v4.engine.service {
 
 			if (gameState.IsCheck) {
 				var checkedKing = gameState.ActiveColor == Color.White ? whiteKingSquare : blackKingSquare; //trust me this is right
-				var checkedColor = gameState.ActiveColor == Color.White ? Color.White : Color.Black; //trust me this is right
-				gameState.IsCheckmate = isCheckmate(checkedColor, gameState.Squares, checkedKing.Index, whiteAttacks, blackAttacks);
+				gameState.IsCheckmate = isCheckmate(gameState, checkedKing, allAttacks, blackAttacks);
 				if (gameState.IsCheckmate) {
 					var score = string.Concat(" ", gameState.ActiveColor == Color.White ? "1-0" : "0-1");
 					gameState.PGN += score;
@@ -162,18 +205,86 @@ namespace chess.v4.engine.service {
 			return ResultOuput<GameState>.Ok(gameState);
 		}
 
-		private static void applyGameData(GameState gameState) {
-			string[] gameData = gameState.FEN.Split(' ');
-			gameState.FEN = gameData[0];
-			gameState.ActiveColor = gameData[1][0] == 'w' ? Color.White : Color.Black;
-			gameState.CastlingAvailability = gameData[2];
-			gameState.EnPassantTargetSquare = gameData[3];
-			int halfmoveClock = 0;
-			int fullmoveNumber = 0;
-			Int32.TryParse(gameData[4], out halfmoveClock);
-			Int32.TryParse(gameData[5], out fullmoveNumber);
-			gameState.HalfmoveClock = halfmoveClock;
-			gameState.FullmoveNumber = fullmoveNumber;
+		private Tuple<int, int> getRookPositionsForCastle(Color color, int piecePosition, int newPiecePosition) {
+			//manage the castle
+			var rookRank = color == Color.White ? 1 : 8; //intentionally not zero based
+			var rookFile = CoordinateService.IntToFile(piecePosition - newPiecePosition > 0 ? 0 : 7);
+			var rookPos = CoordinateService.CoordinateToPosition(string.Concat(rookFile, rookRank.ToString()));
+
+			var newRookFile = CoordinateService.IntToFile(piecePosition - newPiecePosition > 0 ? 3 : 5);
+			var newRookPos = CoordinateService.CoordinateToPosition(string.Concat(newRookFile, rookRank.ToString()));
+
+			return Tuple.Create<int, int>(rookPos, newRookPos);
+		}
+
+		/// <summary>
+		/// In chess, in order for a position to be considered the same, each player must have the same set of legal moves each time,
+		/// including the possible rights to castle and capture en passant. Positions are considered the same if the same type of piece
+		/// is on a given square. So, for instance, if a player has two knights and the knights are on the same squares, it does not
+		/// matter if the positions of the two knights have been exchanged. The game is not automatically drawn if a position occurs
+		/// for the third time – one of the players, on their move turn, must claim the draw with the arbiter.
+		/// </summary>
+		/// <returns></returns>
+		private bool hasThreefoldRepition(GameState gameState) {
+			if (gameState.HasThreefoldRepition) { return true; }
+			if (gameState.FEN_Records.Count() < 5) {
+				return false;
+			}
+			return gameState.FEN_Records
+					.GroupBy(a => new { a.PiecePlacement, a.CastlingAvailability, a.EnPassantTargetPosition })
+					.Where(a => a.Count() >= 3)
+					.Any();
+		}
+
+		private bool isCheckmate(GameState gameState, Square enemyKingPosition, IEnumerable<AttackedSquare> whiteAttacks, IEnumerable<AttackedSquare> blackAttacks) {
+			var activeColor = gameState.ActiveColor;
+			var squares = gameState.Squares;
+			var checkedColor = gameState.ActiveColor == Color.White ? Color.White : Color.Black; //trust me this is right
+			var kingIsBeingAttacked = whiteAttacks.Any(a => a.Index == enemyKingPosition.Index) || blackAttacks.Any(a => a.Index == enemyKingPosition.Index);
+			if (!kingIsBeingAttacked) {
+				return false;
+			}
+			//make sure that he cannot move
+			var kingHasEscape = false;
+
+			var friendlyAttacks = (activeColor == Color.White ? whiteAttacks : blackAttacks);
+			var opponentAttacks = (activeColor == Color.White ? blackAttacks : whiteAttacks);
+
+			//fix enemyKingAttacks. trying to figure out the moves that the king can make
+			var enemyKingAttacks = squares;
+
+			var remainingKingAttacks = enemyKingAttacks.Except(opponentAttacks);
+			if (remainingKingAttacks.Any()) {
+				kingHasEscape = true;
+			}
+			if (kingHasEscape) {
+				return false;
+			}
+			//make sure that interposition is not possible
+			var attackers = opponentAttacks.Where(a => a.Index == enemyKingPosition.Index);
+			//if there are no attackers there cannot be a single interposition that saves the king
+			if (attackers == null || !attackers.Any() || attackers.Count() > 1) {
+				return true;
+			}
+			var attacker = attackers.FirstOrDefault();
+			var theAttack = getAttack(attacker, gameState, enemyKingPosition);
+			var interposers = friendlyAttacks.ToList().Intersect(theAttack);
+			if (interposers.Any()) {
+				return false;
+			}
+			//there were no friendlies to save the king, checkmate is true
+			return true;
+		}
+
+		private bool isEnPassant(char piece, int piecePosition, int newPiecePosition, string enPassantTargetSquare) {
+			if (char.ToUpper(piece) != 'P') { return false; } //only pawns can perform en passant
+			var enPassantPosition = CoordinateService.CoordinateToPosition(enPassantTargetSquare);
+			if (enPassantPosition != newPiecePosition) { return false; } //if we're not moving to the en passant position, this is not en passant
+			var moveDistance = Math.Abs(piecePosition - newPiecePosition);
+			if (!new List<int> { 7, 9 }.Contains(moveDistance)) { return false; } //is this a diagonal move?
+			if (char.IsLower(piece) && piecePosition < newPiecePosition) { return false; } //black can't move up
+			if (char.IsUpper(piece) && piecePosition > newPiecePosition) { return false; } //black can't move down
+			return true;
 		}
 
 		private bool isRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheck, Color ActiveColor, int kingSquare) {
@@ -202,133 +313,6 @@ namespace chess.v4.engine.service {
 			var pieceToCapture = squares.GetSquare(newPiecePosition).Piece;
 			var isCapture = pieceToCapture != null;
 			return isCapture || isEnPassant;
-		}
-
-		private bool isEnPassant(char piece, int piecePosition, int newPiecePosition, string enPassantTargetSquare) {
-			if (char.ToUpper(piece) != 'P') { return false; } //only pawns can perform en passant
-			var enPassantPosition = CoordinateService.CoordinateToPosition(enPassantTargetSquare);
-			if (enPassantPosition != newPiecePosition) { return false; } //if we're not moving to the en passant position, this is not en passant
-			var moveDistance = Math.Abs(piecePosition - newPiecePosition);
-			if (!new List<int> { 7, 9 }.Contains(moveDistance)) { return false; } //is this a diagonal move?
-			if (char.IsLower(piece) && piecePosition < newPiecePosition) { return false; } //black can't move up
-			if (char.IsUpper(piece) && piecePosition > newPiecePosition) { return false; } //black can't move down
-			return true;
-		}
-
-		private Tuple<int, int> getRookPositionsForCastle(Color color, int piecePosition, int newPiecePosition) {
-			//manage the castle
-			var rookRank = color == Color.White ? 1 : 8; //intentionally not zero based
-			var rookFile = CoordinateService.IntToFile(piecePosition - newPiecePosition > 0 ? 0 : 7);
-			var rookPos = CoordinateService.CoordinateToPosition(string.Concat(rookFile, rookRank.ToString()));
-
-			var newRookFile = CoordinateService.IntToFile(piecePosition - newPiecePosition > 0 ? 3 : 5);
-			var newRookPos = CoordinateService.CoordinateToPosition(string.Concat(newRookFile, rookRank.ToString()));
-
-			return Tuple.Create<int, int>(rookPos, newRookPos);
-		}
-
-		/// <summary>
-		/// In chess, in order for a position to be considered the same, each player must have the same set of legal moves each time,
-		/// including the possible rights to castle and capture en passant. Positions are considered the same if the same type of piece
-		/// is on a given square. So, for instance, if a player has two knights and the knights are on the same squares, it does not
-		/// matter if the positions of the two knights have been exchanged. The game is not automatically drawn if a position occurs
-		/// for the third time – one of the players, on their move turn, must claim the draw with the arbiter.
-		/// </summary>
-		/// <returns></returns>
-		private bool hasThreefoldRepition(GameState gameState) {
-			if (gameState.HasThreefoldRepition) { return true; }
-			if (gameState.History.Count() < 5) {
-				return false;
-			}
-			var threeIdentical = gameState.History
-										.GroupBy(a => new { a.FEN, a.CastlingAvailability, a.EnPassantTargetSquare })
-										.Where(a => a.Count() >= 3)
-										.Select(a => new { a.Key.FEN, a.Key.CastlingAvailability, a.Key.EnPassantTargetSquare });
-			return threeIdentical != null && threeIdentical.Any();
-		}
-
-		private bool isCheckmate(Color activeColor, List<Square> squares, int enemyKingPosition, IEnumerable<Square> whiteAttacks, IEnumerable<Square> blackAttacks) {
-			var kingIsBeingAttacked = whiteAttacks.Any(a => a.Index == enemyKingPosition) || blackAttacks.Any(a => a.Index == enemyKingPosition);
-			if (!kingIsBeingAttacked) {
-				return false;
-			}
-			//make sure that he cannot move
-			var kingHasEscape = false;
-
-			var friendlyAttacks = (activeColor == Color.White ? whiteAttacks : blackAttacks);
-			var opponentAttacks = (activeColor == Color.White ? blackAttacks : whiteAttacks);
-
-			//fix enemyKingAttacks. trying to figure out the moves that the king can make
-			var enemyKingAttacks = squares;
-
-			var remainingKingAttacks = enemyKingAttacks.Except(opponentAttacks);
-			if (remainingKingAttacks.Any()) {
-				kingHasEscape = true;
-			}
-			if (kingHasEscape) {
-				return false;
-			}
-			//make sure that interposition is not possible
-			var attackers = opponentAttacks.Where(a => a.Index == enemyKingPosition);
-			//if there are no attackers there cannot be a single interposition that saves the king
-			if (attackers == null || !attackers.Any() || attackers.Count() > 1) {
-				return true;
-			}
-			var attacker = attackers.FirstOrDefault();
-			var attackerPiece = squares.GetPiece(attacker.Index);
-			var theAttack = getAttack(attackerPiece.Color, squares, attacker.Index, enemyKingPosition, attackerPiece.PieceType);
-			var interposers = friendlyAttacks.ToList().Intersect(theAttack);
-			if (interposers.Any()) {
-				return false;
-			}
-			//there were no friendlies to save the king, checkmate is true
-			return true;
-		}
-
-		private List<Square> getAttack(Color attackerPieceColor, List<Square> squares, int attackerPosition, int enemyKingPosition, PieceType attackerPieceType) {
-			var theAttack = new List<Square>();
-			switch (attackerPieceType) {
-				case PieceType.Pawn | PieceType.Knight | PieceType.King: //you can't interpose a pawn or a knight attack, also a king cannot attack a king
-					break;
-
-				case PieceType.Bishop:
-					foreach (var direction in CoordinateService.DiagonalLines) {
-						var potentialAttack = CoordinateService.GetDiagonalLine(squares, attackerPosition, direction, attackerPieceColor, true);
-						if (potentialAttack.Any(a => a.Index == enemyKingPosition)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					break;
-
-				case PieceType.Rook:
-					foreach (var direction in CoordinateService.OrthogonalLines) {
-						var potentialAttack = CoordinateService.GetOrthogonalLine(squares, attackerPosition, direction, attackerPieceColor, true);
-						if (potentialAttack.Any(a => a.Index == enemyKingPosition)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					break;
-
-				case PieceType.Queen:
-					foreach (var direction in CoordinateService.DiagonalLines) {
-						var potentialAttack = CoordinateService.GetDiagonalLine(squares, attackerPosition, direction, attackerPieceColor, true);
-						if (potentialAttack.Any(a => a.Index == enemyKingPosition)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					foreach (var direction in CoordinateService.OrthogonalLines) {
-						var potentialAttack = CoordinateService.GetOrthogonalLine(squares, attackerPosition, direction, attackerPieceColor, true);
-						if (potentialAttack.Any(a => a.Index == enemyKingPosition)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					break;
-			}
-			return theAttack;
 		}
 	}
 }
