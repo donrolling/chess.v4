@@ -12,24 +12,24 @@ namespace tests {
 
 	[TestClass]
 	public class GameStateTests {
-		public GameStateService GameStateService { get; }
+		public AttackService AttackService { get; }
 		public CoordinateService CoordinateService { get; }
+		public GameStateService GameStateService { get; }
 		public MoveService MoveService { get; }
 		public NotationService NotationService { get; }
-		public AttackService AttackService { get; }
 
 		public GameStateTests() {
 			this.CoordinateService = new CoordinateService();
-			this.MoveService = new MoveService();
 			this.NotationService = new NotationService(this.CoordinateService);
 			this.AttackService = new AttackService(this.NotationService, this.CoordinateService);
+			this.MoveService = new MoveService(this.CoordinateService, this.AttackService);
 			this.GameStateService = new GameStateService(this.NotationService, this.CoordinateService, this.MoveService, this.AttackService);
 		}
 
 		[TestMethod]
 		public void UpdateTest() {
 			//set up default position and test that it is correct
-			var gamestateResult = GameStateService.SetStartPosition(FEN.StartingPosition);
+			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
 			Assert.AreEqual(64, gamestateResult.Output.Squares.Count());
 			AssertStartingPosition(gamestateResult.Output.Squares);
 			//now change the board and test if the change took place
