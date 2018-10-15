@@ -25,5 +25,6 @@ namespace chess.v4.engine.interfaces {
 
 		int PositionToRankInt(int position);
 
+		(int RookPos, int NewRookPos) GetRookPositionsForCastle(Color color, int piecePosition, int newPiecePosition);
 	}
 }

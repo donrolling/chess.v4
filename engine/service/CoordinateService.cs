@@ -32,6 +32,18 @@ namespace chess.v4.engine.service {
 			return (int)(file - 97);
 		}
 
+		public (int RookPos, int NewRookPos) GetRookPositionsForCastle(Color color, int piecePosition, int newPiecePosition) {
+			//manage the castle
+			var rookRank = color == Color.White ? 1 : 8; //intentionally not zero based
+			var rookFile = this.IntToFile(piecePosition - newPiecePosition > 0 ? 0 : 7);
+			var rookPos = this.CoordinateToPosition(string.Concat(rookFile, rookRank.ToString()));
+
+			var newRookFile = this.IntToFile(piecePosition - newPiecePosition > 0 ? 3 : 5);
+			var newRookPos = this.CoordinateToPosition(string.Concat(newRookFile, rookRank.ToString()));
+
+			return (rookPos, newRookPos);
+		}
+
 		public char IntToFile(int file) {
 			return (char)(file + 97);
 		}

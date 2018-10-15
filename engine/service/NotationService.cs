@@ -11,18 +11,16 @@ using System.Text;
 namespace chess.v4.engine.service {
 
 	public class NotationService : INotationService {
-		private const string defaultCastlingAvailability = "KQkq";
-
 		public ICoordinateService CoordinateService { get; }
+		private const string defaultCastlingAvailability = "KQkq";
 
 		public NotationService(ICoordinateService coordinateService) {
 			CoordinateService = coordinateService;
 		}
 
-		public List<Square> ApplyMoveToSquares(List<Square> squares, int piecePosition, int newPiecePosition) {
-			var xs = squares.Clone();
-			var square = xs.GetSquare(piecePosition);
-			var newSquare = xs.Where(a => a.Index == newPiecePosition).First();
+		public void ApplyMoveToSquares(List<Square> squares, int piecePosition, int newPiecePosition) {
+			var square = squares.GetSquare(piecePosition);
+			var newSquare = squares.Where(a => a.Index == newPiecePosition).First();
 			var piece = square.Piece;
 			square.Piece = null;
 			newSquare.Piece = new Piece {
@@ -30,19 +28,24 @@ namespace chess.v4.engine.service {
 				PieceType = piece.PieceType,
 				Color = piece.Color
 			};
-			return xs;
 		}
 
-		public void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo) {
-			var pieceIdentity = pieceColor == Color.White ? char.ToUpper(piecePromotedTo) : char.ToLower(piecePromotedTo);
-			var square = squares.Where(a => a.Index == newPiecePosition).First();
-			var piece = square.Piece;
-			square.Piece = new Piece {
-				Identity = pieceIdentity,
-				PieceType = piece.PieceType,
-				Color = pieceColor
-			};
-		}
+		//public FEN_Record CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
+		//	var position = createNewPositionFromMatrix(squares);
+		//	var castlingAvailability = getCastlingAvailability(squares, gameState.CastlingAvailability, piecePosition, newPiecePosition);
+		//	var enPassantCoord = getEnPassantCoord(squares, gameState.ActiveColor, piecePosition, newPiecePosition);
+		//	var halfmoveClock = getHalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
+		//	var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
+		//	var activeColor = GeneralUtility.Reverse(gameState.ActiveColor);
+		//	return new FEN_Record {
+		//		PiecePlacement = position,
+		//		ActiveColor = activeColor,
+		//		CastlingAvailability = castlingAvailability,
+		//		EnPassantTargetSquare = enPassantCoord,
+		//		FullmoveNumber = fullmoveNumber,
+		//		HalfmoveClock = halfmoveClock
+		//	};
+		//}
 
 		public List<Square> GetSquaresFromFEN_Record(FEN_Record fen) {
 			var squares = new List<Square>();
@@ -82,16 +85,49 @@ namespace chess.v4.engine.service {
 			return squares.OrderBy(a => a.Index).ToList();
 		}
 
-		public FEN_Record CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
-			//"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-			var position = createNewPositionFromMatrix(squares);
-			var castlingAvailability = getCastlingAvailability(squares, gameState.CastlingAvailability, piecePosition, newPiecePosition);
-			var enPassantCoord = getEnPassantCoord(squares, gameState.ActiveColor, piecePosition, newPiecePosition);
-			var halfmoveClock = gethalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
-			var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
-			var fenParams = new string[6] { position, CoordinateService.Reverse(gameState.ActiveColor).ToString(), castlingAvailability, enPassantCoord, halfmoveClock, fullmoveNumber };
-			var fen = string.Join(" ", fenParams);
-			return new FEN_Record(fen);
+		public void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo) {
+			var pieceIdentity = pieceColor == Color.White ? char.ToUpper(piecePromotedTo) : char.ToLower(piecePromotedTo);
+			var square = squares.Where(a => a.Index == newPiecePosition).First();
+			var piece = square.Piece;
+			square.Piece = new Piece {
+				Identity = pieceIdentity,
+				PieceType = piece.PieceType,
+				Color = pieceColor
+			};
+		}
+
+		private string createNewPositionFromMatrix(List<Square> squares) {
+			var position = new StringBuilder();
+			for (int i = 0; i < 8; i++) {
+				int leftSideIndex = 8 * (7 - i);
+				var row = squares.Where(a => a.Index >= leftSideIndex && a.Index < leftSideIndex + 8);
+				if (row != null && row.Any()) {
+					int missingPieceCount = 0;
+					for (int j = 0; j < 8; j++) {
+						var index = leftSideIndex + j;
+						var square = squares.GetSquare(index);
+						var piece = square.Piece;
+						if (piece != null) {
+							if (missingPieceCount > 0) {
+								position.Append(missingPieceCount.ToString());
+								missingPieceCount = 0;
+							}
+							position.Append(piece.Identity);
+						} else {
+							missingPieceCount += 1;
+						}
+					}
+					if (missingPieceCount > 0) {
+						position.Append(missingPieceCount.ToString());
+					}
+				} else {
+					position.Append('8');
+				}
+				if (i < 7) {
+					position.Append('/');
+				}
+			}
+			return position.ToString();
 		}
 
 		private string getCastlingAvailability(List<Square> matrix, string castlingAvailability, int piecePosition, int newPiecePosition) {
@@ -128,31 +164,6 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		/// <summary>
-		/// Get the halfmove clock.
-		/// </summary>
-		/// <param name="squares">Must be the current matrix, not the new one.</param>
-		/// <param name="halfmoveClock">Current halfmove clock.</param>
-		/// <param name="piecePosition">Moving piece position.</param>
-		/// <param name="newPiecePosition">Capture piece position.</param>
-		/// <returns></returns>
-		private string gethalfmoveClock(List<Square> squares, int halfmoveClock, int piecePosition, int newPiecePosition) {
-			var movingPiece = squares.GetPiece(piecePosition);
-			var capturePiece = squares.GetPiece(newPiecePosition); 
-			//if we're captuing, or moving a pawn the clock resets
-			if (capturePiece != null || (movingPiece.PieceType == PieceType.Pawn)) {
-				return "0";
-			}
-			return (halfmoveClock + 1).ToString();
-		}
-
-		private string getFullmoveNumber(int fullmoveNumber, Color activeColor) {
-			if (activeColor == Color.Black) {
-				return (fullmoveNumber + 1).ToString();
-			}
-			return (fullmoveNumber).ToString();
-		}
-
 		private string getEnPassantCoord(List<Square> squares, Color activeColor, int piecePosition, int newPiecePosition) {
 			var piece = squares.GetPiece(newPiecePosition);
 			if (piece.PieceType == PieceType.Pawn) {
@@ -168,38 +179,29 @@ namespace chess.v4.engine.service {
 			return "-";
 		}
 
-		private string createNewPositionFromMatrix(List<Square> squares) {
-			var position = new StringBuilder();
-			for (int i = 0; i < 8; i++) {
-				int leftSideIndex = 8 * (7 - i);
-				var row = squares.Where(a => a.Index >= leftSideIndex && a.Index < leftSideIndex + 8);
-				if (row != null && row.Any()) {
-					int missingPieceCount = 0;
-					for (int j = 0; j < 8; j++) {
-						var index = leftSideIndex + j;
-						var square = squares.GetSquare(index);
-						var piece = square.Piece;
-						if (piece != null) {
-							if (missingPieceCount > 0) {
-								position.Append(missingPieceCount.ToString());
-								missingPieceCount = 0;
-							}
-							position.Append(piece.Identity);
-						} else {
-							missingPieceCount += 1;
-						}
-					}
-					if (missingPieceCount > 0) {
-						position.Append(missingPieceCount.ToString());
-					}
-				} else {
-					position.Append('8');
-				}
-				if (i < 7) {
-					position.Append('/');
-				}
+		private int getFullmoveNumber(int fullmoveNumber, Color activeColor) {
+			if (activeColor == Color.Black) {
+				return fullmoveNumber + 1;
 			}
-			return position.ToString();
+			return fullmoveNumber;
+		}
+
+		/// <summary>
+		/// Get the halfmove clock.
+		/// </summary>
+		/// <param name="squares">Must be the current matrix, not the new one.</param>
+		/// <param name="halfmoveClock">Current halfmove clock.</param>
+		/// <param name="piecePosition">Moving piece position.</param>
+		/// <param name="newPiecePosition">Capture piece position.</param>
+		/// <returns></returns>
+		private int getHalfmoveClock(List<Square> squares, int halfmoveClock, int piecePosition, int newPiecePosition) {
+			var movingPiece = squares.GetPiece(piecePosition);
+			var capturePiece = squares.GetPiece(newPiecePosition);
+			//if we're captuing, or moving a pawn the clock resets
+			if (capturePiece != null || (movingPiece.PieceType == PieceType.Pawn)) {
+				return 0;
+			}
+			return halfmoveClock + 1;
 		}
 	}
 }

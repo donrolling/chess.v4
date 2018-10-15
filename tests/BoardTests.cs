@@ -22,7 +22,7 @@ namespace tests {
 		[TestMethod]
 		public void Given_StartPosition_AllPositions_AreCorrect() {
 			//set up default position and test that it is correct
-			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
+			var gamestateResult = GameStateService.Initialize(GeneralReference.Starting_FEN_Position);
 			Assert.IsTrue(gamestateResult.Sucess);
 			Assert.AreEqual(64, gamestateResult.Output.Squares.Count());
 			var squares = gamestateResult.Output.Squares;
@@ -76,7 +76,7 @@ namespace tests {
 		[TestMethod]
 		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_CastleAvailability_IsCorrect() {
 			var fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2";
-			var gamestateResult = GameStateService.SetStartPosition(fen);
+			var gamestateResult = GameStateService.Initialize(fen);
 			Assert.IsTrue(gamestateResult.Sucess);
 			//testing castle availability
 			//1. e4 c5 2. Nc3 b5
@@ -112,7 +112,7 @@ namespace tests {
 		[TestMethod]
 		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_EnPassantTargetSquare_IsCorrect() {
 			//testing en passant target square
-			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
+			var gamestateResult = GameStateService.Initialize(GeneralReference.Starting_FEN_Position);
 			Assert.IsTrue(gamestateResult.Sucess);
 			//1. e4
 			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "e2", "e4");
@@ -133,7 +133,7 @@ namespace tests {
 		[TestMethod]
 		public void ShitIsFucked() {
 			var fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
-			var gamestateResult = GameStateService.SetStartPosition(fen);
+			var gamestateResult = GameStateService.Initialize(fen);
 			Assert.IsTrue(gamestateResult.Sucess);
 		}
 	}
