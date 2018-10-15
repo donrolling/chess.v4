@@ -69,5 +69,9 @@ namespace chess.v4.engine.utility {
 		public static Color GetOppositeColor(Color activeColor) {
 			return activeColor == Color.White ? Color.Black : Color.White;
 		}
+
+		public static Color Reverse(Color pieceColor) {
+			return pieceColor == Color.White ? Color.Black : Color.White;
+		}
 	}
 }

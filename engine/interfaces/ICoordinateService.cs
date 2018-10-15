@@ -25,6 +25,5 @@ namespace chess.v4.engine.interfaces {
 
 		int PositionToRankInt(int position);
 
-		Color Reverse(Color pieceColor);
 	}
 }

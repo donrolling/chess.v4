@@ -66,8 +66,5 @@ namespace chess.v4.engine.service {
 			return rank;
 		}
 
-		public Color Reverse(Color pieceColor) {
-			return pieceColor == Color.White ? Color.Black : Color.White;
-		}
 	}
 }
