@@ -332,7 +332,7 @@ namespace chess.v4.engine.service {
 		}
 
 		private void removeKingChecksFromKingMoves(GameState gameState, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {
-			var oppositePieceColor = CoordinateService.Reverse(color);
+			var oppositePieceColor = GeneralUtility.Reverse(color);
 			//var allAttacks = GetAttacks(oppositePieceColor, fen, true).Where(a => a.Square.Occupied && a.Square.Piece.PieceType == PieceType.King);
 			var allAttacksExceptKing = GetAttacks(gameState, true);
 			var conflictingAttacks = from a in allAttacksExceptKing
