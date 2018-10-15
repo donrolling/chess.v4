@@ -3,6 +3,7 @@ using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.utility;
+using common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,21 +19,41 @@ namespace chess.v4.engine.service {
 			AttackService = attackService;
 		}
 
-		public bool DetermineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos) {
-			var oppositeColor = GeneralUtility.GetOppositeColor(gameState.ActiveColor);
-			//var enemyAttacks = this.PieceService.GetAttacks(oppositeColor, fen).SelectMany(a => a.Value);
-			var positions = this.getKingPositionsDuringCastle(kingPos, rookPos);
-			var arePositionsAttacked = positions.Intersect<int>(enemyAttacks.Select(a => a.Index)).Any();
-			return arePositionsAttacked;
-		}
+		public ResultOuput<bool> IsValidCastleAttempt(GameState gameState, Square square, int destination, IEnumerable<AttackedSquare> attackedSquares) {
+			var piece = square.Piece;
 
-		public bool IsCastle(Square square, int destination) {
-			if (!square.Occupied) {
-				return false;
-			}
-			return
-				square.Piece.PieceType == PieceType.King
+			var isCastleAttempt =
+				(square.Index == 4 || square.Index == 60)
+				&& piece.PieceType == PieceType.King
 				&& Math.Abs(square.Index - destination) == 2;
+
+			//if not a castle, then no validation needed.
+			if (!isCastleAttempt) {
+				return ResultOuput<bool>.Ok(isCastleAttempt);
+			}
+
+			var castlingAvailability = checkCastleAvailability(gameState, destination, piece);
+			if (!castlingAvailability) {
+				return ResultOuput<bool>.Error("Castling is not available.");
+			}
+
+			//validate the move
+			if (gameState.MoveInfo.IsCheck) {
+				return ResultOuput<bool>.Error("Can't castle out of check.");
+			}
+
+			var kingTravelSquareIndexes = getKingCastleCoordinates(square, destination);
+			var reverseColor = gameState.ActiveColor.Reverse();
+			var enemyAttacks = from a in attackedSquares
+							   join k in kingTravelSquareIndexes on a.Index equals k
+							   where a.AttackerSquare.Piece.Color == reverseColor
+							   select a;
+
+			if (enemyAttacks.Any()) {
+				return ResultOuput<bool>.Error("Can't castle through check.");
+			}
+
+			return ResultOuput<bool>.Ok(isCastleAttempt);
 		}
 
 		public bool IsCheckmate(GameState gameState, Square enemyKingPosition, IEnumerable<AttackedSquare> whiteAttacks, IEnumerable<AttackedSquare> blackAttacks) {
@@ -126,6 +147,88 @@ namespace chess.v4.engine.service {
 			var pieceToCapture = squares.GetSquare(newPiecePosition).Piece;
 			var isCapture = pieceToCapture != null;
 			return isCapture || isEnPassant;
+		}
+
+		private static bool checkCastleAvailability(GameState gameState, int destination, Piece piece) {
+			if (gameState.CastlingAvailability == "-") {
+				return false;
+			}
+			var castlingAvailability = true;
+			switch (piece.Color) {
+				case Color.Black:
+					switch (destination) {
+						case 58:
+							castlingAvailability = gameState.CastlingAvailability.Contains("q", StringComparison.CurrentCulture);
+							break;
+
+						case 62:
+							castlingAvailability = gameState.CastlingAvailability.Contains("k", StringComparison.CurrentCulture);
+							break;
+
+						default:
+							throw new Exception("Invalid destination.");
+					}
+					break;
+
+				case Color.White:
+					switch (destination) {
+						case 2:
+							castlingAvailability = gameState.CastlingAvailability.Contains("Q", StringComparison.CurrentCulture);
+							break;
+
+						case 6:
+							castlingAvailability = gameState.CastlingAvailability.Contains("K", StringComparison.CurrentCulture);
+							break;
+
+						default:
+							throw new Exception("Invalid destination.");
+					}
+					break;
+
+				default:
+					throw new Exception("Enum not matched.");
+			}
+
+			return castlingAvailability;
+		}
+
+		private static int[] getKingCastleCoordinates(Square kingSquare, int destination) {
+			switch (kingSquare.Piece.Color) {
+				case Color.Black:
+					switch (destination) {
+						case 58:
+							return new int[2] { 61, 62 };
+
+						case 62:
+							return new int[2] { 58, 59 };
+
+						default:
+							throw new Exception("Invalid destination.");
+					}
+
+				case Color.White:
+					switch (destination) {
+						case 2:
+							return new int[2] { 2, 3 };
+
+						case 6:
+							return new int[2] { 5, 6 };
+
+						default:
+							throw new Exception("Invalid destination.");
+					}
+
+				default:
+					throw new Exception("Enum not matched.");
+			}
+		}
+
+		private bool determineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos) {
+			var oppositeColor = gameState.ActiveColor.Reverse();
+			//var enemyAttacks = this.PieceService.GetAttacks(oppositeColor, fen).SelectMany(a => a.Value);
+			var positions = this.getKingPositionsDuringCastle(kingPos, rookPos);
+			var arePositionsAttacked = positions.Intersect<int>(enemyAttacks.Select(a => a.Index)).Any();
+			return arePositionsAttacked;
 		}
 
 		private int[] getKingPositionsDuringCastle(int kingPos, int rookPos) {

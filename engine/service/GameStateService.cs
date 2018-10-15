@@ -2,10 +2,8 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
-using chess.v4.engine.reference;
 using chess.v4.engine.utility;
 using common;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,65 +39,26 @@ namespace chess.v4.engine.service {
 		/// <param name="pgnMove"></param>
 		/// <returns></returns>
 		public ResultOuput<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, string pgnMove) {
+			var square = gameState.Squares.GetSquare(piecePosition);
+			if (!square.Occupied) {
+				return ResultOuput<GameState>.Error("Square was empty.");
+			}
 			var newGameState = gameState.DeepCopy();
-			//this.getNewGameState(newGameState);
-			//NotationService.ApplyMoveToSquares(newGameState.Squares, piecePosition, newPiecePosition);
+			var allAttacks = this.AttackService.GetAttacks(gameState, false);
+			this.getMoveInfo(newGameState, piecePosition, newPiecePosition, allAttacks);
 
-			NotationService.ApplyMoveToSquares(newGameState.Squares, piecePosition, newPiecePosition);
 			var oldSquares = gameState.Squares;
 			var newSquares = newGameState.Squares;
-			var square = gameState.Squares.GetSquare(piecePosition);
 			var piece = square.Piece;
 			var color = gameState.ActiveColor;
 
-			//post move application examination
-			var isCastle = this.MoveService.IsCastle(square, newPiecePosition);
-			if (isCastle) { 
-				//if is castle, make two moves
-				if (gameState.MoveInfo.IsCheck) {
-					return ResultOuput<GameState>.Error("Can't castle out of check.");
-				}
-
-				var rookPosition = this.CoordinateService.GetRookPositionsForCastle(color, piecePosition, newPiecePosition);
-				//todo: enemyAttacks
-				var enemyAttacks = new List<Square>();
-				var isCastleThroughCheck = this.MoveService.DetermineCastleThroughCheck(gameState, enemyAttacks, piecePosition, rookPosition.RookPos);
-				if (!isCastleThroughCheck) {
-					//make the second move here
-					NotationService.ApplyMoveToSquares(newSquares, rookPosition.RookPos, rookPosition.NewRookPos);
-				} else {
-					return ResultOuput<GameState>.Error("Can't castle through check.");
-				}
-			}
-
-			var isEnPassant = this.MoveService.IsEnPassant(piece.Identity, piecePosition, newPiecePosition, gameState.EnPassantTargetSquare);
-			if (isEnPassant) { //if is en passant, update matrix again
-				var pawnPassing = color == Color.White ? (newPiecePosition - 8) : (newPiecePosition + 8);
-				oldSquares.GetSquare(pawnPassing).Piece = null;
-			}
-
-			bool isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
-			if (isPawnPromotion) { //if is a pawn promotion, update matrix again
-				var piecePromotedTo = pgnMove.Substring(pgnMove.IndexOf(PGNService.PawnPromotionIndicator) + 1, 1)[0];
-				NotationService.UpdateMatrix_PromotePiece(oldSquares, newPiecePosition, color, piecePromotedTo);
-			}
-
-			if (square.Piece.PieceType != PieceType.Pawn) {
-				var _isValidPawnMove = this.MoveService.IsValidPawnMove(square, oldSquares, color, piecePosition, newPiecePosition, isEnPassant);
-				if (!_isValidPawnMove) {
-					var errorMessage = "Invalid move.";
-					var invalidGameState = getNewGameState(gameState, gameState.PGN, gameState.MoveInfo.HasThreefoldRepition, string.Empty, errorMessage);
-					return invalidGameState;
-				}
-			}
-
-			gameState.FEN_Records.Add(new FEN_Record(gameState.ToString()));
+			
 			//var newFEN = NotationService.CreateNewFENFromGameState(gameState, newSquares, piecePosition, newPiecePosition);
 			//var newGameState = getNewGameState(newFEN, gameState.PGN, gameState.MoveInfo.HasThreefoldRepition, string.Empty);
 			//if (newGameState.Failure) {
 			//	return newGameState;
 			//}
-			var hasThreefoldRepition = this.HasThreefoldRepition(gameState);
+			var hasThreefoldRepition = this.hasThreefoldRepition(gameState);
 			var putsOwnKingInCheck = (
 					gameState.ActiveColor == Color.White
 					&& newGameState.MoveInfo.IsWhiteCheck
@@ -118,6 +77,48 @@ namespace chess.v4.engine.service {
 			var pos1 = CoordinateService.CoordinateToPosition("e2");
 			var pos2 = CoordinateService.CoordinateToPosition("e4");
 			return this.MakeMove(gameState, pos1, pos2, string.Empty);
+		}
+
+		private ResultOuput<MoveInfo> getMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks) {
+			gameState.ActiveColor = gameState.ActiveColor.Reverse();
+			gameState.MoveInfo = new MoveInfo();
+			var oldSquare = gameState.Squares.GetSquare(piecePosition);
+			var isValidCastleAttempt = this.MoveService.IsValidCastleAttempt(gameState, oldSquare, newPiecePosition, allAttacks);
+			if (isValidCastleAttempt.Sucess) {
+				gameState.MoveInfo.IsCastle = isValidCastleAttempt.Output;
+			} else {
+				ResultOuput<MoveInfo>.Error(isValidCastleAttempt.Message);
+			}
+			return ResultOuput<MoveInfo>.Ok(gameState.MoveInfo);
+
+			////doesn't test anything, just applies the move
+			//NotationService.ApplyMoveToSquares(gameState.Squares, piecePosition, newPiecePosition);
+			//var piece = oldSquare.Piece;
+
+			////post move application examination
+
+			//var isEnPassant = this.MoveService.IsEnPassant(piece.Identity, piecePosition, newPiecePosition, gameState.EnPassantTargetSquare);
+			//if (isEnPassant) { //if is en passant, update matrix again
+			//	var pawnPassing = gameState.ActiveColor == Color.White ? (newPiecePosition - 8) : (newPiecePosition + 8);
+			//	oldSquares.GetSquare(pawnPassing).Piece = null;
+			//}
+
+			//var isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
+			//if (isPawnPromotion) { //if is a pawn promotion, update matrix again
+			//	var piecePromotedTo = pgnMove.Substring(pgnMove.IndexOf(PGNService.PawnPromotionIndicator) + 1, 1)[0];
+			//	NotationService.UpdateMatrix_PromotePiece(oldSquares, newPiecePosition, gameState.ActiveColor, piecePromotedTo);
+			//}
+
+			//if (oldSquare.Piece.PieceType != PieceType.Pawn) {
+			//	var _isValidPawnMove = this.MoveService.IsValidPawnMove(oldSquare, oldSquares, gameState.ActiveColor, piecePosition, newPiecePosition, isEnPassant);
+			//	if (!_isValidPawnMove) {
+			//		var errorMessage = "Invalid move.";
+			//		var invalidGameState = getNewGameState(gameState, gameState.PGN, gameState.MoveInfo.HasThreefoldRepition, string.Empty, errorMessage);
+			//		return invalidGameState;
+			//	}
+			//}
+
+			//gameState.FEN_Records.Add(new FEN_Record(gameState.ToString()));
 		}
 
 		private ResultOuput<GameState> getNewGameState(FEN_Record fenRecord, string pgn, bool hasThreefoldRepition, string pgnMove, string errorMessage = null) {
@@ -189,11 +190,7 @@ namespace chess.v4.engine.service {
 		/// for the third time – one of the players, on their move turn, must claim the draw with the arbiter.
 		/// </summary>
 		/// <returns></returns>
-		public bool HasThreefoldRepition(GameState gameState) {
-			if (gameState.MoveInfo.HasThreefoldRepition) { return true; }
-			if (gameState.FEN_Records.Count() < 5) {
-				return false;
-			}
+		private bool hasThreefoldRepition(GameState gameState) {
 			return gameState.FEN_Records
 					.GroupBy(a => new { a.PiecePlacement, a.CastlingAvailability, a.EnPassantTargetPosition })
 					.Where(a => a.Count() >= 3)

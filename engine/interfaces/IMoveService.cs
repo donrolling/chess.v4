@@ -1,14 +1,13 @@
 ﻿using chess.v4.engine.enumeration;
 using chess.v4.engine.model;
+using common;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.interfaces {
 
 	public interface IMoveService {
 
-		bool DetermineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos);
-
-		bool IsCastle(Square square, int destination);
+		ResultOuput<bool> IsValidCastleAttempt(GameState gameState, Square square, int destination, IEnumerable<AttackedSquare> attackedSquares);
 
 		bool IsCheckmate(GameState gameState, Square checkedKing, IEnumerable<AttackedSquare> allAttacks, IEnumerable<AttackedSquare> blackAttacks);
 
