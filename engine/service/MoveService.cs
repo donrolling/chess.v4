@@ -10,12 +10,29 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class MoveService : IMoveService {
-		public ICoordinateService CoordinateService { get; }
 		public IAttackService AttackService { get; }
+		public ICoordinateService CoordinateService { get; }
 
 		public MoveService(ICoordinateService coordinateService, IAttackService attackService) {
 			CoordinateService = coordinateService;
 			AttackService = attackService;
+		}
+
+		public bool DetermineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos) {
+			var oppositeColor = GeneralUtility.GetOppositeColor(gameState.ActiveColor);
+			//var enemyAttacks = this.PieceService.GetAttacks(oppositeColor, fen).SelectMany(a => a.Value);
+			var positions = this.getKingPositionsDuringCastle(kingPos, rookPos);
+			var arePositionsAttacked = positions.Intersect<int>(enemyAttacks.Select(a => a.Index)).Any();
+			return arePositionsAttacked;
+		}
+
+		public bool IsCastle(Square square, int destination) {
+			if (!square.Occupied) {
+				return false;
+			}
+			return
+				square.Piece.PieceType == PieceType.King
+				&& Math.Abs(square.Index - destination) == 2;
 		}
 
 		public bool IsCheckmate(GameState gameState, Square enemyKingPosition, IEnumerable<AttackedSquare> whiteAttacks, IEnumerable<AttackedSquare> blackAttacks) {
@@ -58,6 +75,20 @@ namespace chess.v4.engine.service {
 			return true;
 		}
 
+		public bool IsDiagonalMove(int startPosition, int endPosition) {
+			var startMod = startPosition % 8;
+			var endMod = endPosition % 8;
+			var modDiff = Math.Abs(startMod - endMod);
+
+			var startRow = this.CoordinateService.PositionToRankInt(startPosition);
+			var endRow = this.CoordinateService.PositionToRankInt(endPosition);
+			var rowDiff = Math.Abs(startRow - endRow);
+			if (modDiff == rowDiff) {
+				return true;
+			}
+			return false;
+		}
+
 		public bool IsEnPassant(char piece, int piecePosition, int newPiecePosition, string enPassantTargetSquare) {
 			if (char.ToUpper(piece) != 'P') { return false; } //only pawns can perform en passant
 			var enPassantPosition = CoordinateService.CoordinateToPosition(enPassantTargetSquare);
@@ -67,42 +98,6 @@ namespace chess.v4.engine.service {
 			if (char.IsLower(piece) && piecePosition < newPiecePosition) { return false; } //black can't move up
 			if (char.IsUpper(piece) && piecePosition > newPiecePosition) { return false; } //black can't move down
 			return true;
-		}
-
-		public bool DetermineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos) {
-			var oppositeColor = GeneralUtility.GetOppositeColor(gameState.ActiveColor);
-			//var enemyAttacks = this.PieceService.GetAttacks(oppositeColor, fen).SelectMany(a => a.Value);
-			var positions = this.getKingPositionsDuringCastle(kingPos, rookPos);
-			var arePositionsAttacked = positions.Intersect<int>(enemyAttacks.Select(a => a.Index)).Any();
-			return arePositionsAttacked;
-		}
-
-		public bool IsCastle(Square square, int destination) {
-			if (!square.Occupied) {
-				return false;
-			}
-			return
-				square.Piece.PieceType == PieceType.King
-				&& Math.Abs(square.Index - destination) == 2;
-		}
-
-		private int[] getKingPositionsDuringCastle(int kingPos, int rookPos) {
-			int direction = kingPos < rookPos ? 1 : -1;
-			int[] result = new int[2];
-			for (int i = 0; i < 2; i++) {
-				result[i] = kingPos + (direction * (i + 1));
-			}
-			return result;
-		}
-
-		public bool IsValidPawnMove(Square currentSquare, List<Square> squares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant) {
-			var isDiagonalMove = CoordinateService.IsDiagonalMove(currentSquare.Index, newPiecePosition);
-			if (!isDiagonalMove) {
-				return true;
-			}
-			var pieceToCapture = squares.GetSquare(newPiecePosition).Piece;
-			var isCapture = pieceToCapture != null;
-			return isCapture || isEnPassant;
 		}
 
 		public bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheck, Color activeColor, int kingSquare) {
@@ -121,6 +116,25 @@ namespace chess.v4.engine.service {
 				return !onSameFile;
 			}
 			return true;
+		}
+
+		public bool IsValidPawnMove(Square currentSquare, List<Square> squares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant) {
+			var isDiagonalMove = this.IsDiagonalMove(currentSquare.Index, newPiecePosition);
+			if (!isDiagonalMove) {
+				return true;
+			}
+			var pieceToCapture = squares.GetSquare(newPiecePosition).Piece;
+			var isCapture = pieceToCapture != null;
+			return isCapture || isEnPassant;
+		}
+
+		private int[] getKingPositionsDuringCastle(int kingPos, int rookPos) {
+			int direction = kingPos < rookPos ? 1 : -1;
+			int[] result = new int[2];
+			for (int i = 0; i < 2; i++) {
+				result[i] = kingPos + (direction * (i + 1));
+			}
+			return result;
 		}
 	}
 }

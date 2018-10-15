@@ -12,6 +12,8 @@ namespace chess.v4.engine.interfaces {
 
 		bool IsCheckmate(GameState gameState, Square checkedKing, IEnumerable<AttackedSquare> allAttacks, IEnumerable<AttackedSquare> blackAttacks);
 
+		bool IsDiagonalMove(int startPosition, int endPosition);
+
 		bool IsEnPassant(char piece, int piecePosition, int newPiecePosition, string enPassantTargetSquare);
 
 		bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheckWhite, Color activeColor, int kingSquare);

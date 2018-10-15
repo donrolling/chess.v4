@@ -36,20 +36,6 @@ namespace Chess.ServiceLayer {
 			return (char)(file + 97);
 		}
 
-		public bool IsDiagonalMove(int startPosition, int endPosition) {
-			var startMod = startPosition % 8;
-			var endMod = endPosition % 8;
-			var modDiff = Math.Abs(startMod - endMod);
-
-			var startRow = this.PositionToRankInt(startPosition);
-			var endRow = this.PositionToRankInt(endPosition);
-			var rowDiff = Math.Abs(startRow - endRow);
-			if (modDiff == rowDiff) {
-				return true;
-			}
-			return false;
-		}
-
 		public bool IsValidCoordinate(int position) {
 			return position >= 0 && position <= 63;
 		}
