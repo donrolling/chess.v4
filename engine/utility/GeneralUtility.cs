@@ -5,19 +5,14 @@ namespace chess.v4.engine.utility {
 
 	public static class GeneralUtility {
 
-		public static bool BreakAfterAction(bool ignoreKing, char blockingPiece, Color activeColor) {
+		public static bool BreakAfterAction(bool ignoreKing, Piece piece, Color activeColor) {
 			//if ignoreKing is true, then we won't break after we hit the king
 			//because we're trying to determine if the king will be in check if he moves to one of these squares.
-			bool breakAfterAction = false;
-			if (ignoreKing) {
-				bool isOpposingKing = IsOpposingKing(blockingPiece, activeColor);
-				if (!isOpposingKing) {
-					breakAfterAction = true;
-				}
-			} else {
-				breakAfterAction = true;
+			if (!ignoreKing) { return true; }
+			if (piece.PieceType != PieceType.King) {
+				return false;
 			}
-			return breakAfterAction;
+			return !(activeColor == piece.Color);
 		}
 
 		public static bool CanAttackPiece(Color pieceColor, char attackedPiece) {
@@ -73,16 +68,6 @@ namespace chess.v4.engine.utility {
 
 		public static Color GetOppositeColor(Color activeColor) {
 			return activeColor == Color.White ? Color.Black : Color.White;
-		}
-
-		/// <summary>
-		/// Determines if the char passed in is the king for the color opposite of the color passed in.
-		/// </summary>
-		/// <param name="piece">The piece that might be your opponent's king.</param>
-		/// <param name="activeColor">The color of the current player.</param>
-		/// <returns></returns>
-		public static bool IsOpposingKing(char piece, Color activeColor) {
-			return activeColor == Color.White ? (piece == 'k' ? true : false) : (piece == 'K' ? true : false);
 		}
 	}
 }

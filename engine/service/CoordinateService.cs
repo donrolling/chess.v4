@@ -55,7 +55,7 @@ namespace Chess.ServiceLayer {
 						if (GeneralUtility.CanAttackPiece(newSquare.Piece.Color, blockingPiece)) {
 							attacks.Add(square);
 						}
-						var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece.Identity, newSquare.Piece.Color);
+						var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
 						if (breakAfterAction) {
 							break;
 						}
@@ -111,7 +111,7 @@ namespace Chess.ServiceLayer {
 					if (GeneralUtility.CanAttackPiece(square.Piece.Color, blockingPiece.Identity)) {
 						attacks.Add(square);
 					}
-					var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece.Identity, square.Piece.Color);
+					var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, square.Piece.Color);
 					if (breakAfterAction) {
 						break;
 					}

@@ -1,11 +1,8 @@
-﻿using chess.v4.engine.enumeration;
-using chess.v4.engine.extensions;
-using chess.v4.engine.model;
+﻿using chess.v4.engine.extensions;
 using chess.v4.engine.reference;
 using chess.v4.engine.service;
 using Chess.ServiceLayer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace tests {
@@ -27,7 +24,7 @@ namespace tests {
 		}
 
 		[TestMethod]
-		public void Given_StartPosition_AssertThat_AllPositions_AreCorrect() {
+		public void Given_StartPosition_AllPositions_AreCorrect() {
 			//set up default position and test that it is correct
 			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
 			Assert.IsTrue(gamestateResult.Sucess);
@@ -81,28 +78,7 @@ namespace tests {
 		}
 
 		[TestMethod]
-		public void Given_StartPosition_AssertThat_WhenMakeMove_FEN_MatchesExpectation_EnPassantTargetSquare_IsCorrect() {
-			//testing en passant target square
-			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
-			Assert.IsTrue(gamestateResult.Sucess);
-			//1. e4
-			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "e2", "e4");
-			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(28).Identity == 'P');
-			Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", gamestateResult.Output.ToString());
-			//1. e4 c5
-			//testing fullmove number
-			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "c7", "c5");
-			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(34).Identity == 'p');
-			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", gamestateResult.ToString());
-			//1. e4 c5 2. Nc3
-			//testing the halfmove clock
-			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b1", "c3");
-			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(18).Identity == 'N');
-			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2", gamestateResult.ToString());
-		}
-
-		[TestMethod]
-		public void Given_StartPosition_AssertThat_WhenMakeMove_FEN_MatchesExpectation_CastleAvailability_IsCorrect() {
+		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_CastleAvailability_IsCorrect() {
 			var fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2";
 			var gamestateResult = GameStateService.SetStartPosition(fen);
 			Assert.IsTrue(gamestateResult.Sucess);
@@ -128,13 +104,41 @@ namespace tests {
 			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
 			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR w KQkq - 3 5", gamestateResult.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1
-			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "a1", "b1");			
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "a1", "b1");
 			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
 			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR b Kkq - 4 5", gamestateResult.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1 Rb8
 			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "a8", "b8");
 			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
 			Assert.AreEqual("1r1qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR w Kk - 5 6", gamestateResult.ToString());
+		}
+		
+		[TestMethod]
+		public void ShitIsFucked() {
+			var fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
+			var gamestateResult = GameStateService.SetStartPosition(fen);
+			Assert.IsTrue(gamestateResult.Sucess);
+		}
+
+		[TestMethod]
+		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_EnPassantTargetSquare_IsCorrect() {
+			//testing en passant target square
+			var gamestateResult = GameStateService.SetStartPosition(GeneralReference.Starting_FEN_Position);
+			Assert.IsTrue(gamestateResult.Sucess);
+			//1. e4
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "e2", "e4");
+			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(28).Identity == 'P');
+			Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", gamestateResult.Output.ToString());
+			//1. e4 c5
+			//testing fullmove number
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "c7", "c5");
+			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(34).Identity == 'p');
+			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", gamestateResult.ToString());
+			//1. e4 c5 2. Nc3
+			//testing the halfmove clock
+			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b1", "c3");
+			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(18).Identity == 'N');
+			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2", gamestateResult.ToString());
 		}
 	}
 }
