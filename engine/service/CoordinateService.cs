@@ -2,7 +2,7 @@
 using chess.v4.engine.interfaces;
 using System;
 
-namespace Chess.ServiceLayer {
+namespace chess.v4.engine.service {
 
 	public class CoordinateService : ICoordinateService {
 

@@ -1,26 +1,22 @@
 ﻿using chess.v4.engine.extensions;
+using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
-using chess.v4.engine.service;
-using Chess.ServiceLayer;
+using common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using tests.setup;
 
 namespace tests {
 
 	[TestClass]
 	public class GameStateTests {
-		public AttackService AttackService { get; }
-		public CoordinateService CoordinateService { get; }
-		public GameStateService GameStateService { get; }
-		public MoveService MoveService { get; }
-		public NotationService NotationService { get; }
+		public ICoordinateService CoordinateService { get; }
+		public IGameStateService GameStateService { get; }
 
 		public GameStateTests() {
-			this.CoordinateService = new CoordinateService();
-			this.NotationService = new NotationService(this.CoordinateService);
-			this.AttackService = new AttackService(this.NotationService, this.CoordinateService);
-			this.MoveService = new MoveService(this.CoordinateService, this.AttackService);
-			this.GameStateService = new GameStateService(this.NotationService, this.CoordinateService, this.MoveService, this.AttackService);
+			var serviceProvider = new TestSetup().Setup();
+			this.CoordinateService = serviceProvider.GetService<ICoordinateService>();
+			this.GameStateService = serviceProvider.GetService<IGameStateService>();
 		}
 
 		[TestMethod]
@@ -112,13 +108,6 @@ namespace tests {
 			Assert.IsTrue(gamestateResult.Output.Squares.Count == 32);
 			Assert.AreEqual("1r1qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR w Kk - 5 6", gamestateResult.ToString());
 		}
-		
-		[TestMethod]
-		public void ShitIsFucked() {
-			var fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
-			var gamestateResult = GameStateService.SetStartPosition(fen);
-			Assert.IsTrue(gamestateResult.Sucess);
-		}
 
 		[TestMethod]
 		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_EnPassantTargetSquare_IsCorrect() {
@@ -139,6 +128,13 @@ namespace tests {
 			gamestateResult = GameStateService.MakeMove(gamestateResult.Output, "b1", "c3");
 			Assert.IsTrue(gamestateResult.Output.Squares.GetPiece(18).Identity == 'N');
 			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2", gamestateResult.ToString());
+		}
+
+		[TestMethod]
+		public void ShitIsFucked() {
+			var fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
+			var gamestateResult = GameStateService.SetStartPosition(fen);
+			Assert.IsTrue(gamestateResult.Sucess);
 		}
 	}
 }

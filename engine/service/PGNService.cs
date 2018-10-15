@@ -12,13 +12,186 @@ namespace chess.v4.engine.service {
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
 	// kingside castling is indicated by the sequence "O-O"; queenside castling is indicated by the sequence "O-O-O"
 	public class PGNService : IPGNService {
+		public ICoordinateService CoordinateService { get; }
+		public IDiagonalService DiagonalService { get; }
+		public IOrthogonalService OrthogonalService { get; }
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
-		public ICoordinateService CoordinateService { get; }
-
-		public PGNService(ICoordinateService coordinateService) {
+		public PGNService(ICoordinateService coordinateService, IDiagonalService diagonalService, IOrthogonalService orthogonalService) {
 			CoordinateService = coordinateService;
+			DiagonalService = diagonalService;
+			OrthogonalService = orthogonalService;
+		}
+
+		public int GetCurrentPositionFromPGNMove(Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks, PieceType piece, Color playerColor, int newPiecePosition, string pgnMove) {
+			char pieceChar = GetPieceCharFromPieceTypeColor(piece, playerColor);
+			var potentialSquares = allAttacks.Where(a => a.Value.Contains(newPiecePosition)).Select(c => c.Key);
+			var potentialPositions = matrix.Where(a => potentialSquares.Contains(a.Key) && a.Value == pieceChar);
+			if (!potentialPositions.Any()) {
+				return -1; //meaning no postion available
+			}
+
+			//x means capture and shouldn't be used in the equation below
+			bool capture = isCapture(pgnMove);
+			bool check = isCheck(pgnMove);
+			bool castleKingside = isCastleKingside(pgnMove);
+			bool castleQueenside = isCastleQueenside(pgnMove);
+			bool isCastle = castleKingside || castleQueenside;
+			var newPgnMove = pgnMove.Replace("x", "").Replace("+", "");
+
+			if (isCastle) {
+				return getOriginationPositionForCastling(playerColor);
+			}
+
+			if (potentialPositions.Count() < 1) {
+				return potentialPositions.First().Key;
+			}
+
+			//todo: refactor to eliminate redundancy
+			//look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
+			//this should only happen if there are two pieces of the same type that can attack here.
+			var moveLength = newPgnMove.Length;
+			var ambiguityResolver = '-';
+			switch (moveLength) {
+				case 2:
+					if (piece == PieceType.Pawn) {
+						if (!capture) { //todo: make sure this makes sense, i was distracted - seems ok two days later
+							if (playerColor == Color.White) {
+								return potentialPositions.Where(a => a.Key == newPiecePosition - 8 || a.Key == newPiecePosition - 16).First().Key;
+							} else {
+								return potentialPositions.Where(a => a.Key == newPiecePosition + 8 || a.Key == newPiecePosition + 16).First().Key;
+							}
+						}
+					}
+					return -1; //indicates failure
+				case 3: //this should be a pawn attack that can be made by two pawns
+					ambiguityResolver = newPgnMove[0];
+					var files = this.OrthogonalService.GetEntireFile(CoordinateService.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
+					var pieces = potentialPositions.Where(a => files.Contains(a.Key)).ToList();
+					if (pieces.Count() > 1) {
+						throw new Exception("There should not be more than one item found here.");
+					}
+					return pieces.First().Key;
+
+				case 4: //this would be any other piece
+					ambiguityResolver = newPgnMove[1];
+					var isRank = IsRank(ambiguityResolver); //this could be either a rank or a file
+					List<int> ambiguityResolutionSet;
+					if (isRank) {
+						int rank = 0;
+						Int32.TryParse(ambiguityResolver.ToString(), out rank);
+						ambiguityResolutionSet = this.OrthogonalService.GetEntireRank(rank - 1);//needs to be using zero-based rank offset
+					} else {
+						var iFile = CoordinateService.FileToInt(ambiguityResolver);
+						ambiguityResolutionSet = this.OrthogonalService.GetEntireFile(iFile);
+					}
+					var intersection = potentialPositions.Select(a => a.Key).Intersect(ambiguityResolutionSet);
+					if (intersection.Count() > 1) {
+						throw new Exception("There should not be more than one item found here.");
+					}
+					return intersection.First();
+
+				case 5: //we have rank and file, so just find the piece. this should be very rare
+					var _file = CoordinateService.FileToInt(newPgnMove[1]);
+					int _rank = 0;
+					Int32.TryParse(newPgnMove[2].ToString(), out _rank);
+					int pos = CoordinateService.CoordinatePairToPosition(_file, _rank);
+					return pos;
+
+				default:
+					return -1; //indicates failure
+			}
+		}
+
+		public char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor) {
+			char pieceChar = 'a';
+			switch (piece) {
+				case PieceType.Bishop:
+					pieceChar = 'b';
+					break;
+
+				case PieceType.Pawn:
+					pieceChar = 'p';
+					break;
+
+				case PieceType.King:
+					pieceChar = 'k';
+					break;
+
+				case PieceType.Knight:
+					pieceChar = 'n';
+					break;
+
+				case PieceType.Queen:
+					pieceChar = 'q';
+					break;
+
+				case PieceType.Rook:
+					pieceChar = 'r';
+					break;
+			}
+			if (playerColor == Color.White) {
+				pieceChar = char.ToUpper(pieceChar);
+			}
+			return pieceChar;
+		}
+
+		public PieceType GetPieceTypeFromPGNMove(string pgnMove) {
+			if (pgnMove.Length == 2) {
+				return PieceType.Pawn;
+			}
+			if (pgnMove == "O-O" || pgnMove == "O-O-O") {
+				return PieceType.King;
+			}
+			var piece = pgnMove[0]; //should not capitalize this to check because all piece disambiguity notation is caps, therefore a file indicator will not be.
+			switch (piece) {
+				case 'B':
+				case 'b':
+					return PieceType.Bishop;
+
+				case 'K':
+				case 'k':
+					return PieceType.King;
+
+				case 'N':
+				case 'n':
+					return PieceType.Knight;
+
+				case 'Q':
+				case 'q':
+					return PieceType.Queen;
+
+				case 'R':
+				case 'r':
+					return PieceType.Rook;
+			}
+			return PieceType.Pawn;
+		}
+
+		public int GetPositionFromPGNMove(string pgnMove, Color playerColor) {
+			if (pgnMove == "O-O" || pgnMove == "O-O-O") {
+				if (playerColor == Color.White) {
+					if (pgnMove == "O-O") {
+						return 6;
+					} else {
+						return 2;
+					}
+				} else {
+					if (pgnMove == "O-O") {
+						return 62;
+					} else {
+						return 58;
+					}
+				}
+			}
+			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
+			var result = pgnMove.Contains("=") ? CoordinateService.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 4, 2)) : CoordinateService.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 2, 2));
+			return result;
+		}
+
+		public bool IsRank(char potentialRank) {
+			return char.IsNumber(potentialRank);
 		}
 
 		public (int piecePosition, int newPiecePosition) PGNMoveToSquarePair(Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks, Color playerColor, string pgnMove) {
@@ -26,6 +199,42 @@ namespace chess.v4.engine.service {
 			var piece = GetPieceTypeFromPGNMove(pgnMove);
 			var piecePosition = GetCurrentPositionFromPGNMove(matrix, allAttacks, piece, playerColor, newPiecePosition, pgnMove);
 			return (piecePosition, newPiecePosition);
+		}
+
+		public List<string> PGNSplit(string pgn) {
+			if (string.IsNullOrEmpty(pgn)) { return null; }
+
+			var regex = @"\d{1,3}\.";
+			var splitResult = Regex.Split(pgn.Trim(), regex);
+			return splitResult.ToList();
+		}
+
+		public List<string> PGNSplit(string pgn, bool mostConsise) {
+			if (string.IsNullOrEmpty(pgn)) { return null; }
+
+			var pgnData = PGNSplit(pgn);
+			if (!mostConsise) { return pgnData; }
+
+			if (pgnData != null && pgnData.Any()) {
+				var iterationData = pgnData.ToList();
+				var emptyStuffs = iterationData.Where(a => a == " " || string.IsNullOrEmpty(a)).ToList();
+				if (emptyStuffs != null && emptyStuffs.Any()) {
+					foreach (var item in emptyStuffs) {
+						iterationData.Remove(item);
+					}
+				}
+				var returnValue = new List<string>();
+
+				foreach (var item in iterationData) {
+					var movePair = item.Trim().Split(' ');
+					returnValue.Add(movePair[0]);
+					if (movePair.Length > 1) {
+						returnValue.Add(movePair[1]);
+					}
+				}
+				return returnValue;
+			}
+			return null;
 		}
 
 		public string SquarePairToPGNMove(Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks, Color playerColor, string startSquare, string endSquare, char promoteToPiece) {
@@ -43,28 +252,13 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private string squarePairToPGNMove(Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks, Color playerColor, string startSquare, string endSquare) {
-			var startPos = CoordinateService.CoordinateToPosition(startSquare);
-			var endPos = CoordinateService.CoordinateToPosition(endSquare);
-			var isCapture = matrix.ContainsKey(endPos);
-
-			List<int> attacks;
-			allAttacks.TryGetValue(startPos, out attacks);
-			if (attacks != null && attacks.Any() && attacks.Contains(endPos)) {
-				char piece = '0';
-				matrix.TryGetValue(startPos, out piece);
-				if (piece != '0') {
-					if ((playerColor == Color.White && char.IsUpper(piece)) || (playerColor == Color.Black && char.IsLower(piece))) {
-						char notationPiece = char.ToUpper(piece);
-						var coord = CoordinateService.PositionToCoordinate(endPos);
-						string pgnMove = getPgnMove(notationPiece, piece, coord, startPos, endPos, isCapture, matrix, allAttacks);
-						return pgnMove;
-					} else {
-						throw new Exception("Color doesn't match given positions.");
-					}
-				}
-			}
-			throw new Exception("Bad coordinates were given.");
+		private int getOriginationPositionForCastling(Color color) {
+			int rank = color == Color.White ? 1 : 8;
+			int file = 4;
+			char fileChar = CoordinateService.IntToFile(file);
+			var coord = string.Concat(fileChar, rank);
+			int origination = CoordinateService.CoordinateToPosition(coord);
+			return origination;
 		}
 
 		private string getPgnMove(char notationPiece, char piece, string coord, int startPos, int endPos, bool isCapture, Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks) {
@@ -153,221 +347,6 @@ namespace chess.v4.engine.service {
 			return pgnMove;
 		}
 
-		public int GetCurrentPositionFromPGNMove(Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks, PieceType piece, Color playerColor, int newPiecePosition, string pgnMove) {
-			char pieceChar = GetPieceCharFromPieceTypeColor(piece, playerColor);
-			var potentialSquares = allAttacks.Where(a => a.Value.Contains(newPiecePosition)).Select(c => c.Key);
-			var potentialPositions = matrix.Where(a => potentialSquares.Contains(a.Key) && a.Value == pieceChar);
-			if (!potentialPositions.Any()) {
-				return -1; //meaning no postion available
-			}
-
-			//x means capture and shouldn't be used in the equation below
-			bool capture = isCapture(pgnMove);
-			bool check = isCheck(pgnMove);
-			bool castleKingside = isCastleKingside(pgnMove);
-			bool castleQueenside = isCastleQueenside(pgnMove);
-			bool isCastle = castleKingside || castleQueenside;
-			var newPgnMove = pgnMove.Replace("x", "").Replace("+", "");
-
-			if (isCastle) {
-				return getOriginationPositionForCastling(playerColor);
-			}
-
-			if (potentialPositions.Count() < 1) {
-				return potentialPositions.First().Key;
-			}
-
-			//todo: refactor to eliminate redundancy
-			//look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
-			//this should only happen if there are two pieces of the same type that can attack here.
-			var moveLength = newPgnMove.Length;
-			var ambiguityResolver = '-';
-			switch (moveLength) {
-				case 2:
-					if (piece == PieceType.Pawn) {
-						if (!capture) { //todo: make sure this makes sense, i was distracted - seems ok two days later
-							if (playerColor == Color.White) {
-								return potentialPositions.Where(a => a.Key == newPiecePosition - 8 || a.Key == newPiecePosition - 16).First().Key;
-							} else {
-								return potentialPositions.Where(a => a.Key == newPiecePosition + 8 || a.Key == newPiecePosition + 16).First().Key;
-							}
-						}
-					}
-					return -1; //indicates failure
-				case 3: //this should be a pawn attack that can be made by two pawns
-					ambiguityResolver = newPgnMove[0];
-					var files = CoordinateService.GetEntireFile(CoordinateService.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
-					var pieces = potentialPositions.Where(a => files.Contains(a.Key)).ToList();
-					if (pieces.Count() > 1) {
-						throw new Exception("There should not be more than one item found here.");
-					}
-					return pieces.First().Key;
-
-				case 4: //this would be any other piece
-					ambiguityResolver = newPgnMove[1];
-					var isRank = IsRank(ambiguityResolver); //this could be either a rank or a file
-					List<int> ambiguityResolutionSet;
-					if (isRank) {
-						int rank = 0;
-						Int32.TryParse(ambiguityResolver.ToString(), out rank);
-						ambiguityResolutionSet = CoordinateService.GetEntireRank(rank - 1);//needs to be using zero-based rank offset
-					} else {
-						var iFile = CoordinateService.FileToInt(ambiguityResolver);
-						ambiguityResolutionSet = CoordinateService.GetEntireFile(iFile);
-					}
-					var intersection = potentialPositions.Select(a => a.Key).Intersect(ambiguityResolutionSet);
-					if (intersection.Count() > 1) {
-						throw new Exception("There should not be more than one item found here.");
-					}
-					return intersection.First();
-
-				case 5: //we have rank and file, so just find the piece. this should be very rare
-					var _file = CoordinateService.FileToInt(newPgnMove[1]);
-					int _rank = 0;
-					Int32.TryParse(newPgnMove[2].ToString(), out _rank);
-					int pos = CoordinateService.CoordinatePairToPosition(_file, _rank);
-					return pos;
-
-				default:
-					return -1; //indicates failure
-			}
-		}
-
-		public bool IsRank(char potentialRank) {
-			return char.IsNumber(potentialRank);
-		}
-
-		public char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor) {
-			char pieceChar = 'a';
-			switch (piece) {
-				case PieceType.Bishop:
-					pieceChar = 'b';
-					break;
-
-				case PieceType.Pawn:
-					pieceChar = 'p';
-					break;
-
-				case PieceType.King:
-					pieceChar = 'k';
-					break;
-
-				case PieceType.Knight:
-					pieceChar = 'n';
-					break;
-
-				case PieceType.Queen:
-					pieceChar = 'q';
-					break;
-
-				case PieceType.Rook:
-					pieceChar = 'r';
-					break;
-			}
-			if (playerColor == Color.White) {
-				pieceChar = char.ToUpper(pieceChar);
-			}
-			return pieceChar;
-		}
-
-		public int GetPositionFromPGNMove(string pgnMove, Color playerColor) {
-			if (pgnMove == "O-O" || pgnMove == "O-O-O") {
-				if (playerColor == Color.White) {
-					if (pgnMove == "O-O") {
-						return 6;
-					} else {
-						return 2;
-					}
-				} else {
-					if (pgnMove == "O-O") {
-						return 62;
-					} else {
-						return 58;
-					}
-				}
-			}
-			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
-			var result = pgnMove.Contains("=") ? CoordinateService.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 4, 2)) : CoordinateService.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 2, 2));
-			return result;
-		}
-
-		public PieceType GetPieceTypeFromPGNMove(string pgnMove) {
-			if (pgnMove.Length == 2) {
-				return PieceType.Pawn;
-			}
-			if (pgnMove == "O-O" || pgnMove == "O-O-O") {
-				return PieceType.King;
-			}
-			var piece = pgnMove[0]; //should not capitalize this to check because all piece disambiguity notation is caps, therefore a file indicator will not be.
-			switch (piece) {
-				case 'B':
-				case 'b':
-					return PieceType.Bishop;
-
-				case 'K':
-				case 'k':
-					return PieceType.King;
-
-				case 'N':
-				case 'n':
-					return PieceType.Knight;
-
-				case 'Q':
-				case 'q':
-					return PieceType.Queen;
-
-				case 'R':
-				case 'r':
-					return PieceType.Rook;
-			}
-			return PieceType.Pawn;
-		}
-
-		public List<string> PGNSplit(string pgn) {
-			if (string.IsNullOrEmpty(pgn)) { return null; }
-
-			var regex = @"\d{1,3}\.";
-			var splitResult = Regex.Split(pgn.Trim(), regex);
-			return splitResult.ToList();
-		}
-
-		public List<string> PGNSplit(string pgn, bool mostConsise) {
-			if (string.IsNullOrEmpty(pgn)) { return null; }
-
-			var pgnData = PGNSplit(pgn);
-			if (!mostConsise) { return pgnData; }
-
-			if (pgnData != null && pgnData.Any()) {
-				var iterationData = pgnData.ToList();
-				var emptyStuffs = iterationData.Where(a => a == " " || string.IsNullOrEmpty(a)).ToList();
-				if (emptyStuffs != null && emptyStuffs.Any()) {
-					foreach (var item in emptyStuffs) {
-						iterationData.Remove(item);
-					}
-				}
-				var returnValue = new List<string>();
-
-				foreach (var item in iterationData) {
-					var movePair = item.Trim().Split(' ');
-					returnValue.Add(movePair[0]);
-					if (movePair.Length > 1) {
-						returnValue.Add(movePair[1]);
-					}
-				}
-				return returnValue;
-			}
-			return null;
-		}
-
-		private int getOriginationPositionForCastling(Color color) {
-			int rank = color == Color.White ? 1 : 8;
-			int file = 4;
-			char fileChar = CoordinateService.IntToFile(file);
-			var coord = string.Concat(fileChar, rank);
-			int origination = CoordinateService.CoordinateToPosition(coord);
-			return origination;
-		}
-
 		private bool isCapture(string move) {
 			bool retval = false;
 			if (move.Contains('x')) {
@@ -376,9 +355,9 @@ namespace chess.v4.engine.service {
 			return retval;
 		}
 
-		private bool isCheck(string move) {
+		private bool isCastleKingside(string move) {
 			bool retval = false;
-			if (move.Contains('+')) {
+			if (move.Contains("O-O")) {
 				retval = true;
 			}
 			return retval;
@@ -392,12 +371,36 @@ namespace chess.v4.engine.service {
 			return retval;
 		}
 
-		private bool isCastleKingside(string move) {
+		private bool isCheck(string move) {
 			bool retval = false;
-			if (move.Contains("O-O")) {
+			if (move.Contains('+')) {
 				retval = true;
 			}
 			return retval;
+		}
+
+		private string squarePairToPGNMove(Dictionary<int, char> matrix, Dictionary<int, List<int>> allAttacks, Color playerColor, string startSquare, string endSquare) {
+			var startPos = CoordinateService.CoordinateToPosition(startSquare);
+			var endPos = CoordinateService.CoordinateToPosition(endSquare);
+			var isCapture = matrix.ContainsKey(endPos);
+
+			List<int> attacks;
+			allAttacks.TryGetValue(startPos, out attacks);
+			if (attacks != null && attacks.Any() && attacks.Contains(endPos)) {
+				char piece = '0';
+				matrix.TryGetValue(startPos, out piece);
+				if (piece != '0') {
+					if ((playerColor == Color.White && char.IsUpper(piece)) || (playerColor == Color.Black && char.IsLower(piece))) {
+						char notationPiece = char.ToUpper(piece);
+						var coord = CoordinateService.PositionToCoordinate(endPos);
+						string pgnMove = getPgnMove(notationPiece, piece, coord, startPos, endPos, isCapture, matrix, allAttacks);
+						return pgnMove;
+					} else {
+						throw new Exception("Color doesn't match given positions.");
+					}
+				}
+			}
+			throw new Exception("Bad coordinates were given.");
 		}
 	}
 }
