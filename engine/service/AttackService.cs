@@ -12,10 +12,14 @@ namespace chess.v4.engine.service {
 
 	public class AttackService : IAttackService {
 		public ICoordinateService CoordinateService { get; }
+		public IDiagonalService DiagonalService { get; }
 		public INotationService NotationService { get; }
+		public IOrthogonalService OrthogonalService { get; }
 
-		public AttackService(INotationService notationService, ICoordinateService coordinateService) {
+		public AttackService(INotationService notationService, IOrthogonalService orthogonalService, IDiagonalService diagonalService, ICoordinateService coordinateService) {
 			NotationService = notationService;
+			OrthogonalService = orthogonalService;
+			DiagonalService = diagonalService;
 			CoordinateService = coordinateService;
 		}
 
@@ -38,7 +42,7 @@ namespace chess.v4.engine.service {
 
 				case PieceType.Bishop:
 					foreach (var direction in GeneralReference.DiagonalLines) {
-						var potentialAttack = CoordinateService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
 						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
 							theAttack.AddRange(potentialAttack);
 							break;
@@ -48,7 +52,7 @@ namespace chess.v4.engine.service {
 
 				case PieceType.Rook:
 					foreach (var direction in GeneralReference.OrthogonalLines) {
-						var potentialAttack = CoordinateService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
 						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
 							theAttack.AddRange(potentialAttack);
 							break;
@@ -58,14 +62,14 @@ namespace chess.v4.engine.service {
 
 				case PieceType.Queen:
 					foreach (var direction in GeneralReference.DiagonalLines) {
-						var potentialAttack = CoordinateService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
 						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
 							theAttack.AddRange(potentialAttack);
 							break;
 						}
 					}
 					foreach (var direction in GeneralReference.OrthogonalLines) {
-						var potentialAttack = CoordinateService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+						var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
 						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
 							theAttack.AddRange(potentialAttack);
 							break;
@@ -252,16 +256,16 @@ namespace chess.v4.engine.service {
 					return getKnightAttacks(gameState, square);
 
 				case PieceType.Bishop:
-					return CoordinateService.GetDiagonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
+					return this.DiagonalService.GetDiagonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
 
 				case PieceType.Rook:
-					return CoordinateService.GetOrthogonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
+					return this.OrthogonalService.GetOrthogonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
 
 				case PieceType.Queen:
 					var attacks =
-							CoordinateService.GetOrthogonals(gameState, square, ignoreKing)
+							this.OrthogonalService.GetOrthogonals(gameState, square, ignoreKing)
 							.Concat(
-								CoordinateService.GetDiagonals(gameState, square, ignoreKing)
+								this.DiagonalService.GetDiagonals(gameState, square, ignoreKing)
 							);
 					return attacks.Select(a => new AttackedSquare(square, a));
 

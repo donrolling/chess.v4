@@ -11,17 +11,17 @@ namespace chess.v4.engine.interfaces {
 
 		int FileToInt(char file);
 
-		List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing);
+		//List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing);
 
-		List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false);
+		//List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false);
 
-		List<int> GetEntireFile(int file);
+		//List<int> GetEntireFile(int file);
 
-		List<int> GetEntireRank(int rank);
+		//List<int> GetEntireRank(int rank);
 		
-		List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false);
+		//List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false);
 
-		List<Square> GetOrthogonals(GameState gameState, Square square, bool ignoreKing = false);
+		//List<Square> GetOrthogonals(GameState gameState, Square square, bool ignoreKing = false);
 
 		char IntToFile(int file);
 
