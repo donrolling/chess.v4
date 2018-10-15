@@ -5,8 +5,6 @@ namespace chess.v4.engine.interfaces {
 
 	public interface IGameStateService {
 
-		bool HasThreefoldRepition(GameState gameState);
-
 		ResultOuput<GameState> Initialize(string fen);
 
 		ResultOuput<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, string pgnMove);
