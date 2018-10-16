@@ -21,7 +21,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public Envelope<GameState> Initialize(string fen) {
-			return getNewGameState(new FEN_Record(fen), string.Empty, false, string.Empty);
+			return getNewGameState(new FEN_Record(fen));
 		}
 
 		/// <summary>
@@ -60,13 +60,12 @@ namespace chess.v4.engine.service {
 			return this.MakeMove(gameState, pos1, pos2, string.Empty);
 		}
 
-		private Envelope<GameState> getNewGameState(FEN_Record fenRecord, string pgn, bool hasThreefoldRepition, string pgnMove, string errorMessage = null) {
+		private Envelope<GameState> getNewGameState(FEN_Record fenRecord, string errorMessage = null) {
 			if (!string.IsNullOrEmpty(errorMessage)) {
 				return Envelope<GameState>.Error(errorMessage);
 			}
 
 			var gameState = new GameState(fenRecord);
-			gameState.MoveInfo.HasThreefoldRepition = hasThreefoldRepition;
 
 			gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
 
@@ -82,33 +81,32 @@ namespace chess.v4.engine.service {
 			var attacksThatCheckWhite = blackAttacks.Where(a => a.Index == whiteKingSquare.Index);
 			var attacksThatCheckBlack = whiteAttacks.Where(a => a.Index == blackKingSquare.Index);
 
-			var isCheck = false;
-			gameState.MoveInfo.IsWhiteCheck = this.MoveService.IsRealCheck(gameState.Squares, attacksThatCheckWhite, gameState.ActiveColor, whiteKingSquare.Index);
-			gameState.MoveInfo.IsBlackCheck = this.MoveService.IsRealCheck(gameState.Squares, attacksThatCheckBlack, gameState.ActiveColor, blackKingSquare.Index);
+			//gameState.MoveInfo = this.MoveService.GetMoveInfo(gameState, allAttacks);
 
-			if (!string.IsNullOrEmpty(pgnMove)) {
-				bool isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
-				if (isPawnPromotion && isCheck) {
-					pgnMove = string.Concat(pgnMove, '#');
-				}
-				var pgnNumbering = (gameState.ActiveColor == Color.Black ? gameState.FullmoveNumber.ToString() + ". " : string.Empty);
-				var nextPGNMove = string.Concat(pgnNumbering, pgnMove, ' ');
-				gameState.PGN = pgn + nextPGNMove;
-			} else { gameState.PGN = pgn; }
+			//if (!string.IsNullOrEmpty(pgnMove)) {
+			//	bool isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
+			//	if (isPawnPromotion && isCheck) {
+			//		pgnMove = string.Concat(pgnMove, '#');
+			//	}
+			//	var pgnNumbering = (gameState.ActiveColor == Color.Black ? gameState.FullmoveNumber.ToString() + ". " : string.Empty);
+			//	var nextPGNMove = string.Concat(pgnNumbering, pgnMove, ' ');
+			//	gameState.PGN = pgn + nextPGNMove;
+			//} else { gameState.PGN = pgn; }
 
-			if (gameState.MoveInfo.IsCheck) {
-				var checkedKing = gameState.ActiveColor == Color.White ? whiteKingSquare : blackKingSquare; //trust me this is right
-				gameState.MoveInfo.IsCheckmate = this.MoveService.IsCheckmate(gameState, checkedKing, allAttacks, blackAttacks);
-				if (gameState.MoveInfo.IsCheckmate) {
-					var score = string.Concat(" ", gameState.ActiveColor == Color.White ? "1-0" : "0-1");
-					gameState.PGN += score;
-				}
-			}
+			//if (gameState.MoveInfo.IsCheck) {
+			//	var checkedKing = gameState.ActiveColor == Color.White ? whiteKingSquare : blackKingSquare; //trust me this is right
+			//	gameState.MoveInfo.IsCheckmate = this.MoveService.IsCheckmate(gameState, checkedKing, allAttacks, blackAttacks);
+			//	if (gameState.MoveInfo.IsCheckmate) {
+			//		var score = string.Concat(" ", gameState.ActiveColor == Color.White ? "1-0" : "0-1");
+			//		gameState.PGN += score;
+			//	}
+			//}
 			return Envelope<GameState>.Ok(gameState);
 		}
 
 		private Envelope<GameState> makeMove(GameState gameState, int position, MoveInfo moveInfo, int newPiecePosition) {
 			var newGameState = gameState.DeepCopy();
+			newGameState.MoveInfo = moveInfo;
 			var oldFen = gameState.ToString();
 			var oldSquare = newGameState.Squares.GetSquare(position);
 			var newSquare = newGameState.Squares.GetSquare(newPiecePosition);
