@@ -18,18 +18,6 @@ namespace chess.v4.engine.service {
 			CoordinateService = coordinateService;
 		}
 
-		public void ApplyMoveToSquares(List<Square> squares, int piecePosition, int newPiecePosition) {
-			var square = squares.GetSquare(piecePosition);
-			var newSquare = squares.Where(a => a.Index == newPiecePosition).First();
-			var piece = square.Piece;
-			square.Piece = null;
-			newSquare.Piece = new Piece {
-				Identity = piece.Identity,
-				PieceType = piece.PieceType,
-				Color = piece.Color
-			};
-		}
-
 		//public FEN_Record CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
 		//	var position = createNewPositionFromMatrix(squares);
 		//	var castlingAvailability = getCastlingAvailability(squares, gameState.CastlingAvailability, piecePosition, newPiecePosition);

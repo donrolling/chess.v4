@@ -9,6 +9,8 @@
 		public bool IsEnPassant { get; set; }
 		public bool IsPawnPromotion { get; set; }
 		public bool IsWhiteCheck { get; set; }
+		public bool IsResign { get; set; }
+		public bool IsDraw { get; set; }
 		public bool PutsOwnKingInCheck { get; set; }
 	}
 }
