@@ -25,7 +25,7 @@ namespace chess.v4.engine.service {
 			var enPassantCoord = getEnPassantCoord(squares, gameState.ActiveColor, piecePosition, newPiecePosition);
 			var halfmoveClock = getHalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
 			var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
-			var activeColor = gameState.ActiveColor.Reverse();
+			var activeColor = gameState.ActiveColor;
 			gameState.PiecePlacement = position;
 			gameState.ActiveColor = activeColor;
 			gameState.CastlingAvailability = castlingAvailability;
@@ -118,7 +118,7 @@ namespace chess.v4.engine.service {
 		}
 
 		private string getCastlingAvailability(GameState gameState, string castlingAvailability, int piecePosition, int newPiecePosition) {
-			var square = gameState.Squares.GetSquare(piecePosition);
+			var square = gameState.Squares.GetSquare(newPiecePosition);
 			var movingPiece = square.Piece;
 			if (movingPiece.PieceType == PieceType.Rook || movingPiece.PieceType == PieceType.King) {
 				switch (piecePosition) {
@@ -152,13 +152,13 @@ namespace chess.v4.engine.service {
 		}
 
 		private string getEnPassantCoord(List<Square> squares, Color activeColor, int piecePosition, int newPiecePosition) {
-			var piece = squares.GetPiece(piecePosition);
+			var piece = squares.GetPiece(newPiecePosition);
 			if (piece.PieceType == PieceType.Pawn) {
 				var diff = Math.Abs(piecePosition - newPiecePosition);
 				if (diff == 16) {
 					var moveMarker = 8;
 					if (activeColor == Color.White) { moveMarker = (moveMarker * -1); }
-					var enPassantSquare = newPiecePosition + moveMarker;
+					var enPassantSquare = piecePosition + moveMarker;
 					var enPassantCoord = this.CoordinateService.PositionToCoordinate(enPassantSquare);
 					return enPassantCoord;
 				}
@@ -167,7 +167,7 @@ namespace chess.v4.engine.service {
 		}
 
 		private int getFullmoveNumber(int fullmoveNumber, Color activeColor) {
-			if (activeColor == Color.Black) {
+			if (activeColor == Color.White) {
 				return fullmoveNumber + 1;
 			}
 			return fullmoveNumber;

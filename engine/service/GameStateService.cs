@@ -50,7 +50,8 @@ namespace chess.v4.engine.service {
 			if (moveInfo.IsCheck) {
 				return Envelope<GameState>.Error("Must move out of check. Must not move into check.");
 			}
-			return this.makeMove(gameState, piecePosition, moveInfo, newPiecePosition);
+			var newGameState = gameState.DeepCopy();
+			return this.makeMove(newGameState, piecePosition, moveInfo, newPiecePosition);
 		}
 
 		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination) {
@@ -104,20 +105,19 @@ namespace chess.v4.engine.service {
 		}
 
 		private Envelope<GameState> makeMove(GameState gameState, int position, MoveInfo moveInfo, int newPiecePosition) {
-			var newGameState = gameState.DeepCopy();
-			newGameState.MoveInfo = moveInfo;
+			gameState.MoveInfo = moveInfo;
 			var oldFen = gameState.ToString();
-			var oldSquare = newGameState.Squares.GetSquare(position);
-			var newSquare = newGameState.Squares.GetSquare(newPiecePosition);
+			var oldSquare = gameState.Squares.GetSquare(position);
+			var newSquare = gameState.Squares.GetSquare(newPiecePosition);
 			newSquare.Piece = new Piece {
 				Identity = oldSquare.Piece.Identity,
 				PieceType = oldSquare.Piece.PieceType,
 				Color = oldSquare.Piece.Color
 			};
 			oldSquare.Piece = null;
-			newGameState.FEN_Records.Add(new FEN_Record(oldFen));
+			gameState.FEN_Records.Add(new FEN_Record(oldFen));
 			this.NotationService.SetGameState_FEN(gameState, position, newPiecePosition);
-			return Envelope<GameState>.Ok(newGameState);
+			return Envelope<GameState>.Ok(gameState);
 		}
 	}
 }
