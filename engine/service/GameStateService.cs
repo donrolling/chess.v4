@@ -6,7 +6,6 @@ using common;
 using System.Linq;
 
 namespace chess.v4.engine.service {
-
 	public class GameStateService : IGameStateService {
 		public IAttackService AttackService { get; }
 		public ICoordinateService CoordinateService { get; }
@@ -55,8 +54,8 @@ namespace chess.v4.engine.service {
 		}
 
 		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination) {
-			var pos1 = CoordinateService.CoordinateToPosition("e2");
-			var pos2 = CoordinateService.CoordinateToPosition("e4");
+			var pos1 = CoordinateService.CoordinateToPosition(beginning);
+			var pos2 = CoordinateService.CoordinateToPosition(destination);
 			return this.MakeMove(gameState, pos1, pos2, string.Empty);
 		}
 
@@ -70,16 +69,16 @@ namespace chess.v4.engine.service {
 			gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
 
 			//having problems on the 2nd time through
-			var allAttacks = AttackService.GetAttacks(gameState, false);
-			var whiteAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.White);
-			var blackAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.Black);
+			//var allAttacks = AttackService.GetAttacks(gameState, false);
+			//var whiteAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.White);
+			//var blackAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.Black);
 
-			var whiteKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.White).Single();
-			var blackKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.Black).Single();
+			//var whiteKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.White).Single();
+			//var blackKingSquare = gameState.Squares.Where(a => a.Piece != null && a.Piece.PieceType == PieceType.King && a.Piece.Color == Color.Black).Single();
 
 			//todo: refactor this so that the piece contains its own attacks?
-			var attacksThatCheckWhite = blackAttacks.Where(a => a.Index == whiteKingSquare.Index);
-			var attacksThatCheckBlack = whiteAttacks.Where(a => a.Index == blackKingSquare.Index);
+			//var attacksThatCheckWhite = blackAttacks.Where(a => a.Index == whiteKingSquare.Index);
+			//var attacksThatCheckBlack = whiteAttacks.Where(a => a.Index == blackKingSquare.Index);
 
 			//gameState.MoveInfo = this.MoveService.GetMoveInfo(gameState, allAttacks);
 
@@ -117,6 +116,7 @@ namespace chess.v4.engine.service {
 			};
 			oldSquare.Piece = null;
 			newGameState.FEN_Records.Add(new FEN_Record(oldFen));
+			this.NotationService.SetGameState_FEN(gameState, position, newPiecePosition);
 			return Envelope<GameState>.Ok(newGameState);
 		}
 	}

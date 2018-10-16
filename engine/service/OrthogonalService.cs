@@ -40,24 +40,24 @@ namespace chess.v4.engine.service {
 			return attacks;
 		}
 
-		public List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false) {
-			var currentPosition = square.Index;
+		public List<Square> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false) {
+			var currentPosition = movingSquare.Index;
 			var endCondition = getEndCondition(direction, currentPosition);
 			var attacks = new List<Square>();
 			var iterator = getIteratorByDirectionEnum(direction);
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
 				var isValidCoordinate = this.CoordinateService.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
+				var square = gameState.Squares.GetSquare(position);
 				if (!square.Occupied) {
 					attacks.Add(square);
 					continue;
 				}
-				var blockingPiece = gameState.Squares.GetPiece(position);
-				var canAttackPiece = GeneralUtility.CanAttackPiece(square.Piece.Color, blockingPiece.Identity);
+				var canAttackPiece = GeneralUtility.CanAttackPiece(movingSquare.Piece.Color, square.Piece.Identity);
 				if (canAttackPiece) {
-					attacks.Add(square);
+					attacks.Add(movingSquare);
 				}
-				var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, square.Piece.Color);
+				var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, square.Piece, movingSquare.Piece.Color);
 				if (breakAfterAction) {
 					break;
 				}
