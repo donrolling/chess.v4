@@ -21,7 +21,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public Envelope<GameState> Initialize(string fen) {
-			return getNewGameState(new FEN_Record(fen));
+			return hydrateGameState(new FEN_Record(fen));
 		}
 
 		/// <summary>
@@ -55,12 +55,12 @@ namespace chess.v4.engine.service {
 		}
 
 		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination) {
-			var pos1 = CoordinateService.CoordinateToPosition("e2");
-			var pos2 = CoordinateService.CoordinateToPosition("e4");
+			var pos1 = CoordinateService.CoordinateToPosition(beginning);
+			var pos2 = CoordinateService.CoordinateToPosition(destination);
 			return this.MakeMove(gameState, pos1, pos2, string.Empty);
 		}
 
-		private Envelope<GameState> getNewGameState(FEN_Record fenRecord, string errorMessage = null) {
+		private Envelope<GameState> hydrateGameState(FEN_Record fenRecord, string errorMessage = null) {
 			if (!string.IsNullOrEmpty(errorMessage)) {
 				return Envelope<GameState>.Error(errorMessage);
 			}
