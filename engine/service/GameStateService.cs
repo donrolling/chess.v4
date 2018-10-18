@@ -50,8 +50,7 @@ namespace chess.v4.engine.service {
 			if (moveInfo.IsCheck) {
 				return Envelope<GameState>.Error("Must move out of check. Must not move into check.");
 			}
-			var newGameState = gameState.DeepCopy();
-			return this.makeMove(newGameState, piecePosition, moveInfo, newPiecePosition);
+			return this.makeMove(gameState, piecePosition, moveInfo, newPiecePosition);
 		}
 
 		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination) {
@@ -105,19 +104,26 @@ namespace chess.v4.engine.service {
 		}
 
 		private Envelope<GameState> makeMove(GameState gameState, int position, MoveInfo moveInfo, int newPiecePosition) {
-			gameState.MoveInfo = moveInfo;
-			var oldFen = gameState.ToString();
-			var oldSquare = gameState.Squares.GetSquare(position);
-			var newSquare = gameState.Squares.GetSquare(newPiecePosition);
-			newSquare.Piece = new Piece {
+			var newGameState = gameState.DeepCopy();
+			var oldFen = newGameState.ToString();
+			newGameState.FEN_Records.Add(new FEN_Record(oldFen));
+			newGameState.MoveInfo = moveInfo;
+			var oldSquare = newGameState.Squares.GetSquare(position);
+			var oldSquareCopy = (Square)oldSquare.Clone();
+			oldSquareCopy.Piece = null;
+			var newSquare = newGameState.Squares.GetSquare(newPiecePosition);
+			var newSquareCopy = (Square)newSquare.Clone();
+			newSquareCopy.Piece = new Piece {
 				Identity = oldSquare.Piece.Identity,
 				PieceType = oldSquare.Piece.PieceType,
 				Color = oldSquare.Piece.Color
 			};
-			oldSquare.Piece = null;
-			gameState.FEN_Records.Add(new FEN_Record(oldFen));
-			this.NotationService.SetGameState_FEN(gameState, position, newPiecePosition);
-			return Envelope<GameState>.Ok(gameState);
+			newGameState.Squares.Remove(oldSquare);
+			newGameState.Squares.Remove(newSquare);
+			newGameState.Squares.Add(oldSquareCopy);
+			newGameState.Squares.Add(newSquareCopy);
+			this.NotationService.SetGameState_FEN(gameState, newGameState, position, newPiecePosition);
+			return Envelope<GameState>.Ok(newGameState);
 		}
 	}
 }

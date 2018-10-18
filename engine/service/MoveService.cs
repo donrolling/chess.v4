@@ -18,7 +18,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public Envelope<MoveInfo> GetMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks) {
-			gameState.ActiveColor = gameState.ActiveColor.Reverse();
+			var newActiveColor = gameState.ActiveColor.Reverse();
 			gameState.MoveInfo = new MoveInfo();
 			var oldSquare = gameState.Squares.GetSquare(piecePosition);
 			var isValidCastleAttempt = this.IsValidCastleAttempt(gameState, oldSquare, newPiecePosition, allAttacks);
@@ -29,7 +29,7 @@ namespace chess.v4.engine.service {
 			}
 			var isEnPassant = this.IsEnPassant(oldSquare, newPiecePosition, gameState.EnPassantTargetSquare);
 			if (isEnPassant) { //if is en passant, update matrix again
-				var pawnPassing = gameState.ActiveColor == Color.White ? (newPiecePosition - 8) : (newPiecePosition + 8);
+				var pawnPassing = newActiveColor == Color.White ? (newPiecePosition - 8) : (newPiecePosition + 8);
 				gameState.Squares.GetSquare(pawnPassing).Piece = null;
 			}
 
@@ -42,7 +42,7 @@ namespace chess.v4.engine.service {
 					gameState.PGN += score;
 				}
 				if (isResign) {
-					var score = string.Concat(" ", gameState.ActiveColor == Color.White ? "1-0" : "0-1");
+					var score = string.Concat(" ", newActiveColor == Color.White ? "1-0" : "0-1");
 					gameState.PGN += score;
 				}
 			}
