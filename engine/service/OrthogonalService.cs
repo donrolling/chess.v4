@@ -11,9 +11,11 @@ namespace chess.v4.engine.service {
 
 	public class OrthogonalService : IOrthogonalService {
 		public ICoordinateService CoordinateService { get; }
+		public IMoveService MoveService { get; }
 
-		public OrthogonalService(ICoordinateService coordinateService) {
+		public OrthogonalService(ICoordinateService coordinateService, IMoveService moveService) {
 			CoordinateService = coordinateService;
+			MoveService = moveService;
 		}
 
 		public List<int> GetEntireFile(int file) {
@@ -48,17 +50,14 @@ namespace chess.v4.engine.service {
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
 				var isValidCoordinate = this.CoordinateService.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
-				if (!square.Occupied) {
-					attacks.Add(square);
+				var moveViability = this.MoveService.DetermineMoveViability(gameState, position, ignoreKing);
+				if (!moveViability.IsValidCoordinate) {
 					continue;
 				}
-				var blockingPiece = gameState.Squares.GetPiece(position);
-				var canAttackPiece = GeneralUtility.CanAttackPiece(square.Piece.Color, blockingPiece.Identity);
-				if (canAttackPiece) {
+				if (moveViability.CanAttackPiece && moveViability.SquareToAdd != null) {
 					attacks.Add(square);
 				}
-				var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, square.Piece.Color);
-				if (breakAfterAction) {
+				if (moveViability.BreakAfterAction) {
 					break;
 				}
 			}

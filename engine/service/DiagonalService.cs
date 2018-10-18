@@ -1,18 +1,18 @@
 ﻿using chess.v4.engine.enumeration;
-using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
-using chess.v4.engine.utility;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.service {
 
 	public class DiagonalService : IDiagonalService {
 		public ICoordinateService CoordinateService { get; }
+		public IMoveService MoveService { get; }
 
-		public DiagonalService(ICoordinateService coordinateService) {
+		public DiagonalService(ICoordinateService coordinateService, IMoveService moveService) {
 			CoordinateService = coordinateService;
+			MoveService = moveService;
 		}
 
 		public List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing) {
@@ -22,23 +22,18 @@ namespace chess.v4.engine.service {
 			var newPosition = square.Index;
 			do {
 				if (canDoDiagonalsFromStartPosition(position, diagonalLine)) {
-					newPosition = position + diagonalLine;
-					var isValidCoordinate = this.CoordinateService.IsValidCoordinate(newPosition);
-					if (!isValidCoordinate) { break; }
-					var newSquare = gameState.Squares.GetSquare(newPosition);
-					if (!newSquare.Occupied) {
-						attacks.Add(square);
-						continue;
-					}
-					var blockingPiece = newSquare.Piece;
-					var canAttackPiece = GeneralUtility.CanAttackPiece(newSquare.Piece.Color, blockingPiece);
-					if (canAttackPiece) {
-						attacks.Add(square);
-					}
-					var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
-					if (breakAfterAction) {
-						break;
-					}
+					break;
+				}
+				newPosition = position + diagonalLine;
+				var moveViability = this.MoveService.DetermineMoveViability(gameState, newPosition, ignoreKing);
+				if (!moveViability.IsValidCoordinate) {
+					continue;
+				}
+				if (moveViability.CanAttackPiece && moveViability.SquareToAdd != null) {
+					attacks.Add(square);
+				}
+				if (moveViability.BreakAfterAction) {
+					break;
 				}
 			} while (isValidDiagonalCoordinate(newPosition));
 			return attacks;
@@ -53,9 +48,8 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool canDoDiagonalsFromStartPosition(int startPosition, int direction) {
-			bool isLeftSide = startPosition % 8 == 0;
-			bool isRightSide = startPosition % 8 == 7;
-
+			var isLeftSide = startPosition % 8 == 0;
+			var isRightSide = startPosition % 8 == 7;
 			if (isLeftSide && (direction == 7 || direction == -9)) { return false; }
 			if (isRightSide && (direction == -7 || direction == 9)) { return false; }
 			return true;

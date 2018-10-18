@@ -2,6 +2,7 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using chess.v4.engine.utility;
 using common;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,10 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class MoveService : IMoveService {
-		public IAttackService AttackService { get; }
 		public ICoordinateService CoordinateService { get; }
 
-		public MoveService(ICoordinateService coordinateService, IAttackService attackService) {
+		public MoveService(ICoordinateService coordinateService) {
 			CoordinateService = coordinateService;
-			AttackService = attackService;
 		}
 
 		public Envelope<MoveInfo> GetMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks) {
@@ -80,6 +79,23 @@ namespace chess.v4.engine.service {
 			//gameState.FEN_Records.Add(new FEN_Record(gameState.ToString()));
 		}
 
+		public (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, int newPosition, bool ignoreKing) {
+			if (!this.CoordinateService.IsValidCoordinate(newPosition)) {
+				return (false, false, false, null);
+			}
+			var newSquare = gameState.Squares.GetSquare(newPosition);
+			if (!newSquare.Occupied) {
+				return (true, false, false, newSquare);
+			}
+			var blockingPiece = newSquare.Piece;
+			var canAttackPiece = GeneralUtility.CanAttackPiece(newSquare.Piece.Color, blockingPiece);
+			if (!canAttackPiece) {
+				return (true, false, false, null);
+			}
+			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
+			return (true, breakAfterAction, true, newSquare);
+		}
+
 		/// <summary>
 		/// In chess, in order for a position to be considered the same, each player must have the same set of legal moves each time,
 		/// including the possible rights to castle and capture en passant. Positions are considered the same if the same type of piece
@@ -95,45 +111,45 @@ namespace chess.v4.engine.service {
 					.Any();
 		}
 
-		public bool IsCheckmate(GameState gameState, Square enemyKingPosition, IEnumerable<AttackedSquare> whiteAttacks, IEnumerable<AttackedSquare> blackAttacks) {
-			var activeColor = gameState.ActiveColor;
-			var squares = gameState.Squares;
-			var checkedColor = gameState.ActiveColor == Color.White ? Color.White : Color.Black; //trust me this is right
-			var kingIsBeingAttacked = whiteAttacks.Any(a => a.Index == enemyKingPosition.Index) || blackAttacks.Any(a => a.Index == enemyKingPosition.Index);
-			if (!kingIsBeingAttacked) {
-				return false;
-			}
-			//make sure that he cannot move
-			var kingHasEscape = false;
+		//public bool IsCheckmate(GameState gameState, Square enemyKingPosition, IEnumerable<AttackedSquare> whiteAttacks, IEnumerable<AttackedSquare> blackAttacks) {
+		//	var activeColor = gameState.ActiveColor;
+		//	var squares = gameState.Squares;
+		//	var checkedColor = gameState.ActiveColor == Color.White ? Color.White : Color.Black; //trust me this is right
+		//	var kingIsBeingAttacked = whiteAttacks.Any(a => a.Index == enemyKingPosition.Index) || blackAttacks.Any(a => a.Index == enemyKingPosition.Index);
+		//	if (!kingIsBeingAttacked) {
+		//		return false;
+		//	}
+		//	//make sure that he cannot move
+		//	var kingHasEscape = false;
 
-			var friendlyAttacks = (activeColor == Color.White ? whiteAttacks : blackAttacks);
-			var opponentAttacks = (activeColor == Color.White ? blackAttacks : whiteAttacks);
+		//	var friendlyAttacks = (activeColor == Color.White ? whiteAttacks : blackAttacks);
+		//	var opponentAttacks = (activeColor == Color.White ? blackAttacks : whiteAttacks);
 
-			//fix enemyKingAttacks. trying to figure out the moves that the king can make
-			var enemyKingAttacks = squares;
+		//	//fix enemyKingAttacks. trying to figure out the moves that the king can make
+		//	var enemyKingAttacks = squares;
 
-			var remainingKingAttacks = enemyKingAttacks.Except(opponentAttacks);
-			if (remainingKingAttacks.Any()) {
-				kingHasEscape = true;
-			}
-			if (kingHasEscape) {
-				return false;
-			}
-			//make sure that interposition is not possible
-			var attackers = opponentAttacks.Where(a => a.Index == enemyKingPosition.Index);
-			//if there are no attackers there cannot be a single interposition that saves the king
-			if (attackers == null || !attackers.Any() || attackers.Count() > 1) {
-				return true;
-			}
-			var attacker = attackers.FirstOrDefault();
-			var theAttack = this.AttackService.GetKingAttack(attacker, gameState, enemyKingPosition);
-			var interposers = friendlyAttacks.ToList().Intersect(theAttack);
-			if (interposers.Any()) {
-				return false;
-			}
-			//there were no friendlies to save the king, checkmate is true
-			return true;
-		}
+		//	var remainingKingAttacks = enemyKingAttacks.Except(opponentAttacks);
+		//	if (remainingKingAttacks.Any()) {
+		//		kingHasEscape = true;
+		//	}
+		//	if (kingHasEscape) {
+		//		return false;
+		//	}
+		//	//make sure that interposition is not possible
+		//	var attackers = opponentAttacks.Where(a => a.Index == enemyKingPosition.Index);
+		//	//if there are no attackers there cannot be a single interposition that saves the king
+		//	if (attackers == null || !attackers.Any() || attackers.Count() > 1) {
+		//		return true;
+		//	}
+		//	var attacker = attackers.FirstOrDefault();
+		//	var theAttack = this.AttackService.GetKingAttack(attacker, gameState, enemyKingPosition);
+		//	var interposers = friendlyAttacks.ToList().Intersect(theAttack);
+		//	if (interposers.Any()) {
+		//		return false;
+		//	}
+		//	//there were no friendlies to save the king, checkmate is true
+		//	return true;
+		//}
 
 		public bool IsDiagonalMove(int startPosition, int endPosition) {
 			var startMod = startPosition % 8;

@@ -5,12 +5,15 @@ using System.Collections.Generic;
 
 namespace chess.v4.engine.interfaces {
 
-	public interface IMoveService {	
+	public interface IMoveService {
+
+		(bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, int newPosition, bool ignoreKing);
+
 		Envelope<MoveInfo> GetMoveInfo(GameState newGameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks);
 
 		bool HasThreefoldRepition(GameState gameState);
 
-		bool IsCheckmate(GameState gameState, Square checkedKing, IEnumerable<AttackedSquare> allAttacks, IEnumerable<AttackedSquare> blackAttacks);
+		//bool IsCheckmate(GameState gameState, Square checkedKing, IEnumerable<AttackedSquare> allAttacks, IEnumerable<AttackedSquare> blackAttacks);
 
 		bool IsDiagonalMove(int startPosition, int endPosition);
 
