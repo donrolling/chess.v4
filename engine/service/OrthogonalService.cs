@@ -55,7 +55,7 @@ namespace chess.v4.engine.service {
 					continue;
 				}
 				if (moveViability.CanAttackPiece && moveViability.SquareToAdd != null) {
-					attacks.Add(square);
+					attacks.Add(moveViability.SquareToAdd);
 				}
 				if (moveViability.BreakAfterAction) {
 					break;
