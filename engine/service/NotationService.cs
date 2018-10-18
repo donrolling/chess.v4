@@ -18,22 +18,21 @@ namespace chess.v4.engine.service {
 			CoordinateService = coordinateService;
 		}
 
-		//public FEN_Record CreateNewFENFromGameState(GameState gameState, List<Square> squares, int piecePosition, int newPiecePosition) {
-		//	var position = createNewPositionFromMatrix(squares);
-		//	var castlingAvailability = getCastlingAvailability(squares, gameState.CastlingAvailability, piecePosition, newPiecePosition);
-		//	var enPassantCoord = getEnPassantCoord(squares, gameState.ActiveColor, piecePosition, newPiecePosition);
-		//	var halfmoveClock = getHalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
-		//	var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
-		//	var activeColor = GeneralUtility.Reverse(gameState.ActiveColor);
-		//	return new FEN_Record {
-		//		PiecePlacement = position,
-		//		ActiveColor = activeColor,
-		//		CastlingAvailability = castlingAvailability,
-		//		EnPassantTargetSquare = enPassantCoord,
-		//		FullmoveNumber = fullmoveNumber,
-		//		HalfmoveClock = halfmoveClock
-		//	};
-		//}
+		public void SetGameState_FEN(GameState gameState, int piecePosition, int newPiecePosition) {
+			var squares = gameState.Squares;
+			var position = createNewPositionFromMatrix(squares);
+			var castlingAvailability = getCastlingAvailability(gameState, gameState.CastlingAvailability, piecePosition, newPiecePosition);
+			var enPassantCoord = getEnPassantCoord(squares, gameState.ActiveColor, piecePosition, newPiecePosition);
+			var halfmoveClock = getHalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
+			var fullmoveNumber = getFullmoveNumber(gameState.FullmoveNumber, gameState.ActiveColor);
+			var activeColor = gameState.ActiveColor;
+			gameState.PiecePlacement = position;
+			gameState.ActiveColor = activeColor;
+			gameState.CastlingAvailability = castlingAvailability;
+			gameState.EnPassantTargetSquare = enPassantCoord;
+			gameState.FullmoveNumber = fullmoveNumber;
+			gameState.HalfmoveClock = halfmoveClock;
+		}
 
 		public List<Square> GetSquaresFromFEN_Record(FEN_Record fen) {
 			var squares = new List<Square>();
@@ -118,8 +117,8 @@ namespace chess.v4.engine.service {
 			return position.ToString();
 		}
 
-		private string getCastlingAvailability(List<Square> matrix, string castlingAvailability, int piecePosition, int newPiecePosition) {
-			var square = matrix.Where(a => a.Index == newPiecePosition).First();
+		private string getCastlingAvailability(GameState gameState, string castlingAvailability, int piecePosition, int newPiecePosition) {
+			var square = gameState.Squares.GetSquare(newPiecePosition);
 			var movingPiece = square.Piece;
 			if (movingPiece.PieceType == PieceType.Rook || movingPiece.PieceType == PieceType.King) {
 				switch (piecePosition) {
@@ -159,7 +158,7 @@ namespace chess.v4.engine.service {
 				if (diff == 16) {
 					var moveMarker = 8;
 					if (activeColor == Color.White) { moveMarker = (moveMarker * -1); }
-					var enPassantSquare = newPiecePosition + moveMarker;
+					var enPassantSquare = piecePosition + moveMarker;
 					var enPassantCoord = this.CoordinateService.PositionToCoordinate(enPassantSquare);
 					return enPassantCoord;
 				}
@@ -168,7 +167,7 @@ namespace chess.v4.engine.service {
 		}
 
 		private int getFullmoveNumber(int fullmoveNumber, Color activeColor) {
-			if (activeColor == Color.Black) {
+			if (activeColor == Color.White) {
 				return fullmoveNumber + 1;
 			}
 			return fullmoveNumber;

@@ -42,8 +42,8 @@ namespace chess.v4.engine.service {
 			return attacks;
 		}
 
-		public List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false) {
-			var currentPosition = square.Index;
+		public List<Square> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false) {
+			var currentPosition = movingSquare.Index;
 			var endCondition = getEndCondition(direction, currentPosition);
 			var attacks = new List<Square>();
 			var iterator = getIteratorByDirectionEnum(direction);
