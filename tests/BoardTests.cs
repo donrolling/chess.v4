@@ -133,12 +133,5 @@ namespace tests {
 			Assert.IsTrue(gameStateResult.Result.Squares.GetPiece(18).Identity == 'N');
 			Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2", gameStateResult.Result.ToString());
 		}
-
-		//[TestMethod]
-		//public void ShitIsFucked() {
-		//	var fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
-		//	var gamestateResult = GameStateService.Initialize(fen);
-		//	Assert.IsTrue(gamestateResult.Sucess);
-		//}
 	}
 }

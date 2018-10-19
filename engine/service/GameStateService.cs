@@ -1,11 +1,11 @@
-﻿using chess.v4.engine.enumeration;
-using chess.v4.engine.extensions;
+﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using chess.v4.engine.reference;
 using common;
-using System.Linq;
 
 namespace chess.v4.engine.service {
+
 	public class GameStateService : IGameStateService {
 		public IAttackService AttackService { get; }
 		public ICoordinateService CoordinateService { get; }
@@ -21,6 +21,10 @@ namespace chess.v4.engine.service {
 
 		public Envelope<GameState> Initialize(string fen) {
 			return hydrateGameState(new FEN_Record(fen));
+		}
+
+		public Envelope<GameState> Initialize() {
+			return hydrateGameState(new FEN_Record(GeneralReference.Starting_FEN_Position));
 		}
 
 		/// <summary>
