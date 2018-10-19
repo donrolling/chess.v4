@@ -3,6 +3,7 @@ using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
 using common;
+using System.Linq;
 
 namespace chess.v4.engine.service {
 
@@ -73,7 +74,7 @@ namespace chess.v4.engine.service {
 			gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
 
 			//having problems on the 2nd time through
-			//var allAttacks = AttackService.GetAttacks(gameState, false);
+			gameState.Attacks = this.AttackService.GetAttacks(gameState, false).ToList();
 			//var whiteAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.White);
 			//var blackAttacks = allAttacks.Where(a => a.AttackerSquare.Piece.Color == Color.Black);
 
@@ -83,9 +84,7 @@ namespace chess.v4.engine.service {
 			//todo: refactor this so that the piece contains its own attacks?
 			//var attacksThatCheckWhite = blackAttacks.Where(a => a.Index == whiteKingSquare.Index);
 			//var attacksThatCheckBlack = whiteAttacks.Where(a => a.Index == blackKingSquare.Index);
-
-			//gameState.MoveInfo = this.MoveService.GetMoveInfo(gameState, allAttacks);
-
+						
 			//if (!string.IsNullOrEmpty(pgnMove)) {
 			//	bool isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
 			//	if (isPawnPromotion && isCheck) {

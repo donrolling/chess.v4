@@ -7,6 +7,7 @@ namespace chess.v4.engine.model {
 		public MoveInfo MoveInfo { get; set; }
 		public string PGN { get; set; }
 		public List<Square> Squares { get; set; } = new List<Square>();
+		public List<AttackedSquare> Attacks { get; set; } = new List<AttackedSquare>();
 
 		public GameState() {
 		}
