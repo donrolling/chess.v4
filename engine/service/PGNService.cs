@@ -27,13 +27,15 @@ namespace chess.v4.engine.service {
 		}
 
 		public int GetCurrentPositionFromPGNMove(GameState gameState, PieceType piece, Color playerColor, int newPiecePosition, string pgnMove) {
-			char pieceChar = GetPieceCharFromPieceTypeColor(piece, playerColor);
-			var potentialSquares = gameState.Attacks.Where(a => a.Index == newPiecePosition);
-			var potentialPositions = from s in gameState.Squares
-									 join p in potentialSquares on s.Index equals p.Index
-									 where s.Occupied && s.Piece.Identity == pieceChar
-									 select p;
-			if (!potentialPositions.Any()) {
+			//char pieceChar = GetPieceCharFromPieceTypeColor(piece, playerColor);
+			var potentialAttacks = gameState.Attacks.Where(a => 
+										a.Index == newPiecePosition 
+										//&& a.AttackerSquare.Piece.Identity == pieceChar
+										&& a.AttackerSquare.Piece.PieceType == piece
+										&& a.AttackerSquare.Piece.Color == playerColor
+									);
+			
+			if (!potentialAttacks.Any()) {
 				return -1; //meaning no postion available
 			}
 
@@ -48,12 +50,7 @@ namespace chess.v4.engine.service {
 			if (isCastle) {
 				return getOriginationPositionForCastling(playerColor);
 			}
-
-			//what??
-			//if (potentialPositions.Count() < 1) {
-			//	return potentialPositions.First().Key;
-			//}
-
+	
 			//todo: refactor to eliminate redundancy
 			//look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
 			//this should only happen if there are two pieces of the same type that can attack here.
@@ -62,19 +59,18 @@ namespace chess.v4.engine.service {
 			switch (moveLength) {
 				case 2:
 					if (piece == PieceType.Pawn) {
-						if (!capture) { //todo: make sure this makes sense, i was distracted - seems ok two days later
-							if (playerColor == Color.White) {
-								return potentialPositions.Where(a => a.Index == newPiecePosition - 8 || a.Index == newPiecePosition - 16).First().Index;
-							} else {
-								return potentialPositions.Where(a => a.Index == newPiecePosition + 8 || a.Index == newPiecePosition + 16).First().Index;
-							}
+						if (!capture) {
+							//todo: make sure this makes sense, i was distracted - seems ok two days later
+							return potentialAttacks
+									.Where(a => a.Index == newPiecePosition
+									).First().Index;
 						}
 					}
 					return -1; //indicates failure
 				case 3: //this should be a pawn attack that can be made by two pawns
 					ambiguityResolver = newPgnMove[0];
 					var files = this.OrthogonalService.GetEntireFile(CoordinateService.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
-					var pieces = potentialPositions.Where(a => files.Contains(a.Index)).ToList();
+					var pieces = potentialAttacks.Where(a => files.Contains(a.Index)).ToList();
 					if (pieces.Count() > 1) {
 						throw new Exception("There should not be more than one item found here.");
 					}
@@ -92,7 +88,7 @@ namespace chess.v4.engine.service {
 						var iFile = CoordinateService.FileToInt(ambiguityResolver);
 						ambiguityResolutionSet = this.OrthogonalService.GetEntireFile(iFile);
 					}
-					var intersection = potentialPositions.Select(a => a.Index).Intersect(ambiguityResolutionSet);
+					var intersection = potentialAttacks.Select(a => a.Index).Intersect(ambiguityResolutionSet);
 					if (intersection.Count() > 1) {
 						throw new Exception("There should not be more than one item found here.");
 					}
