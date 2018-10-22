@@ -36,9 +36,12 @@ namespace chess.v4.engine.service {
 			}
 			//differentiate
 			var potentialPositions = from s in gameState.Squares
-									 join p in potentialSquares on s.Index equals p.Index
-									 where s.Occupied && s.Piece.Identity == piece.Identity
+									 join p in potentialSquares on s.Index equals p.AttackerSquare.Index
+									 where s.Piece.Identity == piece.Identity
 									 select p;
+			if (!potentialPositions.Any()) {
+				throw new Exception("No squares found.");
+			}
 			//x means capture and shouldn't be used in the equation below
 			var capture = isCapture(pgnMove);
 			var check = isCheck(pgnMove);
@@ -376,7 +379,7 @@ namespace chess.v4.engine.service {
 				var iFile = CoordinateService.FileToInt(ambiguityResolver);
 				ambiguityResolutionSet = this.OrthogonalService.GetEntireFile(iFile);
 			}
-			var intersection = potentialPositions.Select(a => a.Index).Intersect(ambiguityResolutionSet);
+			var intersection = potentialPositions.Select(a => a.AttackerSquare.Index).Intersect(ambiguityResolutionSet);
 			if (intersection.Count() > 1) {
 				throw new Exception("There should not be more than one item found here.");
 			}
