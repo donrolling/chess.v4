@@ -1,6 +1,8 @@
 ﻿using chess.v4.engine.interfaces;
 using chess.v4.engine.service;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog;
 using System;
 
 namespace tests.setup {
@@ -18,6 +20,7 @@ namespace tests.setup {
 			services.AddTransient<IOrthogonalService, OrthogonalService>();
 			services.AddTransient<IPGNFileService, PGNFileService>();
 			services.AddTransient<IPGNService, PGNService>();
+			services.AddTransient<ILoggerFactory, LoggerFactory>();
 			return services.BuildServiceProvider();
 		}
 	}

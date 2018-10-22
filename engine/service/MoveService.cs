@@ -85,12 +85,12 @@ namespace chess.v4.engine.service {
 			}
 			var newSquare = gameState.Squares.GetSquare(newPosition);
 			if (!newSquare.Occupied) {
-				return (true, false, false, newSquare);
+				return (true, false, true, newSquare);
 			}
 			var blockingPiece = newSquare.Piece;
-			var canAttackPiece = GeneralUtility.CanAttackPiece(newSquare.Piece.Color, blockingPiece);
+			var canAttackPiece = GeneralUtility.CanAttackPiece(gameState.ActiveColor, blockingPiece);
 			if (!canAttackPiece) {
-				return (true, false, false, null);
+				return (true, true, false, null);
 			}
 			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
 			return (true, breakAfterAction, true, newSquare);
