@@ -198,7 +198,6 @@ namespace chess.v4.engine.service {
 			var squares = gameState.Squares;
 			var position = square.Index;
 			var pieceColor = square.Piece.Color;
-			var attacks = new List<Square>();
 			var coord = CoordinateService.PositionToCoordinate(position);
 			int file = CoordinateService.FileToInt(coord[0]);
 			int rank = CoordinateService.PositionToRankInt(position);
@@ -209,6 +208,7 @@ namespace chess.v4.engine.service {
 			var nextRank = (rank + directionIndicator);
 			var newPosition = CoordinateService.CoordinatePairToPosition(file, nextRank);
 			var attackedSquare = squares.GetSquare(newPosition);
+			var attacks = new List<Square>();
 			attacks.Add(attackedSquare);
 
 			if (file - 1 >= 0) {
@@ -226,7 +226,7 @@ namespace chess.v4.engine.service {
 				}
 			}
 			//have to plus one here because rank is zero based and coordinate is base 1
-			if ((rank + 1) == rankIndicator) {
+			if (rank + 1 == rankIndicator) {
 				var rankUpPosition = CoordinateService.CoordinatePairToPosition(file, nextRank + directionIndicator);
 				attacks.Add(squares.GetSquare(rankUpPosition));
 			}
@@ -318,17 +318,12 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private bool isValidPawnAttack(List<Square> matrix, int position, Color pieceColor) {
-			if (CoordinateService.IsValidCoordinate(position)) {
-				return true;
-				//if (matrix.Select(a => a.Key).Contains(position)) {
-				//var blockingPiece = matrix.Where(a => a.Key == position).First();
-				//if (CoordinateService.CanAttackPiece(pieceColor, blockingPiece.Value)) {
-				//	return true;
-				//}
-				//}
+		private bool isValidPawnAttack(List<Square> squares, int position, Color pieceColor) {
+			var attackedSquare = squares.GetSquare(position);
+			if (!attackedSquare.Occupied) {
+				return false;
 			}
-			return false;
+			return GeneralUtility.CanAttackPiece(pieceColor, attackedSquare.Piece);
 		}
 
 		private void removeKingChecksFromKingMoves(GameState gameState, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {

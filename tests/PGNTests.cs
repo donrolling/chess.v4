@@ -1,5 +1,6 @@
 ﻿using chess.v4.engine.enumeration;
 using chess.v4.engine.interfaces;
+using chess.v4.engine.model;
 using common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using tests.setup;
@@ -25,11 +26,11 @@ namespace tests {
 			Assert.IsTrue(gameStateResult.Sucess);
 			var gameState = gameStateResult.Result;
 
-			var positions = PGNService.PGNMoveToSquarePair(gameState, Color.White, "e4");
+			var positions = PGNService.PGNMoveToSquarePair(gameState, "e4");
 			Assert.AreEqual(12, positions.Item1);
 			Assert.AreEqual(28, positions.Item2);
 
-			var positions2 = PGNService.PGNMoveToSquarePair(gameState, Color.White, "e3");
+			var positions2 = PGNService.PGNMoveToSquarePair(gameState, "e3");
 			Assert.AreEqual(12, positions2.Item1);
 			Assert.AreEqual(20, positions2.Item2);
 		}
@@ -57,7 +58,8 @@ namespace tests {
 			var gameStateResult = this.GameStateService.Initialize(fen);
 			Assert.IsTrue(gameStateResult.Sucess);
 			var gameState = gameStateResult.Result;
-			var pos = PGNService.GetCurrentPositionFromPGNMove(gameState, PieceType.Rook, Color.White, 43, "R1d6");
+			var piece = new Piece(PieceType.Rook, Color.White);
+			var pos = PGNService.GetCurrentPositionFromPGNMove(gameState, piece, 43, "R1d6");
 			Assert.AreEqual(3, pos);
 		}
 	}
