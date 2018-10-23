@@ -11,12 +11,10 @@ using System.Text;
 namespace chess.v4.engine.service {
 
 	public class NotationService : INotationService {
-		public ICoordinateService CoordinateService { get; }
 		private static List<PieceType> _castlingPieces { get; set; } = new List<PieceType> { PieceType.Rook, PieceType.King };
 		private const string defaultCastlingAvailability = "KQkq";
 
-		public NotationService(ICoordinateService coordinateService) {
-			CoordinateService = coordinateService;
+		public NotationService() {
 		}
 
 		public List<Square> GetSquaresFromFEN_Record(FEN_Record fen) {
@@ -45,10 +43,10 @@ namespace chess.v4.engine.service {
 					} else {
 						var index = leftSideIndex + charIndex;
 						squares.Add(
-							new Square {
-								Index = index,
-								Piece = NotationUtility.GetPieceFromCharacter(c)
-							}
+							new Square(index,
+								NotationUtility.PositionToCoordinate(index),
+								NotationUtility.GetPieceFromCharacter(c)
+							)
 						);
 						charIndex++;
 					}
@@ -129,7 +127,7 @@ namespace chess.v4.engine.service {
 			}
 			var moveMarker = activeColor == Color.White ? 8 : -8;
 			var enPassantSquare = piecePosition + moveMarker;
-			return this.CoordinateService.PositionToCoordinate(enPassantSquare);
+			return NotationUtility.PositionToCoordinate(enPassantSquare);
 		}
 
 		private int getFullmoveNumber(int fullmoveNumber, Color activeColor) {

@@ -1,7 +1,9 @@
-﻿using chess.v4.engine.extensions;
+﻿using chess.v4.engine.enumeration;
+using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
+using chess.v4.engine.utility;
 using common;
 using System.Linq;
 
@@ -9,23 +11,22 @@ namespace chess.v4.engine.service {
 
 	public class GameStateService : IGameStateService {
 		public IAttackService AttackService { get; }
-		public ICoordinateService CoordinateService { get; }
+
 		public IMoveService MoveService { get; }
 		public INotationService NotationService { get; }
 
-		public GameStateService(INotationService notationService, ICoordinateService coordinateService, IMoveService moveService, IAttackService attackService) {
+		public GameStateService(INotationService notationService, IMoveService moveService, IAttackService attackService) {
 			NotationService = notationService;
-			CoordinateService = coordinateService;
+
 			MoveService = moveService;
 			AttackService = attackService;
 		}
 
 		public Envelope<GameState> Initialize(string fen) {
+			if (string.IsNullOrEmpty(fen)) {
+				fen = GeneralReference.Starting_FEN_Position;
+			}
 			return hydrateGameState(new FEN_Record(fen));
-		}
-
-		public Envelope<GameState> Initialize() {
-			return hydrateGameState(new FEN_Record(GeneralReference.Starting_FEN_Position));
 		}
 
 		/// <summary>
@@ -38,30 +39,37 @@ namespace chess.v4.engine.service {
 		/// <param name="gameState"></param>
 		/// <param name="piecePosition">Positions should be numbered 0-63 where a1 is 0</param>
 		/// <param name="newPiecePosition">Positions should be numbered 0-63 where a1 is 0</param>
-		/// <param name="pgnMove"></param>
 		/// <returns></returns>
-		public Envelope<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, string pgnMove) {
+		public Envelope<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType = null) {
+			var moveInfo = this.getMoveInfo(gameState, piecePosition, newPiecePosition, piecePromotionType);
+			if (moveInfo.Failure) {
+				return Envelope<GameState>.Error(moveInfo.Message);
+			}
+			return this.makeMove(gameState, piecePosition, moveInfo.Result, newPiecePosition);
+		}
+
+		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination, PieceType? piecePromotionType = null) {
+			var pos1 = NotationUtility.CoordinateToPosition(beginning);
+			var pos2 = NotationUtility.CoordinateToPosition(destination);
+			return this.MakeMove(gameState, pos1, pos2, piecePromotionType);
+		}
+
+		private Envelope<MoveInfo> getMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType) {
 			var square = gameState.Squares.GetSquare(piecePosition);
 			if (!square.Occupied) {
-				return Envelope<GameState>.Error("Square was empty.");
+				return Envelope<MoveInfo>.Error("Square was empty.");
 			}
 			var allAttacks = this.AttackService.GetAttacks(gameState, false);
 			var moveInfoResult = this.MoveService.GetMoveInfo(gameState, piecePosition, newPiecePosition, allAttacks);
 			if (moveInfoResult.Failure) {
-				return Envelope<GameState>.Error(moveInfoResult.Message);
+				return Envelope<MoveInfo>.Error(moveInfoResult.Message);
 			}
 			var moveInfo = moveInfoResult.Result;
 			//var putsOwnKingInCheck = false;
 			if (moveInfo.IsCheck) {
-				return Envelope<GameState>.Error("Must move out of check. Must not move into check.");
+				return Envelope<MoveInfo>.Error("Must move out of check. Must not move into check.");
 			}
-			return this.makeMove(gameState, piecePosition, moveInfo, newPiecePosition);
-		}
-
-		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination) {
-			var pos1 = CoordinateService.CoordinateToPosition(beginning);
-			var pos2 = CoordinateService.CoordinateToPosition(destination);
-			return this.MakeMove(gameState, pos1, pos2, string.Empty);
+			return Envelope<MoveInfo>.Ok(moveInfo);
 		}
 
 		private Envelope<GameState> hydrateGameState(FEN_Record fenRecord, string errorMessage = null) {
@@ -84,7 +92,7 @@ namespace chess.v4.engine.service {
 			//todo: refactor this so that the piece contains its own attacks?
 			//var attacksThatCheckWhite = blackAttacks.Where(a => a.Index == whiteKingSquare.Index);
 			//var attacksThatCheckBlack = whiteAttacks.Where(a => a.Index == blackKingSquare.Index);
-						
+
 			//if (!string.IsNullOrEmpty(pgnMove)) {
 			//	bool isPawnPromotion = pgnMove.Contains(PGNService.PawnPromotionIndicator);
 			//	if (isPawnPromotion && isCheck) {

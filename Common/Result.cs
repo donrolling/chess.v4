@@ -3,7 +3,7 @@
 	public class Result {
 		private bool _success = true;
 
-		public bool Sucess {
+		public bool Success {
 			get {
 				return _success;
 			}
@@ -25,14 +25,14 @@
 
 		public static Result Ok(string message = "") {
 			return new Result {
-				Sucess = true,
+				Success = true,
 				Message = message
 			};
 		}
 
 		public static Result Error(string message) {
 			return new Result {
-				Sucess = false,
+				Success = false,
 				Message = message
 			};
 		}

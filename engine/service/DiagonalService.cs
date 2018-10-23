@@ -7,11 +7,9 @@ using System.Collections.Generic;
 namespace chess.v4.engine.service {
 
 	public class DiagonalService : IDiagonalService {
-		public ICoordinateService CoordinateService { get; }
 		public IMoveService MoveService { get; }
 
-		public DiagonalService(ICoordinateService coordinateService, IMoveService moveService) {
-			CoordinateService = coordinateService;
+		public DiagonalService(IMoveService moveService) {
 			MoveService = moveService;
 		}
 

@@ -2,6 +2,7 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
+using chess.v4.engine.utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,12 @@ namespace chess.v4.engine.service {
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
 	// kingside castling is indicated by the sequence "O-O"; queenside castling is indicated by the sequence "O-O-O"
 	public class PGNService : IPGNService {
-		public ICoordinateService CoordinateService { get; }
 		public IDiagonalService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
-		public PGNService(ICoordinateService coordinateService, IDiagonalService diagonalService, IOrthogonalService orthogonalService) {
-			CoordinateService = coordinateService;
+		public PGNService(IDiagonalService diagonalService, IOrthogonalService orthogonalService) {
 			DiagonalService = diagonalService;
 			OrthogonalService = orthogonalService;
 		}
@@ -158,8 +157,8 @@ namespace chess.v4.engine.service {
 			}
 			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
 			var result = pgnMove.Contains("=")
-							? CoordinateService.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 4, 2))
-							: CoordinateService.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 2, 2));
+							? NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 4, 2))
+							: NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 2, 2));
 			return result;
 		}
 
@@ -223,9 +222,9 @@ namespace chess.v4.engine.service {
 		private Square getOriginationPositionForCastling(GameState gameState, Color color) {
 			var rank = color == Color.White ? 1 : 8;
 			var file = 4;
-			var fileChar = CoordinateService.IntToFile(file);
+			var fileChar = NotationUtility.IntToFile(file);
 			var coord = string.Concat(fileChar, rank);
-			var origination = CoordinateService.CoordinateToPosition(coord);
+			var origination = NotationUtility.CoordinateToPosition(coord);
 			return gameState.Squares.GetSquare(origination);
 		}
 
@@ -253,8 +252,8 @@ namespace chess.v4.engine.service {
 			}
 
 			//if other piece is on same the file of departure (if they differ); or
-			var movingPieceFile = CoordinateService.PositionToFileChar(startPos);
-			var otherPieceFile = CoordinateService.PositionToFileChar(secondPiece.Index);
+			var movingPieceFile = NotationUtility.PositionToFileChar(startPos);
+			var otherPieceFile = NotationUtility.PositionToFileChar(secondPiece.Index);
 
 			if (movingPieceFile != otherPieceFile) {
 				if (notationPiece == 'P') {
@@ -265,8 +264,8 @@ namespace chess.v4.engine.service {
 				return result;
 			} else {
 				//the rank of departure (if the files are the same but the ranks differ)
-				var movingPieceRank = CoordinateService.PositionToRankInt(startPos);
-				var otherPieceRank = CoordinateService.PositionToRankInt(secondPiece.Index);
+				var movingPieceRank = NotationUtility.PositionToRankInt(startPos);
+				var otherPieceRank = NotationUtility.PositionToRankInt(secondPiece.Index);
 				if (movingPieceRank != otherPieceRank) {
 					result = string.Concat(pgnMove.Substring(0, 1), movingPieceRank, captureMarker, pgnMove.Substring(1, pgnMove.Length - 1));
 					return result;
@@ -286,7 +285,7 @@ namespace chess.v4.engine.service {
 			switch (notationPiece) {
 				case 'P':
 					if (isCapture) {
-						var file = CoordinateService.PositionToFileChar(startPos);
+						var file = NotationUtility.PositionToFileChar(startPos);
 						pgnMove = string.Concat(file, coord);
 					} else {
 						pgnMove = coord;
@@ -359,7 +358,7 @@ namespace chess.v4.engine.service {
 
 		private Square pgnLength3(IEnumerable<AttackedSquare> potentialPositions, string newPgnMove) {
 			var ambiguityResolver = newPgnMove[0];
-			var files = this.OrthogonalService.GetEntireFile(CoordinateService.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
+			var files = this.OrthogonalService.GetEntireFile(NotationUtility.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
 			var potentialSquare = potentialPositions.Where(a => files.Contains(a.Index)).ToList();
 			if (potentialSquare.Count() > 1) {
 				throw new Exception("There should not be more than one item found here.");
@@ -376,7 +375,7 @@ namespace chess.v4.engine.service {
 				Int32.TryParse(ambiguityResolver.ToString(), out rank);
 				ambiguityResolutionSet = this.OrthogonalService.GetEntireRank(rank - 1);//needs to be using zero-based rank offset
 			} else {
-				var iFile = CoordinateService.FileToInt(ambiguityResolver);
+				var iFile = NotationUtility.FileToInt(ambiguityResolver);
 				ambiguityResolutionSet = this.OrthogonalService.GetEntireFile(iFile);
 			}
 			var intersection = potentialPositions.Select(a => a.AttackerSquare.Index).Intersect(ambiguityResolutionSet);
@@ -387,16 +386,16 @@ namespace chess.v4.engine.service {
 		}
 
 		private Square pgnLength5(GameState gameState, string newPgnMove) {
-			var _file = CoordinateService.FileToInt(newPgnMove[1]);
+			var _file = NotationUtility.FileToInt(newPgnMove[1]);
 			var _rank = 0;
 			Int32.TryParse(newPgnMove[2].ToString(), out _rank);
-			var pos = CoordinateService.CoordinatePairToPosition(_file, _rank);
+			var pos = NotationUtility.CoordinatePairToPosition(_file, _rank);
 			return gameState.Squares.GetSquare(pos);
 		}
 
 		private string squarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare) {
-			var startPos = CoordinateService.CoordinateToPosition(startSquare);
-			var endPos = CoordinateService.CoordinateToPosition(endSquare);
+			var startPos = NotationUtility.CoordinateToPosition(startSquare);
+			var endPos = NotationUtility.CoordinateToPosition(endSquare);
 			var destinationSquare = gameState.Squares.GetSquare(endPos);
 			var isCapture = destinationSquare.Occupied && destinationSquare.Piece.Color != playerColor;
 
@@ -415,7 +414,7 @@ namespace chess.v4.engine.service {
 				throw new Exception("Color doesn't match given positions.");
 			}
 			var notationPiece = char.ToUpper(piece.Identity);
-			var coord = CoordinateService.PositionToCoordinate(endPos);
+			var coord = NotationUtility.PositionToCoordinate(endPos);
 			var pgnMove = getPgnMove(notationPiece, piece, coord, startPos, endPos, isCapture, gameState);
 			return pgnMove;
 		}

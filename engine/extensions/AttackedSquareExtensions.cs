@@ -1,16 +1,11 @@
 ﻿using chess.v4.engine.enumeration;
 using chess.v4.engine.model;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.extensions {
 
-	public static class SquareExtensions {
-
-		public static List<T> Clone<T>(this IList<T> listToClone) where T : ICloneable {
-			return listToClone.Select(item => (T)item.Clone()).ToList();
-		}
+	public static class AttackedSquareExtensions {
 
 		/// <summary>
 		/// Might not return the piece you want if there are more than one of that type and color.
@@ -19,31 +14,31 @@ namespace chess.v4.engine.extensions {
 		/// <param name="pieceType"></param>
 		/// <param name="pieceColor"></param>
 		/// <returns></returns>
-		public static Square FindPiece(this List<Square> squares, PieceType pieceType, Color pieceColor) {
+		public static AttackedSquare FindPiece(this List<AttackedSquare> squares, PieceType pieceType, Color pieceColor) {
 			return squares.Where(a => a.Occupied && a.Piece.PieceType == pieceType && a.Piece.Color == pieceColor).FirstOrDefault();
 		}
 
-		public static IEnumerable<Square> FindPieces(this List<Square> squares, PieceType pieceType, Color pieceColor) {
+		public static IEnumerable<AttackedSquare> FindPieces(this List<AttackedSquare> squares, PieceType pieceType, Color pieceColor) {
 			return squares.Where(a => a.Occupied && a.Piece.PieceType == pieceType && a.Piece.Color == pieceColor);
 		}
 
-		public static Piece GetPiece(this List<Square> squares, int piecePosition) {
+		public static Piece GetPiece(this List<AttackedSquare> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First().Piece;
 		}
 
-		public static Square GetSquare(this List<Square> squares, int piecePosition) {
+		public static AttackedSquare GetSquare(this List<AttackedSquare> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First();
 		}
 
-		public static bool Intersects(this List<Square> squares, int[] positions) {
+		public static bool Intersects(this List<AttackedSquare> squares, int[] positions) {
 			return positions.Intersect<int>(squares.Select(a => a.Index)).Any();
 		}
 
-		public static bool Intersects(this List<Square> squares, int position) {
+		public static bool Intersects(this List<AttackedSquare> squares, int position) {
 			return squares.Where(a => a.Index == position).Any();
 		}
 
-		public static IEnumerable<Square> Occupied(this List<Square> squares) {
+		public static IEnumerable<AttackedSquare> Occupied(this List<AttackedSquare> squares) {
 			return squares.Where(a => a.Piece != null);
 		}
 	}

@@ -11,16 +11,14 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class AttackService : IAttackService {
-		public ICoordinateService CoordinateService { get; }
 		public IDiagonalService DiagonalService { get; }
 		public INotationService NotationService { get; }
 		public IOrthogonalService OrthogonalService { get; }
 
-		public AttackService(INotationService notationService, IOrthogonalService orthogonalService, IDiagonalService diagonalService, ICoordinateService coordinateService) {
+		public AttackService(INotationService notationService, IOrthogonalService orthogonalService, IDiagonalService diagonalService) {
 			NotationService = notationService;
 			OrthogonalService = orthogonalService;
 			DiagonalService = diagonalService;
-			CoordinateService = coordinateService;
 		}
 
 		public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false) {
@@ -109,7 +107,7 @@ namespace chess.v4.engine.service {
 
 			foreach (var positionShim in positionList) {
 				var tempPos = position + positionShim;
-				var isValidCoordinate = CoordinateService.IsValidCoordinate(tempPos);
+				var isValidCoordinate = GeneralUtility.IsValidCoordinate(tempPos);
 				if (!isValidCoordinate) {
 					continue;
 				}
@@ -128,7 +126,7 @@ namespace chess.v4.engine.service {
 
 				do { //make sure the path is clear
 					clearPathPos += direction;
-					clearPathFile = CoordinateService.PositionToFile(clearPathPos);
+					clearPathFile = NotationUtility.PositionToFile(clearPathPos);
 				} while (isValidMove(squares, clearPathPos, pieceColor) && clearPathFile > 0 && clearPathFile < 8);
 
 				if (
@@ -161,15 +159,15 @@ namespace chess.v4.engine.service {
 			var currentPosition = square.Index;
 			var pieceColor = square.Piece.Color;
 			var attacks = new List<Square>();
-			var coord = CoordinateService.PositionToCoordinate(currentPosition);
-			var file = CoordinateService.FileToInt(coord[0]);
+			var coord = NotationUtility.PositionToCoordinate(currentPosition);
+			var file = NotationUtility.FileToInt(coord[0]);
 			var rank = (int)coord[1];
 			var potentialPositions = new List<int> { 6, 10, 15, 17, -6, -10, -15, -17 };
 			foreach (var potentialPosition in potentialPositions) {
 				var position = currentPosition + potentialPosition;
 				var _isValidKnightMove = isValidKnightMove(currentPosition, position, file, rank);
 				var _isValidMove = isValidMove(squares, position, pieceColor);
-				var _isValidCoordinate = CoordinateService.IsValidCoordinate(position);
+				var _isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 
 				if (!_isValidKnightMove || !_isValidMove || !_isValidCoordinate) { continue; }
 
@@ -198,43 +196,43 @@ namespace chess.v4.engine.service {
 			var squares = gameState.Squares;
 			var position = square.Index;
 			var pieceColor = square.Piece.Color;
-			var coord = CoordinateService.PositionToCoordinate(position);
-			int file = CoordinateService.FileToInt(coord[0]);
-			int rank = CoordinateService.PositionToRankInt(position);
+			var coord = NotationUtility.PositionToCoordinate(position);
+			int file = NotationUtility.FileToInt(coord[0]);
+			int rank = NotationUtility.PositionToRankInt(position);
 
 			var directionIndicator = pieceColor == Color.White ? 1 : -1;
 			var rankIndicator = pieceColor == Color.White ? 2 : 7;
 
 			var nextRank = (rank + directionIndicator);
-			var newPosition = CoordinateService.CoordinatePairToPosition(file, nextRank);
+			var newPosition = NotationUtility.CoordinatePairToPosition(file, nextRank);
 			var attackedSquare = squares.GetSquare(newPosition);
 			var attacks = new List<Square>();
 			attacks.Add(attackedSquare);
 
 			if (file - 1 >= 0) {
 				//get attack square on left
-				var leftPos = CoordinateService.CoordinatePairToPosition(file - 1, nextRank);
+				var leftPos = NotationUtility.CoordinatePairToPosition(file - 1, nextRank);
 				if (isValidPawnAttack(squares, leftPos, pieceColor)) {
 					attacks.Add(squares.GetSquare(leftPos));
 				}
 			}
 			if (file + 1 <= 7) {
 				//get attack square on right
-				var rightPos = CoordinateService.CoordinatePairToPosition(file + 1, nextRank);
+				var rightPos = NotationUtility.CoordinatePairToPosition(file + 1, nextRank);
 				if (isValidPawnAttack(squares, rightPos, pieceColor)) {
 					attacks.Add(squares.GetSquare(rightPos));
 				}
 			}
 			//have to plus one here because rank is zero based and coordinate is base 1
 			if (rank + 1 == rankIndicator) {
-				var rankUpPosition = CoordinateService.CoordinatePairToPosition(file, nextRank + directionIndicator);
+				var rankUpPosition = NotationUtility.CoordinatePairToPosition(file, nextRank + directionIndicator);
 				attacks.Add(squares.GetSquare(rankUpPosition));
 			}
 
 			//add en passant position
 			if (gameState.EnPassantTargetPosition > -1) {
-				var leftPos = CoordinateService.CoordinatePairToPosition(file - 1, nextRank);
-				var rightPos = CoordinateService.CoordinatePairToPosition(file + 1, nextRank);
+				var leftPos = NotationUtility.CoordinatePairToPosition(file - 1, nextRank);
+				var rightPos = NotationUtility.CoordinatePairToPosition(file + 1, nextRank);
 				if (gameState.EnPassantTargetPosition == leftPos || gameState.EnPassantTargetPosition == rightPos) {
 					attacks.Add(squares.GetSquare(gameState.EnPassantTargetPosition));
 				}
@@ -281,8 +279,8 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool isValidKnightMove(int position, int tempPosition, int file, int rank) {
-			var tempCoord = CoordinateService.PositionToCoordinate(tempPosition);
-			var tempFile = CoordinateService.FileToInt(tempCoord[0]);
+			var tempCoord = NotationUtility.PositionToCoordinate(tempPosition);
+			var tempFile = NotationUtility.FileToInt(tempCoord[0]);
 			var tempRank = (int)tempCoord[1];
 
 			var fileDiff = Math.Abs(tempFile - file);
@@ -299,7 +297,7 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool isValidMove(List<Square> squares, int position, Color pieceColor) {
-			var isValidCoordinate = CoordinateService.IsValidCoordinate(position);
+			var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 			if (!isValidCoordinate) {
 				return false;
 			}

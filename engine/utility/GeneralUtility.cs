@@ -62,5 +62,8 @@ namespace chess.v4.engine.utility {
 			return Color.White;
 		}
 
+		public static bool IsValidCoordinate(int position) {
+			return position >= 0 && position <= 63;
+		}
 	}
 }

@@ -14,13 +14,13 @@ namespace tests {
 
 	[TestClass]
 	public class PGNTests : BaseTest {
-		public ICoordinateService CoordinateService { get; }
+		
 		public IGameStateService GameStateService { get; }
 		public IPGNService PGNService { get; }
 
 		public PGNTests() {
 			var serviceProvider = new TestSetup().Setup();
-			this.CoordinateService = serviceProvider.GetService<ICoordinateService>();
+			
 			this.GameStateService = serviceProvider.GetService<IGameStateService>();
 			this.PGNService = serviceProvider.GetService<IPGNService>();
 		}
@@ -28,7 +28,7 @@ namespace tests {
 		[TestMethod]
 		public void AllAttacks() {
 			var gameStateResult = this.GameStateService.Initialize();
-			Assert.IsTrue(gameStateResult.Sucess);
+			Assert.IsTrue(gameStateResult.Success);
 			var gameState = gameStateResult.Result;
 
 			var positions = PGNService.PGNMoveToSquarePair(gameState, "e4");
@@ -62,7 +62,7 @@ namespace tests {
 			//create a situation where the engine has to differentiate between two rooks of the same color on a single file
 			var fen = "4r3/N2R3p/1k2BPp1/8/8/2P5/PP3PPP/3R2K1 w - - 0 30";
 			var gameStateResult = this.GameStateService.Initialize(fen);
-			Assert.IsTrue(gameStateResult.Sucess);
+			Assert.IsTrue(gameStateResult.Success);
 			var gameState = gameStateResult.Result;
 			var piece = new Piece(PieceType.Rook, Color.White);
 			//assert that two white rooks exist

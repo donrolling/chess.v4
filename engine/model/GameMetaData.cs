@@ -4,23 +4,38 @@ using System.Collections.Generic;
 namespace chess.v4.engine.model {
 
 	public class GameMetaData {
-		public string Event { get; set; }
-		public string Site { get; set; }
-		public string Date { get; set; }
-		public string Round { get; set; }
-		public string White { get; set; }
-		public string Black { get; set; }
-		public string Result { get; set; }
-		public string WhiteELO { get; set; }
-		public string BlackELO { get; set; }
-		public string ECO { get; set; }
-		public string ID { get; set; }
-		public string Filename { get; set; }
 		public string Annotator { get; set; }
-		public string Source { get; set; }
-		public string Remark { get; set; }
-
+		public string Black { get; set; }
+		public string BlackELO { get; set; }
+		public string Date { get; set; }
+		public string ECO { get; set; }
+		public string Event { get; set; }
+		public string Filename { get; set; }
+		public string ID { get; set; }
 		public SortedList<int, string> Moves { get; set; }
+		public string Remark { get; set; }
+		public string Result { get; set; }
+		public string Round { get; set; }
+		public string Site { get; set; }
+		public string Source { get; set; }
+		public string White { get; set; }
+		public string WhiteELO { get; set; }
+
+		public string GetValue(MetaType metaType) {
+			var value = this.GetType().GetProperty(metaType.ToString()).GetValue(this, null);
+			return value.ToString();
+		}
+
+		public string GetValue(string propertyName) {
+			string retval = string.Empty;
+			var propInfo = this.GetType().GetProperty(propertyName);
+			try {
+				var value = propInfo.GetValue(this, null);
+				retval = value.ToString();
+			} catch {
+			}
+			return retval;
+		}
 
 		public void SetValue(MetaType metaType, string value) {
 			switch (metaType) {
@@ -84,22 +99,6 @@ namespace chess.v4.engine.model {
 					this.ID = value;
 					break;
 			}
-		}
-
-		public string GetValue(MetaType metaType) {
-			var value = this.GetType().GetProperty(metaType.ToString()).GetValue(this, null);
-			return value.ToString();
-		}
-
-		public string GetValue(string propertyName) {
-			string retval = string.Empty;
-			var propInfo = this.GetType().GetProperty(propertyName);
-			try {
-				var value = propInfo.GetValue(this, null);
-				retval = value.ToString();
-			} catch {
-			}
-			return retval;
 		}
 	}
 }

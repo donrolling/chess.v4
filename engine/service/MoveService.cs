@@ -11,10 +11,25 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class MoveService : IMoveService {
-		public ICoordinateService CoordinateService { get; }
 
-		public MoveService(ICoordinateService coordinateService) {
-			CoordinateService = coordinateService;
+		public MoveService() {
+		}
+
+		public (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, int newPosition, bool ignoreKing) {
+			if (!GeneralUtility.IsValidCoordinate(newPosition)) {
+				return (false, false, false, null);
+			}
+			var newSquare = gameState.Squares.GetSquare(newPosition);
+			if (!newSquare.Occupied) {
+				return (true, false, true, newSquare);
+			}
+			var blockingPiece = newSquare.Piece;
+			var canAttackPiece = GeneralUtility.CanAttackPiece(gameState.ActiveColor, blockingPiece);
+			if (!canAttackPiece) {
+				return (true, true, false, null);
+			}
+			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
+			return (true, breakAfterAction, true, newSquare);
 		}
 
 		public Envelope<MoveInfo> GetMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks) {
@@ -22,7 +37,7 @@ namespace chess.v4.engine.service {
 			gameState.MoveInfo = new MoveInfo();
 			var oldSquare = gameState.Squares.GetSquare(piecePosition);
 			var isValidCastleAttempt = this.IsValidCastleAttempt(gameState, oldSquare, newPiecePosition, allAttacks);
-			if (isValidCastleAttempt.Sucess) {
+			if (isValidCastleAttempt.Success) {
 				gameState.MoveInfo.IsCastle = isValidCastleAttempt.Result;
 			} else {
 				Envelope<MoveInfo>.Error(isValidCastleAttempt.Message);
@@ -77,23 +92,6 @@ namespace chess.v4.engine.service {
 			//}
 
 			//gameState.FEN_Records.Add(new FEN_Record(gameState.ToString()));
-		}
-
-		public (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, int newPosition, bool ignoreKing) {
-			if (!this.CoordinateService.IsValidCoordinate(newPosition)) {
-				return (false, false, false, null);
-			}
-			var newSquare = gameState.Squares.GetSquare(newPosition);
-			if (!newSquare.Occupied) {
-				return (true, false, true, newSquare);
-			}
-			var blockingPiece = newSquare.Piece;
-			var canAttackPiece = GeneralUtility.CanAttackPiece(gameState.ActiveColor, blockingPiece);
-			if (!canAttackPiece) {
-				return (true, true, false, null);
-			}
-			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
-			return (true, breakAfterAction, true, newSquare);
 		}
 
 		/// <summary>
@@ -156,8 +154,8 @@ namespace chess.v4.engine.service {
 			var endMod = endPosition % 8;
 			var modDiff = Math.Abs(startMod - endMod);
 
-			var startRow = this.CoordinateService.PositionToRankInt(startPosition);
-			var endRow = this.CoordinateService.PositionToRankInt(endPosition);
+			var startRow = NotationUtility.PositionToRankInt(startPosition);
+			var endRow = NotationUtility.PositionToRankInt(endPosition);
 			var rowDiff = Math.Abs(startRow - endRow);
 			if (modDiff == rowDiff) {
 				return true;
@@ -168,7 +166,7 @@ namespace chess.v4.engine.service {
 		public bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare) {
 			var piece = square.Piece;
 			if (piece.PieceType != PieceType.Pawn) { return false; } //only pawns can perform en passant
-			var enPassantPosition = CoordinateService.CoordinateToPosition(enPassantTargetSquare);
+			var enPassantPosition = NotationUtility.CoordinateToPosition(enPassantTargetSquare);
 			if (enPassantPosition != newPiecePosition) { return false; } //if we're not moving to the en passant position, this is not en passant
 			var moveDistance = Math.Abs(square.Index - newPiecePosition);
 			if (!new List<int> { 7, 9 }.Contains(moveDistance)) { return false; } //is this a diagonal move?

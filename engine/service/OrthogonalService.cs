@@ -1,5 +1,4 @@
 ﻿using chess.v4.engine.enumeration;
-using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
@@ -10,11 +9,9 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class OrthogonalService : IOrthogonalService {
-		public ICoordinateService CoordinateService { get; }
 		public IMoveService MoveService { get; }
 
-		public OrthogonalService(ICoordinateService coordinateService, IMoveService moveService) {
-			CoordinateService = coordinateService;
+		public OrthogonalService(IMoveService moveService) {
 			MoveService = moveService;
 		}
 
@@ -48,7 +45,7 @@ namespace chess.v4.engine.service {
 			var attacks = new List<Square>();
 			var iterator = getIteratorByDirectionEnum(direction);
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
-				var isValidCoordinate = this.CoordinateService.IsValidCoordinate(position);
+				var isValidCoordinate = NotationUtility.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
 				var moveViability = this.MoveService.DetermineMoveViability(gameState, position, ignoreKing);
 				if (!moveViability.IsValidCoordinate) {
@@ -76,8 +73,8 @@ namespace chess.v4.engine.service {
 		}
 
 		private int getEndCondition(Direction direction, int position) {
-			var file = this.CoordinateService.PositionToFileInt(position);
-			var rank = this.CoordinateService.PositionToRankInt(position);
+			var file = NotationUtility.PositionToFileInt(position);
+			var rank = NotationUtility.PositionToRankInt(position);
 
 			switch (direction) {
 				case Direction.RowUp:
