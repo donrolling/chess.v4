@@ -45,7 +45,7 @@ namespace chess.v4.engine.service {
 			var attacks = new List<Square>();
 			var iterator = getIteratorByDirectionEnum(direction);
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
-				var isValidCoordinate = NotationUtility.IsValidCoordinate(position);
+				var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
 				var moveViability = this.MoveService.DetermineMoveViability(gameState, position, ignoreKing);
 				if (!moveViability.IsValidCoordinate) {

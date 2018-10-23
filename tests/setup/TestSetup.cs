@@ -12,7 +12,6 @@ namespace tests.setup {
 		internal IServiceProvider Setup() {
 			var services = new ServiceCollection();
 			services.AddTransient<IAttackService, AttackService>();
-			services.AddTransient<ICoordinateService, CoordinateService>();
 			services.AddTransient<IDiagonalService, DiagonalService>();
 			services.AddTransient<IGameStateService, GameStateService>();
 			services.AddTransient<IMoveService, MoveService>();

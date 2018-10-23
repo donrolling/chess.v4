@@ -314,21 +314,7 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private bool determineCastleThroughCheck(GameState gameState, List<Square> enemyAttacks, int kingPos, int rookPos) {
-			var oppositeColor = gameState.ActiveColor.Reverse();
-			//var enemyAttacks = this.PieceService.GetAttacks(oppositeColor, fen).SelectMany(a => a.Value);
-			var positions = this.getKingPositionsDuringCastle(kingPos, rookPos);
-			var arePositionsAttacked = positions.Intersect<int>(enemyAttacks.Select(a => a.Index)).Any();
-			return arePositionsAttacked;
-		}
-
-		private int[] getKingPositionsDuringCastle(int kingPos, int rookPos) {
-			int direction = kingPos < rookPos ? 1 : -1;
-			int[] result = new int[2];
-			for (int i = 0; i < 2; i++) {
-				result[i] = kingPos + (direction * (i + 1));
-			}
-			return result;
-		}
+		
+		
 	}
 }

@@ -2,6 +2,7 @@
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
+using chess.v4.engine.utility;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.service {
@@ -71,7 +72,7 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool isValidDiagonalCoordinate(int position) {
-			if (!this.CoordinateService.IsValidCoordinate(position)) { return false; }
+			if (!GeneralUtility.IsValidCoordinate(position)) { return false; }
 			if (position % 8 == 0 || position % 8 == 7) { return false; }
 			if (position < 7 || position > 56) { return false; }
 			return true;
