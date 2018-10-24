@@ -15,7 +15,7 @@ namespace chess.v4.engine.service {
 		public MoveService() {
 		}
 
-		public (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, int newPosition, bool ignoreKing) {
+		public (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
 			if (!GeneralUtility.IsValidCoordinate(newPosition)) {
 				return (false, false, false, null);
 			}
@@ -24,7 +24,7 @@ namespace chess.v4.engine.service {
 				return (true, false, true, newSquare);
 			}
 			var blockingPiece = newSquare.Piece;
-			var canAttackPiece = GeneralUtility.CanAttackPiece(gameState.ActiveColor, blockingPiece);
+			var canAttackPiece = GeneralUtility.CanAttackPiece(attackingPiece.Color, blockingPiece);
 			if (!canAttackPiece) {
 				return (true, true, false, null);
 			}
@@ -164,6 +164,9 @@ namespace chess.v4.engine.service {
 		}
 
 		public bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare) {
+			if (enPassantTargetSquare == "-") {
+				return false;
+			}
 			var piece = square.Piece;
 			if (piece.PieceType != PieceType.Pawn) { return false; } //only pawns can perform en passant
 			var enPassantPosition = NotationUtility.CoordinateToPosition(enPassantTargetSquare);

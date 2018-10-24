@@ -7,7 +7,7 @@ namespace chess.v4.engine.interfaces {
 
 		IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false);
 
-		IEnumerable<Square> GetKingAttack(AttackedSquare attacker, GameState gameState, Square enemyKingPosition);
+		//IEnumerable<Square> GetKingAttack(AttackedSquare attacker, GameState gameState, Square enemyKingPosition);
 
 		IEnumerable<AttackedSquare> GetKingAttacks(GameState gameState, Square square);
 	}

@@ -32,51 +32,51 @@ namespace chess.v4.engine.service {
 			return allAttacks;
 		}
 
-		public IEnumerable<Square> GetKingAttack(AttackedSquare attackedSquare, GameState gameState, Square enemyKing) {
-			var theAttack = new List<Square>();
-			switch (attackedSquare.AttackerSquare.Piece.PieceType) {
-				case PieceType.Pawn | PieceType.Knight | PieceType.King: //you can't interpose a pawn or a knight attack, also a king cannot attack a king
-					break;
+		//public IEnumerable<Square> GetKingAttack(AttackedSquare attackedSquare, GameState gameState, Square enemyKing) {
+		//	var theAttack = new List<Square>();
+		//	switch (attackedSquare.AttackerSquare.Piece.PieceType) {
+		//		case PieceType.Pawn | PieceType.Knight | PieceType.King: //you can't interpose a pawn or a knight attack, also a king cannot attack a king
+		//			break;
 
-				case PieceType.Bishop:
-					foreach (var direction in GeneralReference.DiagonalLines) {
-						var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					break;
+		//		case PieceType.Bishop:
+		//			foreach (var direction in GeneralReference.DiagonalLines) {
+		//				var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+		//					theAttack.AddRange(potentialAttack);
+		//					break;
+		//				}
+		//			}
+		//			break;
 
-				case PieceType.Rook:
-					foreach (var direction in GeneralReference.OrthogonalLines) {
-						var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					break;
+		//		case PieceType.Rook:
+		//			foreach (var direction in GeneralReference.OrthogonalLines) {
+		//				var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+		//					theAttack.AddRange(potentialAttack);
+		//					break;
+		//				}
+		//			}
+		//			break;
 
-				case PieceType.Queen:
-					foreach (var direction in GeneralReference.DiagonalLines) {
-						var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					foreach (var direction in GeneralReference.OrthogonalLines) {
-						var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-						if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-							theAttack.AddRange(potentialAttack);
-							break;
-						}
-					}
-					break;
-			}
-			return theAttack;
-		}
+		//		case PieceType.Queen:
+		//			foreach (var direction in GeneralReference.DiagonalLines) {
+		//				var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+		//					theAttack.AddRange(potentialAttack);
+		//					break;
+		//				}
+		//			}
+		//			foreach (var direction in GeneralReference.OrthogonalLines) {
+		//				var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
+		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
+		//					theAttack.AddRange(potentialAttack);
+		//					break;
+		//				}
+		//			}
+		//			break;
+		//	}
+		//	return theAttack;
+		//}
 
 		public IEnumerable<AttackedSquare> GetKingAttacks(GameState gameState, Square square) {
 			var attacks = new List<AttackedSquare>();

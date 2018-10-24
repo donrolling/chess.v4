@@ -6,7 +6,7 @@ namespace chess.v4.engine.interfaces {
 
 	public interface IDiagonalService {
 
-		List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing);
+		List<Square> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing);
 
 		List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false);
 	}

@@ -7,7 +7,7 @@ namespace chess.v4.engine.interfaces {
 
 	public interface IMoveService {
 
-		(bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, int newPosition, bool ignoreKing);
+		(bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing);
 
 		Envelope<MoveInfo> GetMoveInfo(GameState newGameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks);
 

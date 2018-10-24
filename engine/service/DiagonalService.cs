@@ -1,4 +1,5 @@
 ﻿using chess.v4.engine.enumeration;
+using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
@@ -14,34 +15,35 @@ namespace chess.v4.engine.service {
 			MoveService = moveService;
 		}
 
-		public List<Square> GetDiagonalLine(GameState gameState, Square square, DiagonalDirection direction, bool ignoreKing) {
+		public List<Square> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing) {
 			var attacks = new List<Square>();
 			var diagonalLine = getIteratorByDirectionEnum(direction);
 			var position = square.Index;
-			var newPosition = square.Index;
+			var attackPosition = square.Index;
 			do {
-				if (canDoDiagonalsFromStartPosition(position, diagonalLine)) {
+				if (!canDoDiagonalsFromStartPosition(position, diagonalLine)) {
 					break;
 				}
-				newPosition = position + diagonalLine;
-				var moveViability = this.MoveService.DetermineMoveViability(gameState, newPosition, ignoreKing);
+				attackPosition = attackPosition + diagonalLine;
+				var moveViability = this.MoveService.DetermineMoveViability(gameState, attackingPiece, attackPosition, ignoreKing);
 				if (!moveViability.IsValidCoordinate) {
 					continue;
 				}
 				if (moveViability.CanAttackPiece && moveViability.SquareToAdd != null) {
-					attacks.Add(square);
+					var attackSquare = gameState.Squares.GetSquare(attackPosition);
+					attacks.Add(attackSquare);
 				}
 				if (moveViability.BreakAfterAction) {
 					break;
 				}
-			} while (isValidDiagonalCoordinate(newPosition));
+			} while (isValidDiagonalCoordinate(attackPosition));
 			return attacks;
 		}
 
 		public List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false) {
 			var attacks = new List<Square>();
 			foreach (var direction in GeneralReference.DiagonalLines) {
-				attacks.AddRange(GetDiagonalLine(gameState, square, direction, ignoreKing));
+				attacks.AddRange(GetDiagonalLine(gameState, square, square.Piece, direction, ignoreKing));
 			}
 			return attacks;
 		}

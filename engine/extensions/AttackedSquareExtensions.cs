@@ -29,6 +29,10 @@ namespace chess.v4.engine.extensions {
 		public static AttackedSquare GetSquare(this List<AttackedSquare> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First();
 		}
+		
+		public static AttackedSquare GetSquareMaybe(this List<AttackedSquare> squares, int piecePosition) {
+			return squares.Where(a => a.Index == piecePosition).FirstOrDefault();
+		}
 
 		public static bool Intersects(this List<AttackedSquare> squares, int[] positions) {
 			return positions.Intersect<int>(squares.Select(a => a.Index)).Any();

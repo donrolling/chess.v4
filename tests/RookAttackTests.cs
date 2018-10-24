@@ -1,4 +1,4 @@
-﻿using chess.v4.engine.extensions;
+﻿using chess.v4.engine.enumeration;
 using chess.v4.engine.interfaces;
 using common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,7 +7,6 @@ using tests.setup;
 using tests.utility;
 
 namespace tests {
-
 	[TestClass]
 	public class RookAttackTests {
 		public IAttackService AttackService { get; }
@@ -27,10 +26,10 @@ namespace tests {
 		public void WhiteRookAttacksEmptyBoardFromD4() {
 			var fen = "7k/8/8/8/3R4/8/8/7K b - - 0 32";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteRookAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "d4").ToList();
-			var allSquareIndexs = new int[] { 24, 25, 26, 27, 28, 29, 30, 31, 59, 51, 43, 35, 19, 11, 3 };
+			var whiteRookAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Index == 27).ToList();
+			var allSquareIndexs = new int[] { 24, 25, 26, 28, 29, 30, 31, 59, 51, 43, 35, 19, 11, 3 };
 			foreach (var x in allSquareIndexs) {
-				Assert.IsNotNull(whiteRookAttacks.GetSquare(x), $"Rook should be able to attack square: { x }");
+				TestUtility.ListContainsSquare(whiteRookAttacks, PieceType.Rook, x);
 			}
 		}
 	}
