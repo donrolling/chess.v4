@@ -9,11 +9,9 @@ namespace chess.v4.engine.interfaces {
 
 		(bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing);
 
-		Envelope<MoveInfo> GetMoveInfo(GameState newGameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks);
+		Envelope<StateInfo> GetMoveInfo(GameState newGameState, int piecePosition, int newPiecePosition);
 
 		bool HasThreefoldRepition(GameState gameState);
-
-		//bool IsCheckmate(GameState gameState, Square checkedKing, IEnumerable<AttackedSquare> allAttacks, IEnumerable<AttackedSquare> blackAttacks);
 
 		bool IsDiagonalMove(int startPosition, int endPosition);
 

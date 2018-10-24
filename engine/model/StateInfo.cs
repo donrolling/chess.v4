@@ -1,6 +1,7 @@
-﻿namespace chess.v4.engine.model {
+﻿using chess.v4.engine.enumeration;
 
-	public class MoveInfo {
+namespace chess.v4.engine.model {
+	public class StateInfo {
 		public bool HasThreefoldRepition { get; set; }
 		public bool IsBlackCheck { get; set; }
 		public bool IsCastle { get; set; }
@@ -12,5 +13,8 @@
 		public bool IsResign { get; set; }
 		public bool IsWhiteCheck { get; set; }
 		public bool PutsOwnKingInCheck { get; set; }
+
+		public StateInfo() {
+		}
 	}
 }

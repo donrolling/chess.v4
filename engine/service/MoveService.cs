@@ -32,15 +32,16 @@ namespace chess.v4.engine.service {
 			return (true, breakAfterAction, true, newSquare);
 		}
 
-		public Envelope<MoveInfo> GetMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, IEnumerable<AttackedSquare> allAttacks) {
+		public Envelope<StateInfo> GetMoveInfo(GameState gameState, int piecePosition, int newPiecePosition) {
 			var newActiveColor = gameState.ActiveColor.Reverse();
-			gameState.MoveInfo = new MoveInfo();
+			gameState.MoveInfo = new StateInfo();
 			var oldSquare = gameState.Squares.GetSquare(piecePosition);
-			var isValidCastleAttempt = this.IsValidCastleAttempt(gameState, oldSquare, newPiecePosition, allAttacks);
+			
+			var isValidCastleAttempt = this.IsValidCastleAttempt(gameState, oldSquare, newPiecePosition, gameState.Attacks);
 			if (isValidCastleAttempt.Success) {
 				gameState.MoveInfo.IsCastle = isValidCastleAttempt.Result;
 			} else {
-				Envelope<MoveInfo>.Error(isValidCastleAttempt.Message);
+				return Envelope<StateInfo>.Error(isValidCastleAttempt.Message);
 			}
 			var isEnPassant = this.IsEnPassant(oldSquare, newPiecePosition, gameState.EnPassantTargetSquare);
 			if (isEnPassant) { //if is en passant, update matrix again
@@ -62,7 +63,7 @@ namespace chess.v4.engine.service {
 				}
 			}
 
-			return Envelope<MoveInfo>.Ok(gameState.MoveInfo);
+			return Envelope<StateInfo>.Ok(gameState.MoveInfo);
 
 			////doesn't test anything, just applies the move
 			//NotationService.ApplyMoveToSquares(gameState.Squares, piecePosition, newPiecePosition);
@@ -209,8 +210,8 @@ namespace chess.v4.engine.service {
 				return Envelope<bool>.Ok(isCastleAttempt);
 			}
 
-			var castlingAvailability = checkCastleAvailability(gameState, destination, piece);
-			if (!castlingAvailability) {
+			var castleInfo = checkCastleAvailability(gameState, destination, piece);
+			if (!castleInfo.CastleAvailability) {
 				return Envelope<bool>.Error("Castling is not available.");
 			}
 
@@ -219,14 +220,8 @@ namespace chess.v4.engine.service {
 				return Envelope<bool>.Error("Can't castle out of check.");
 			}
 
-			var kingTravelSquareIndexes = getKingCastleCoordinates(square, destination);
-			var reverseColor = gameState.ActiveColor.Reverse();
-			var enemyAttacks = from a in attackedSquares
-							   join k in kingTravelSquareIndexes on a.Index equals k
-							   where a.AttackerSquare.Piece.Color == reverseColor
-							   select a;
-
-			if (enemyAttacks.Any()) {
+			var castleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, square.Index, castleInfo.RookPosition);
+			if (castleThroughCheck) {
 				return Envelope<bool>.Error("Can't castle through check.");
 			}
 
@@ -243,36 +238,31 @@ namespace chess.v4.engine.service {
 			return isCapture || isEnPassant;
 		}
 
-		private static bool checkCastleAvailability(GameState gameState, int destination, Piece piece) {
+		private static (bool CastleAvailability, int RookPosition) checkCastleAvailability(GameState gameState, int destination, Piece piece) {
 			if (gameState.CastlingAvailability == "-") {
-				return false;
+				return (false, 0);
 			}
 			var castlingAvailability = true;
 			switch (piece.Color) {
 				case Color.Black:
 					switch (destination) {
 						case 58:
-							castlingAvailability = gameState.CastlingAvailability.Contains("q", StringComparison.CurrentCulture);
-							break;
+							return (gameState.CastlingAvailability.Contains("q", StringComparison.CurrentCulture), 56);
 
 						case 62:
-							castlingAvailability = gameState.CastlingAvailability.Contains("k", StringComparison.CurrentCulture);
-							break;
+							return (gameState.CastlingAvailability.Contains("k", StringComparison.CurrentCulture), 63);
 
 						default:
 							throw new Exception("Invalid destination.");
 					}
-					break;
 
 				case Color.White:
 					switch (destination) {
 						case 2:
-							castlingAvailability = gameState.CastlingAvailability.Contains("Q", StringComparison.CurrentCulture);
-							break;
+							return (gameState.CastlingAvailability.Contains("Q", StringComparison.CurrentCulture), 0);
 
 						case 6:
-							castlingAvailability = gameState.CastlingAvailability.Contains("K", StringComparison.CurrentCulture);
-							break;
+							return (gameState.CastlingAvailability.Contains("K", StringComparison.CurrentCulture), 7);
 
 						default:
 							throw new Exception("Invalid destination.");
@@ -282,8 +272,6 @@ namespace chess.v4.engine.service {
 				default:
 					throw new Exception("Enum not matched.");
 			}
-
-			return castlingAvailability;
 		}
 
 		private static int[] getKingCastleCoordinates(Square kingSquare, int destination) {
