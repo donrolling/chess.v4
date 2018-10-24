@@ -11,12 +11,8 @@ namespace chess.v4.engine.utility {
 		public static bool DetermineCastleThroughCheck(GameState gameState, int kingPos, int rookPos) {
 			var oppositeColor = gameState.ActiveColor.Reverse();
 			var positions = CastleUtility.GetKingPositionsDuringCastle(kingPos, rookPos);
-			var arePositionsAttacked = positions
-				.Intersect<int>(
-					gameState.Attacks
-						.Where(a => a.Occupied && a.Piece.Color == oppositeColor)
-						.Select(a => a.Index)
-				).Any();
+			var opponentAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Piece.Color == oppositeColor).Select(a => a.Index);
+			var arePositionsAttacked = positions.Intersect<int>(opponentAttacks).Any();
 			return arePositionsAttacked;
 		}
 
