@@ -6,10 +6,8 @@
 		public AttackedSquare() {
 		}
 
-		public AttackedSquare(Square attackingSquare, Square square) {
+		public AttackedSquare(Square attackingSquare, Square square): base(square.Index, square.Name, square.Piece) {
 			this.AttackerSquare = attackingSquare;
-			this.Index = square.Index;
-			this.Piece = square.Piece;
 		}
 	}
 }

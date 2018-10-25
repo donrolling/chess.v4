@@ -82,6 +82,11 @@ namespace chess.v4.engine.utility {
 			var file = (position % 8);
 			return file;
 		}
+		
+		public static int PositionToRank(int position) {
+			var rank = (position / 8);
+			return rank;
+		}
 
 		public static char PositionToFileChar(int position) {
 			var file = (char)((position % 8) + 97);

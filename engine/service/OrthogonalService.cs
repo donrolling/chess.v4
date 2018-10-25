@@ -9,10 +9,8 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class OrthogonalService : IOrthogonalService {
-		public IMoveService MoveService { get; }
 
-		public OrthogonalService(IMoveService moveService) {
-			MoveService = moveService;
+		public OrthogonalService() {
 		}
 
 		public List<int> GetEntireFile(int file) {
@@ -47,7 +45,7 @@ namespace chess.v4.engine.service {
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
 				var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
-				var moveViability = this.MoveService.DetermineMoveViability(gameState, movingSquare.Piece, position, ignoreKing);
+				var moveViability = GeneralUtility.DetermineMoveViability(gameState, movingSquare.Piece, position, ignoreKing);
 				if (!moveViability.IsValidCoordinate) {
 					continue;
 				}

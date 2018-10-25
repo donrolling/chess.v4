@@ -1,5 +1,8 @@
 ﻿using chess.v4.engine.enumeration;
+using chess.v4.engine.extensions;
 using chess.v4.engine.model;
+using System;
+using System.Collections.Generic;
 
 namespace chess.v4.engine.utility {
 
@@ -64,6 +67,38 @@ namespace chess.v4.engine.utility {
 
 		public static bool IsValidCoordinate(int position) {
 			return position >= 0 && position <= 63;
+		}
+
+		public static bool IsDiagonal(int p1, int p2) {
+			var positions = new List<int> { 7, 9, -7, -9 };
+			return positions.Contains(p1 - p2);
+		}
+
+		public static bool IsOrthogonal(int p1, int p2) {
+			var positions = new List<int> { 8, -8, 1, -1 };
+			return positions.Contains(p1 - p2);
+		}
+
+		public static bool GivenOrthogonalMove_IsItARankMove(int p1, int p2) {			
+			var positions = new List<int> { 8, -8 };
+			return positions.Contains(p1 - p2);
+		}
+
+		public static (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
+			if (!GeneralUtility.IsValidCoordinate(newPosition)) {
+				return (false, false, false, null);
+			}
+			var newSquare = gameState.Squares.GetSquare(newPosition);
+			if (!newSquare.Occupied) {
+				return (true, false, true, newSquare);
+			}
+			var blockingPiece = newSquare.Piece;
+			var canAttackPiece = GeneralUtility.CanAttackPiece(attackingPiece.Color, blockingPiece);
+			if (!canAttackPiece) {
+				return (true, true, false, null);
+			}
+			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
+			return (true, breakAfterAction, true, newSquare);
 		}
 	}
 }

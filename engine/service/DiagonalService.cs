@@ -9,10 +9,8 @@ using System.Collections.Generic;
 namespace chess.v4.engine.service {
 
 	public class DiagonalService : IDiagonalService {
-		public IMoveService MoveService { get; }
+		public DiagonalService() {
 
-		public DiagonalService(IMoveService moveService) {
-			MoveService = moveService;
 		}
 
 		public List<Square> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing) {
@@ -25,7 +23,7 @@ namespace chess.v4.engine.service {
 					break;
 				}
 				attackPosition = attackPosition + diagonalLine;
-				var moveViability = this.MoveService.DetermineMoveViability(gameState, attackingPiece, attackPosition, ignoreKing);
+				var moveViability = GeneralUtility.DetermineMoveViability(gameState, attackingPiece, attackPosition, ignoreKing);
 				if (!moveViability.IsValidCoordinate) {
 					continue;
 				}

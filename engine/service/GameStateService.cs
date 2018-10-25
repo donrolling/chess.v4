@@ -9,6 +9,11 @@ using System.Linq;
 
 namespace chess.v4.engine.service {
 
+	/// <summary>
+	/// There is a guiding principle here. Don't edit the GameState object anywhere but here.
+	/// It gets confusing.
+	/// Go ahead and calculate things elsewhere, but bring the results back here to apply them.
+	/// </summary>
 	public class GameStateService : IGameStateService {
 		public IAttackService AttackService { get; }
 
@@ -60,7 +65,7 @@ namespace chess.v4.engine.service {
 				return Envelope<StateInfo>.Error("Square was empty.");
 			}
 			//var allAttacks = this.AttackService.GetAttacks(gameState, false);
-			var moveInfoResult = this.MoveService.GetMoveInfo(gameState, piecePosition, newPiecePosition);
+			var moveInfoResult = this.MoveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
 			if (moveInfoResult.Failure) {
 				return Envelope<StateInfo>.Error(moveInfoResult.Message);
 			}
@@ -79,7 +84,7 @@ namespace chess.v4.engine.service {
 			var gameState = new GameState(fenRecord);
 			gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
 			gameState.Attacks = this.AttackService.GetAttacks(gameState, false).ToList();
-			gameState.MoveInfo = this.MoveService.GetMoveInfo(gameState);
+			gameState.StateInfo = this.MoveService.GetStateInfo(gameState);
 			return Envelope<GameState>.Ok(gameState);
 		}
 
@@ -87,7 +92,7 @@ namespace chess.v4.engine.service {
 			var newGameState = gameState.DeepCopy();
 			var oldFen = newGameState.ToString();
 			newGameState.FEN_Records.Add(new FEN_Record(oldFen));
-			newGameState.MoveInfo = moveInfo;
+			newGameState.StateInfo = moveInfo;
 			var oldSquare = newGameState.Squares.GetSquare(position);
 			var oldSquareCopy = (Square)oldSquare.Clone();
 			oldSquareCopy.Piece = null;

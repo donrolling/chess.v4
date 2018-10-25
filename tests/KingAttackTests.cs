@@ -38,11 +38,11 @@ namespace tests {
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "g1").ToList();
 			//king checkmate make sure that the king has no attacks
-			Assert.AreEqual(0, whiteKingAttacks.Count());
-			Assert.IsTrue(gameState.MoveInfo.IsCheck);
-			Assert.IsTrue(gameState.MoveInfo.IsBlackCheck);
-			Assert.IsFalse(gameState.MoveInfo.IsWhiteCheck);
-			Assert.IsTrue(gameState.MoveInfo.IsCheckmate);
+			//Assert.AreEqual(0, whiteKingAttacks.Count());
+			Assert.IsTrue(gameState.StateInfo.IsCheck);
+			Assert.IsTrue(gameState.StateInfo.IsWhiteCheck);
+			Assert.IsFalse(gameState.StateInfo.IsBlackCheck);
+			Assert.IsTrue(gameState.StateInfo.IsCheckmate);
 		}
 
 		[TestMethod]
@@ -118,10 +118,10 @@ namespace tests {
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var blackKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "g1").ToList();
 			Assert.AreEqual(0, blackKingAttacks.Count());
-			Assert.IsTrue(gameState.MoveInfo.IsCheck);
-			Assert.IsTrue(gameState.MoveInfo.IsBlackCheck);
-			Assert.IsFalse(gameState.MoveInfo.IsWhiteCheck);
-			Assert.IsTrue(gameState.MoveInfo.IsCheckmate);
+			Assert.IsTrue(gameState.StateInfo.IsCheck);
+			Assert.IsTrue(gameState.StateInfo.IsBlackCheck);
+			Assert.IsFalse(gameState.StateInfo.IsWhiteCheck);
+			Assert.IsTrue(gameState.StateInfo.IsCheckmate);
 		}
 	}
 }
