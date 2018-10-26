@@ -49,7 +49,7 @@ namespace tests {
 		public void WhiteKingMayCastle() {
 			var fen = "r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PPQPPP/R3KBNR w KQkq - 3 5";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "d1").ToList();
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e1").ToList();
 			var allSquareIndexs = new int[] { 2, 3 };
 			foreach (var x in allSquareIndexs) {
 				Assert.IsNotNull(whiteKingAttacks.GetSquare(x), $"King should be able to attack square: { x }");
