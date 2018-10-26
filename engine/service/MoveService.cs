@@ -11,15 +11,15 @@ using System.Linq;
 namespace chess.v4.engine.service {
 
 	public class MoveService : IMoveService {
+		public IDiagonalService DiagonalService { get; }
+
+		public IOrthogonalService OrthogonalService { get; }
 
 		//kings don't count here
 		private List<PieceType> diagonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Pawn, PieceType.Bishop };
 
 		//kings don't count here
 		private List<PieceType> orthogonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Rook };
-
-		public IOrthogonalService OrthogonalService { get; }
-		public IDiagonalService DiagonalService { get; }
 
 		public MoveService(IOrthogonalService orthogonalService, IDiagonalService diagonalService) {
 			OrthogonalService = orthogonalService;
@@ -38,6 +38,8 @@ namespace chess.v4.engine.service {
 			} else {
 				return Envelope<StateInfo>.Error(isValidCastleAttempt.Message);
 			}
+
+			stateInfo.IsPawnPromotion = this.isPawnPromotion(oldSquare, newPiecePosition);
 
 			var isResign = false;
 			var isDraw = false;
@@ -324,7 +326,7 @@ namespace chess.v4.engine.service {
 									clearMoveCount--;
 								}
 							} else {
-								var file = NotationUtility.PositionToFile(x.Index); 
+								var file = NotationUtility.PositionToFile(x.Index);
 								var entireFile = this.OrthogonalService.GetEntireFile(file);
 								//is clearMove going to be on this file?
 								//if so, we're still in check
@@ -370,6 +372,19 @@ namespace chess.v4.engine.service {
 			//now see if any of the interpositions stop all attacks
 			foreach (var interposition in interpositions) {
 				//todo:
+			}
+			return false;
+		}
+
+		private bool isPawnPromotion(Square square, int newPiecePosition) {
+			if (square.Piece.PieceType != PieceType.Pawn) {
+				return false;
+			}
+			if (square.Piece.Color == Color.White && newPiecePosition >= 56 && newPiecePosition <= 63) {
+				return true;
+			}
+			if (square.Piece.Color == Color.Black && newPiecePosition >= 0 && newPiecePosition <= 7) {
+				return true;
 			}
 			return false;
 		}

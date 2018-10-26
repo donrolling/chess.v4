@@ -63,13 +63,18 @@ namespace chess.v4.engine.service {
 			var square = gameState.Squares.GetSquare(piecePosition);
 			if (!square.Occupied) {
 				return Envelope<StateInfo>.Error("Square was empty.");
-			}
-			//var allAttacks = this.AttackService.GetAttacks(gameState, false);
+			}			
 			var moveInfoResult = this.MoveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
 			if (moveInfoResult.Failure) {
 				return Envelope<StateInfo>.Error(moveInfoResult.Message);
 			}
 			var moveInfo = moveInfoResult.Result;
+			if (moveInfo.IsPawnPromotion) {
+				if (!piecePromotionType.HasValue) {
+					return Envelope<StateInfo>.Error("Must provide pawn promotion piece type in order to promote a pawn.");
+				}
+				moveInfo.PawnPromotedTo = piecePromotionType.Value;
+			}
 			//var putsOwnKingInCheck = false;
 			if (moveInfo.IsCheck) {
 				return Envelope<StateInfo>.Error("Must move out of check. Must not move into check.");
@@ -98,11 +103,9 @@ namespace chess.v4.engine.service {
 			oldSquareCopy.Piece = null;
 			var newSquare = newGameState.Squares.GetSquare(newPiecePosition);
 			var newSquareCopy = (Square)newSquare.Clone();
-			newSquareCopy.Piece = new Piece {
-				Identity = oldSquare.Piece.Identity,
-				PieceType = oldSquare.Piece.PieceType,
-				Color = oldSquare.Piece.Color
-			};
+			newSquareCopy.Piece = moveInfo.IsPawnPromotion
+				? new Piece(moveInfo.PawnPromotedTo, gameState.ActiveColor)
+				: new Piece { Identity = oldSquare.Piece.Identity, PieceType = oldSquare.Piece.PieceType, Color = oldSquare.Piece.Color };
 			newGameState.Squares.Remove(oldSquare);
 			newGameState.Squares.Remove(newSquare);
 			newGameState.Squares.Add(oldSquareCopy);

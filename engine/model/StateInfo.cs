@@ -8,6 +8,8 @@ namespace chess.v4.engine.model {
 		public bool IsCheckmate { get; set; }
 		public bool IsDraw { get; set; }
 		public bool IsWhiteCheck { get; set; }
+		public bool IsPawnPromotion { get; set; }
+		public PieceType PawnPromotedTo { get; set; }
 
 		public StateInfo() {
 		}
