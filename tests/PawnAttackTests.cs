@@ -2,6 +2,7 @@
 using chess.v4.engine.interfaces;
 using common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using tests.setup;
 using tests.utility;
@@ -11,13 +12,13 @@ namespace tests {
 	[TestClass]
 	public class PawnAttackTests {
 		public IAttackService AttackService { get; }
-		
+
 		public IGameStateService GameStateService { get; }
 		public IMoveService MoveService { get; }
 
 		public PawnAttackTests() {
 			var serviceProvider = new TestSetup().Setup();
-			
+
 			this.AttackService = serviceProvider.GetService<IAttackService>();
 			this.GameStateService = serviceProvider.GetService<IGameStateService>();
 			this.MoveService = serviceProvider.GetService<IMoveService>();
@@ -33,31 +34,25 @@ namespace tests {
 		}
 
 		[TestMethod]
-		public void PawnAttack() {
+		public void GameStart_Verify_PawnAttack() {
 			var gameState = TestUtility.GetGameState(this.GameStateService);
-			var attacks = gameState.Attacks;
 			//white queenside rook pawn, opening moves
-			var a2PawnAttacks = attacks.Where(a => a.AttackerSquare.Name == "a2");
-			Assert.IsTrue(a2PawnAttacks.Any(a => a.Index == 16));
-			Assert.IsTrue(a2PawnAttacks.Any(a => a.Index == 17));
-			Assert.IsTrue(a2PawnAttacks.Any(a => a.Index == 24));
-			Assert.IsTrue(a2PawnAttacks.Count() == 3);
+			var attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "a2").ToList();
+			var squares = new List<int> { 16, 24 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
+			Assert.IsTrue(attacks.Count() == 2, "Wrong number of attacks");
 
 			//white king pawn, opening moves
-			var e2PawnAttacks = attacks.Where(a => a.AttackerSquare.Name == "e2");
-			Assert.IsTrue(e2PawnAttacks.Any(a => a.Index == 19));
-			Assert.IsTrue(e2PawnAttacks.Any(a => a.Index == 20));
-			Assert.IsTrue(e2PawnAttacks.Any(a => a.Index == 21));
-			Assert.IsTrue(e2PawnAttacks.Any(a => a.Index == 28));
-			Assert.IsTrue(e2PawnAttacks.Count() == 4);
+			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e2").ToList();
+			squares = new List<int> { 20, 28 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
+			Assert.IsTrue(attacks.Count() == 2, "Wrong number of attacks");
 
 			//black
-			var d7PawnAttacks = attacks.Where(a => a.AttackerSquare.Name == "d7");
-			Assert.IsTrue(d7PawnAttacks.Any(a => a.Index == 42));
-			Assert.IsTrue(d7PawnAttacks.Any(a => a.Index == 43));
-			Assert.IsTrue(d7PawnAttacks.Any(a => a.Index == 44));
-			Assert.IsTrue(d7PawnAttacks.Any(a => a.Index == 35));
-			Assert.IsTrue(d7PawnAttacks.Count() == 4);
+			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "d7").ToList();
+			squares = new List<int> { 35, 43 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
+			Assert.IsTrue(attacks.Count() == 2, "Wrong number of attacks");
 		}
 
 		[TestMethod]
