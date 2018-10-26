@@ -36,11 +36,11 @@ namespace tests {
 
 		[TestMethod]
 		public void WhiteKnightAttackStartingPositionFromB1() {
-			var fen = "rnbqkbnr/pppppppp/8/3N4/8/8/PPPPPPPP/R1BQKBNR b KQkq - 0 1";
+			var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var knightAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "b1").ToList();
-			var allSquareIndexs = new int[] { 18, 16 };
-			foreach (var x in allSquareIndexs) {
+			var allSquareIndexes = new int[] { 18, 16 };
+			foreach (var x in allSquareIndexes) {
 				Assert.IsNotNull(knightAttacks.GetSquare(x), $"Knight should be able to attack square: { x }");
 			}
 			Assert.IsTrue(knightAttacks.Count() == 2);
