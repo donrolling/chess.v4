@@ -99,6 +99,10 @@ namespace chess.v4.engine.service {
 			newGameState.FEN_Records.Add(new FEN_Record(oldFen));
 			newGameState.StateInfo = moveInfo;
 			var oldSquare = newGameState.Squares.GetSquare(position);
+			var attacks = gameState.Attacks.GetPositionAttacksOnPosition(position, newPiecePosition);
+			if (!attacks.Any()) {
+				return Envelope<GameState>.Error($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+			}
 			var oldSquareCopy = (Square)oldSquare.Clone();
 			oldSquareCopy.Piece = null;
 			var newSquare = newGameState.Squares.GetSquare(newPiecePosition);

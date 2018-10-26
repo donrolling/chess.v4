@@ -22,6 +22,15 @@ namespace chess.v4.engine.extensions {
 			return squares.Where(a => a.Occupied && a.Piece.PieceType == pieceType && a.Piece.Color == pieceColor);
 		}
 
+		public static IEnumerable<AttackedSquare> GetAttacks(this List<AttackedSquare> squares, int piecePosition) {
+			return squares.Where(a => a.AttackerSquare.Index == piecePosition);
+		}
+		
+		public static IEnumerable<AttackedSquare> GetPositionAttacksOnPosition(this List<AttackedSquare> squares, int piecePosition, int newPiecePosition) {
+			return squares.Where(a => a.AttackerSquare.Index == piecePosition && a.Index == newPiecePosition);
+		}
+		
+
 		public static Piece GetPiece(this List<AttackedSquare> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First().Piece;
 		}
@@ -29,7 +38,7 @@ namespace chess.v4.engine.extensions {
 		public static AttackedSquare GetSquare(this List<AttackedSquare> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).First();
 		}
-		
+
 		public static AttackedSquare GetSquareMaybe(this List<AttackedSquare> squares, int piecePosition) {
 			return squares.Where(a => a.Index == piecePosition).FirstOrDefault();
 		}

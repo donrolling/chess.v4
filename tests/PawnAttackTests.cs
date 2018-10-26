@@ -26,11 +26,14 @@ namespace tests {
 
 		[TestMethod]
 		public void PawnAnomalies() {
-			//test some errors that I found involving pawns moving diagonally when they're not capturing
 			var fen = "1k3r2/7p/4BPp1/1N1R4/8/2P5/PP3PPP/R5K1 w  - 3 26";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+			var attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "f2").ToList();
+			var squares = new List<int> { 21, 29 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
+			Assert.AreEqual(2, attacks.Count());
 			var gameStateResult = this.GameStateService.MakeMove(gameState, 13, 20);
-			Assert.IsFalse(gameStateResult.Success, "This move was invalid, so the attempt to make it should fail.");
+			Assert.IsTrue(gameStateResult.Failure, "This move was invalid, so the attempt to make it should fail.");
 		}
 
 		[TestMethod]
@@ -40,19 +43,19 @@ namespace tests {
 			var attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "a2").ToList();
 			var squares = new List<int> { 16, 24 };
 			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
-			Assert.IsTrue(attacks.Count() == 2, "Wrong number of attacks");
+			Assert.AreEqual(2, attacks.Count());
 
 			//white king pawn, opening moves
 			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e2").ToList();
 			squares = new List<int> { 20, 28 };
 			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
-			Assert.IsTrue(attacks.Count() == 2, "Wrong number of attacks");
-
+			Assert.AreEqual(2, attacks.Count());
+			
 			//black
 			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "d7").ToList();
 			squares = new List<int> { 35, 43 };
 			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
-			Assert.IsTrue(attacks.Count() == 2, "Wrong number of attacks");
+			Assert.AreEqual(2, attacks.Count());
 		}
 
 		[TestMethod]
