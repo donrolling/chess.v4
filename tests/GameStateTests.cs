@@ -72,6 +72,15 @@ namespace tests {
 			Assert.AreEqual('P', squares.GetPiece(14).Identity);
 			Assert.AreEqual('P', squares.GetPiece(15).Identity);
 		}
+		[TestMethod]
+		public void Given_ProblematicStartPosition() {
+			var fen = "r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4";
+			var gameStateResult = GameStateService.Initialize(fen);
+			Assert.IsTrue(gameStateResult.Success);
+			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "c1", "a3");
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
+			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR b KQkq - 2 4", gameStateResult.Result.ToString());
+		}
 
 		[TestMethod]
 		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_CastleAvailability_IsCorrect() {
