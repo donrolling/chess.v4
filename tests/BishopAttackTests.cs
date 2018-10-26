@@ -1,7 +1,8 @@
-﻿using chess.v4.engine.extensions;
+﻿using chess.v4.engine.enumeration;
 using chess.v4.engine.interfaces;
 using common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using tests.setup;
 using tests.utility;
@@ -24,15 +25,35 @@ namespace tests {
 		}
 
 		[TestMethod]
+		public void AllBishops_Given_SweetOpening_ValidateBasicOpeningAttacks() {
+			var fen = "rnbqkbnr/p1p2p1p/1p4p1/3pp3/3PP3/1P4P1/P1P2P1P/RNBQKBNR w KQkq - 0 1";
+			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+			var attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "c1").ToList();
+			var squares = new List<int> { 9, 16, 11, 20, 29, 38, 47 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Bishop);
+			Assert.AreEqual(squares.Count(), attacks.Count());
+
+			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "f1").ToList();
+			squares = new List<int> { 14, 23, 12, 19, 26, 33, 40 };
+			Assert.AreEqual(squares.Count(), attacks.Count());
+
+			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "c8").ToList();
+			squares = new List<int> { 49, 40, 51, 44, 37, 30, 23 };
+			Assert.AreEqual(squares.Count(), attacks.Count());
+
+			attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "f8").ToList();
+			squares = new List<int> { 54, 47, 52, 43, 34, 25, 16 };
+			Assert.AreEqual(squares.Count(), attacks.Count());
+		}
+
+		[TestMethod]
 		public void WhiteBishopAttacksStartingPositionFromD4() {
 			var fen = "rnbqkbnr/pppppppp/8/8/3B4/8/PPPPPPPP/RN1QKBNR b KQkq - 0 1";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteBishopAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "d4").ToList();
-			var allSquareIndexs = new int[] { 20, 34, 41, 48, 18, 36, 45, 54 };
-			foreach (var x in allSquareIndexs) {
-				Assert.IsNotNull(whiteBishopAttacks.GetSquare(x), $"Bishop should be able to attack square: { x }");
-			}			
-			Assert.IsTrue(whiteBishopAttacks.Count() == 8);
+			var attacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "d4").ToList();
+			var squares = new List<int> { 20, 34, 41, 48, 18, 36, 45, 54 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Bishop);
+			Assert.AreEqual(8, attacks.Count());
 		}
 	}
 }
