@@ -102,11 +102,11 @@ namespace tests {
 
 		[TestMethod]
 		public void WhiteKingAttemptsToCastleThroughCheck_Fails() {
-			var fen = "r3k2r/pp3ppp/2p2q2/3P3b/1Q2PB2/1P6/P1P1BPPP/R3K2R w KQkq - 3 13";
+			var fen = "r3k2r/pp3ppp/2pq4/7b/1Q2PB2/1P6/P1P1BPPP/R3K2R w KQkq - 3 13";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 
 			var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
-			Assert.IsFalse(isCastleThroughCheck);
+			Assert.IsTrue(isCastleThroughCheck);
 
 			var newGameStateResult = this.GameStateService.MakeMove(gameState, 4, 2);
 			Assert.IsFalse(newGameStateResult.Success);
