@@ -83,10 +83,10 @@ namespace chess.v4.engine.service {
 			};
 		}
 
-		private string getCastlingAvailability(GameState newGameState, string castlingAvailability, int oldPiecePosition, int newPiecePosition) {
-			var square = newGameState.Squares.GetSquare(newPiecePosition);
+		private string getCastlingAvailability(GameState gameState, string castlingAvailability, int oldPiecePosition, int newPiecePosition) {
+			var square = gameState.Squares.GetSquare(newPiecePosition);
 			if (!_castlingPieces.Contains(square.Piece.PieceType)) {
-				return newGameState.CastlingAvailability;
+				return gameState.CastlingAvailability;
 			}
 			switch (oldPiecePosition) {
 				case 0: //R

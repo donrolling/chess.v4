@@ -5,10 +5,10 @@ using chess.v4.engine.model;
 using chess.v4.engine.reference;
 using chess.v4.engine.utility;
 using common;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
-
 	/// <summary>
 	/// There is a guiding principle here. Don't edit the GameState object anywhere but here.
 	/// It gets confusing.
@@ -46,11 +46,11 @@ namespace chess.v4.engine.service {
 		/// <param name="newPiecePosition">Positions should be numbered 0-63 where a1 is 0</param>
 		/// <returns></returns>
 		public Envelope<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType = null) {
-			var moveInfo = this.getMoveInfo(gameState, piecePosition, newPiecePosition, piecePromotionType);
-			if (moveInfo.Failure) {
-				return Envelope<GameState>.Error(moveInfo.Message);
+			var stateInfo = this.getStateInfo(gameState, piecePosition, newPiecePosition, piecePromotionType);
+			if (stateInfo.Failure) {
+				return Envelope<GameState>.Error(stateInfo.Message);
 			}
-			return this.makeMove(gameState, piecePosition, moveInfo.Result, newPiecePosition);
+			return this.makeMove(gameState, piecePosition, stateInfo.Result, newPiecePosition);
 		}
 
 		public Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination, PieceType? piecePromotionType = null) {
@@ -59,11 +59,28 @@ namespace chess.v4.engine.service {
 			return this.MakeMove(gameState, pos1, pos2, piecePromotionType);
 		}
 
-		private Envelope<StateInfo> getMoveInfo(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType) {
+		private static GameState manageSquares(GameState gameState, StateInfo stateInfo, int piecePosition, int newPiecePosition) {
+			var movingGameState = gameState.DeepCopy();
+			var oldSquare = movingGameState.Squares.GetSquare(piecePosition);
+			var oldSquareCopy = (Square)oldSquare.Clone();
+			oldSquareCopy.Piece = null;
+			var newSquare = movingGameState.Squares.GetSquare(newPiecePosition);
+			var newSquareCopy = (Square)newSquare.Clone();
+			newSquareCopy.Piece = stateInfo.IsPawnPromotion
+				? new Piece(stateInfo.PawnPromotedTo, gameState.ActiveColor)
+				: new Piece { Identity = oldSquare.Piece.Identity, PieceType = oldSquare.Piece.PieceType, Color = oldSquare.Piece.Color };
+			movingGameState.Squares.Remove(oldSquare);
+			movingGameState.Squares.Remove(newSquare);
+			movingGameState.Squares.Add(oldSquareCopy);
+			movingGameState.Squares.Add(newSquareCopy);
+			return movingGameState;
+		}
+
+		private Envelope<StateInfo> getStateInfo(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType) {
 			var square = gameState.Squares.GetSquare(piecePosition);
 			if (!square.Occupied) {
 				return Envelope<StateInfo>.Error("Square was empty.");
-			}			
+			}
 			var moveInfoResult = this.MoveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
 			if (moveInfoResult.Failure) {
 				return Envelope<StateInfo>.Error(moveInfoResult.Message);
@@ -93,28 +110,33 @@ namespace chess.v4.engine.service {
 			return Envelope<GameState>.Ok(gameState);
 		}
 
-		private Envelope<GameState> makeMove(GameState gameState, int position, StateInfo moveInfo, int newPiecePosition) {
-			var newGameState = gameState.DeepCopy();
-			var oldFen = newGameState.ToString();
-			newGameState.FEN_Records.Add(new FEN_Record(oldFen));
-			newGameState.StateInfo = moveInfo;
-			var oldSquare = newGameState.Squares.GetSquare(position);
-			var attacks = gameState.Attacks.GetPositionAttacksOnPosition(position, newPiecePosition);
+		private Envelope<GameState> makeMove(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition) {
+			//store important stuff from old gamestate
+			var previousStateFEN = gameState.ToString();
+			var fenRecordArray = new List<FEN_Record>().ToArray();
+			gameState.FEN_Records.CopyTo(fenRecordArray);
+			var fenRecords = fenRecordArray.ToList();
+			fenRecords.Add(new FEN_Record(previousStateFEN));
+
+			//verify that the move can be made
+			var oldSquare = gameState.Squares.GetSquare(piecePosition);
+			var attacks = gameState.Attacks.GetPositionAttacksOnPosition(piecePosition, newPiecePosition);
 			if (!attacks.Any()) {
 				return Envelope<GameState>.Error($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
 			}
-			var oldSquareCopy = (Square)oldSquare.Clone();
-			oldSquareCopy.Piece = null;
-			var newSquare = newGameState.Squares.GetSquare(newPiecePosition);
-			var newSquareCopy = (Square)newSquare.Clone();
-			newSquareCopy.Piece = moveInfo.IsPawnPromotion
-				? new Piece(moveInfo.PawnPromotedTo, gameState.ActiveColor)
-				: new Piece { Identity = oldSquare.Piece.Identity, PieceType = oldSquare.Piece.PieceType, Color = oldSquare.Piece.Color };
-			newGameState.Squares.Remove(oldSquare);
-			newGameState.Squares.Remove(newSquare);
-			newGameState.Squares.Add(oldSquareCopy);
-			newGameState.Squares.Add(newSquareCopy);
-			this.NotationService.SetGameState_FEN(gameState, newGameState, position, newPiecePosition);
+
+			//make the move
+			var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
+			this.NotationService.SetGameState_FEN(gameState, movingGameState, piecePosition, newPiecePosition);
+			var currentStateFEN = movingGameState.ToString();
+
+			//setup new gamestate
+			var newGameStateResult = hydrateGameState(new FEN_Record(currentStateFEN));
+			if (newGameStateResult.Failure) {
+				throw new System.Exception(newGameStateResult.Message);
+			}
+			var newGameState = newGameStateResult.Result;
+			newGameState.FEN_Records = fenRecords;
 			return Envelope<GameState>.Ok(newGameState);
 		}
 	}

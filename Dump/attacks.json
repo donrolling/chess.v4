@@ -1,0 +1,845 @@
+[{
+	"AttackerSquare": {
+		"Index": 0,
+		"Name": "a1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "R",
+			"PieceType": 3
+		}
+	},
+	"Index": 1,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 3,
+		"Name": "d1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "Q",
+			"PieceType": 4
+		}
+	},
+	"Index": 12,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 3,
+		"Name": "d1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "Q",
+			"PieceType": 4
+		}
+	},
+	"Index": 21,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 3,
+		"Name": "d1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "Q",
+			"PieceType": 4
+		}
+	},
+	"Index": 30,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 3,
+		"Name": "d1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "Q",
+			"PieceType": 4
+		}
+	},
+	"Index": 39,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 4,
+		"Name": "e1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "K",
+			"PieceType": 5
+		}
+	},
+	"Index": 12,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 5,
+		"Name": "f1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "B",
+			"PieceType": 2
+		}
+	},
+	"Index": 12,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 5,
+		"Name": "f1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "B",
+			"PieceType": 2
+		}
+	},
+	"Index": 19,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 5,
+		"Name": "f1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "B",
+			"PieceType": 2
+		}
+	},
+	"Index": 26,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 5,
+		"Name": "f1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "B",
+			"PieceType": 2
+		}
+	},
+	"Index": 33,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 5,
+		"Name": "f1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "B",
+			"PieceType": 2
+		}
+	},
+	"Index": 40,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 6,
+		"Name": "g1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 12,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 6,
+		"Name": "g1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 21,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 6,
+		"Name": "g1",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 23,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 8,
+		"Name": "a2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 16,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 8,
+		"Name": "a2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 24,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 9,
+		"Name": "b2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 17,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 9,
+		"Name": "b2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 25,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 10,
+		"Name": "c2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 18,
+	"Name": "c3",
+	"Occupied": true,
+	"Piece": {
+		"Color": 1,
+		"Identity": "N",
+		"PieceType": 1
+	}
+}, {
+	"AttackerSquare": {
+		"Index": 10,
+		"Name": "c2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 26,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 11,
+		"Name": "d2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 19,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 11,
+		"Name": "d2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 27,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 13,
+		"Name": "f2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 21,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 13,
+		"Name": "f2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 29,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 14,
+		"Name": "g2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 22,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 14,
+		"Name": "g2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 30,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 15,
+		"Name": "h2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 23,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 15,
+		"Name": "h2",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 31,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 24,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 33,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 35,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 12,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "N",
+			"PieceType": 1
+		}
+	},
+	"Index": 1,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 28,
+		"Name": "e4",
+		"Occupied": true,
+		"Piece": {
+			"Color": 1,
+			"Identity": "P",
+			"PieceType": 0
+		}
+	},
+	"Index": 36,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 34,
+		"Name": "c5",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 26,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 48,
+		"Name": "a7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 40,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 48,
+		"Name": "a7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 32,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 49,
+		"Name": "b7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 41,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 49,
+		"Name": "b7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 33,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 51,
+		"Name": "d7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 43,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 51,
+		"Name": "d7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 35,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 52,
+		"Name": "e7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 44,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 52,
+		"Name": "e7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 36,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 53,
+		"Name": "f7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 45,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 53,
+		"Name": "f7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 37,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 54,
+		"Name": "g7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 46,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 54,
+		"Name": "g7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 38,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 55,
+		"Name": "h7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 47,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 55,
+		"Name": "h7",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "p",
+			"PieceType": 0
+		}
+	},
+	"Index": 39,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 57,
+		"Name": "b8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "n",
+			"PieceType": 1
+		}
+	},
+	"Index": 42,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 57,
+		"Name": "b8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "n",
+			"PieceType": 1
+		}
+	},
+	"Index": 40,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 59,
+		"Name": "d8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "q",
+			"PieceType": 4
+		}
+	},
+	"Index": 50,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 59,
+		"Name": "d8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "q",
+			"PieceType": 4
+		}
+	},
+	"Index": 41,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 59,
+		"Name": "d8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "q",
+			"PieceType": 4
+		}
+	},
+	"Index": 32,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 62,
+		"Name": "g8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "n",
+			"PieceType": 1
+		}
+	},
+	"Index": 47,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}, {
+	"AttackerSquare": {
+		"Index": 62,
+		"Name": "g8",
+		"Occupied": true,
+		"Piece": {
+			"Color": 0,
+			"Identity": "n",
+			"PieceType": 1
+		}
+	},
+	"Index": 45,
+	"Name": null,
+	"Occupied": false,
+	"Piece": null
+}]

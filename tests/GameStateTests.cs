@@ -72,6 +72,7 @@ namespace tests {
 			Assert.AreEqual('P', squares.GetPiece(14).Identity);
 			Assert.AreEqual('P', squares.GetPiece(15).Identity);
 		}
+
 		[TestMethod]
 		public void Given_ProblematicStartPosition() {
 			var fen = "r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4";
