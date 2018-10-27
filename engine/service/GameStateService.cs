@@ -113,9 +113,7 @@ namespace chess.v4.engine.service {
 		private Envelope<GameState> makeMove(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition) {
 			//store important stuff from old gamestate
 			var previousStateFEN = gameState.ToString();
-			var fenRecordArray = new List<FEN_Record>().ToArray();
-			gameState.FEN_Records.CopyTo(fenRecordArray);
-			var fenRecords = fenRecordArray.ToList();
+			var fenRecords = gameState.FEN_Records.DeepCopy();
 			fenRecords.Add(new FEN_Record(previousStateFEN));
 
 			//verify that the move can be made
