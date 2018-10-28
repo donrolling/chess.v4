@@ -7,7 +7,7 @@ using System.Linq;
 namespace chess.v4.engine.utility {
 
 	public static class CastleUtility {
-
+	
 		public static bool DetermineCastleThroughCheck(GameState gameState, int kingPos, int rookPos) {
 			var oppositeColor = gameState.ActiveColor.Reverse();
 			var positions = CastleUtility.GetKingPositionsDuringCastle(kingPos, rookPos);

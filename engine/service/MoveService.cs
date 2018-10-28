@@ -31,10 +31,9 @@ namespace chess.v4.engine.service {
 			var stateInfo = new StateInfo();
 			var oldSquare = gameState.Squares.GetSquare(piecePosition);
 
-			var isCastle = false;
 			var isValidCastleAttempt = this.IsValidCastleAttempt(gameState, oldSquare, newPiecePosition, gameState.Attacks);
 			if (isValidCastleAttempt.Success) {
-				isCastle = isValidCastleAttempt.Result;
+				stateInfo.IsCastle = isValidCastleAttempt.Result;
 			} else {
 				return Envelope<StateInfo>.Error(isValidCastleAttempt.Message);
 			}

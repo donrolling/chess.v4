@@ -32,10 +32,9 @@ namespace chess.v4.engine.service {
 						Int32.TryParse(c.ToString(), out advanceSquare);
 						//gotta make empty squares
 						for (int j = 0; j < advanceSquare; j++) {
+							var index = leftSideIndex + charIndex + j;
 							squares.Add(
-								new Square {
-									Index = leftSideIndex + charIndex + j
-								}
+								new Square(index, NotationUtility.PositionToCoordinate(index), null)
 							);
 						}
 						//in FEN we move ahead the number of squares that the number says
@@ -43,10 +42,7 @@ namespace chess.v4.engine.service {
 					} else {
 						var index = leftSideIndex + charIndex;
 						squares.Add(
-							new Square(index,
-								NotationUtility.PositionToCoordinate(index),
-								NotationUtility.GetPieceFromCharacter(c)
-							)
+							new Square(index, NotationUtility.PositionToCoordinate(index), NotationUtility.GetPieceFromCharacter(c))
 						);
 						charIndex++;
 					}

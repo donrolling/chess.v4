@@ -101,6 +101,36 @@ namespace tests {
 		}
 
 		[TestMethod]
+		public void BlackKingCastles_Succeeds() {
+			var fen = "r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R1B1KB1R b KQkq - 0 9";
+			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+
+			var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 60, 63);
+			Assert.IsFalse(isCastleThroughCheck);
+
+			var newGameStateResult = this.GameStateService.MakeMove(gameState, 60, 62);
+			Assert.IsTrue(newGameStateResult.Success);
+
+			var newFEN = newGameStateResult.Result.ToString();
+			Assert.AreEqual("r1bq1rk1/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R1B1KB1R w KQ - 1 10", newFEN);
+		}
+
+		[TestMethod]
+		public void WhiteKingCastles_Succeeds() {
+			var fen = "r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9";
+			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+
+			var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
+			Assert.IsFalse(isCastleThroughCheck);
+
+			var newGameStateResult = this.GameStateService.MakeMove(gameState, 4, 2);
+			Assert.IsTrue(newGameStateResult.Success);
+				
+			var newFEN = newGameStateResult.Result.ToString();
+			Assert.AreEqual("r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/2KR1B1R b kq - 1 9", newFEN);
+		}
+
+		[TestMethod]
 		public void WhiteKingAttemptsToCastleThroughCheck_Fails() {
 			var fen = "r3k2r/pp3ppp/2pq4/7b/1Q2PB2/1P6/P1P1BPPP/R3K2R w KQkq - 3 13";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);

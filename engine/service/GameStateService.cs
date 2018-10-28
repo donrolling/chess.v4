@@ -5,7 +5,6 @@ using chess.v4.engine.model;
 using chess.v4.engine.reference;
 using chess.v4.engine.utility;
 using common;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
@@ -62,17 +61,18 @@ namespace chess.v4.engine.service {
 		private static GameState manageSquares(GameState gameState, StateInfo stateInfo, int piecePosition, int newPiecePosition) {
 			var movingGameState = gameState.DeepCopy();
 			var oldSquare = movingGameState.Squares.GetSquare(piecePosition);
-			var oldSquareCopy = (Square)oldSquare.Clone();
+			var oldSquareCopy = oldSquare.DeepCopy();
 			oldSquareCopy.Piece = null;
 			var newSquare = movingGameState.Squares.GetSquare(newPiecePosition);
-			var newSquareCopy = (Square)newSquare.Clone();
+			var newSquareCopy = newSquare.DeepCopy();
 			newSquareCopy.Piece = stateInfo.IsPawnPromotion
 				? new Piece(stateInfo.PawnPromotedTo, gameState.ActiveColor)
-				: new Piece { Identity = oldSquare.Piece.Identity, PieceType = oldSquare.Piece.PieceType, Color = oldSquare.Piece.Color };
+				: oldSquare.Piece.DeepCopy();
 			movingGameState.Squares.Remove(oldSquare);
 			movingGameState.Squares.Remove(newSquare);
 			movingGameState.Squares.Add(oldSquareCopy);
 			movingGameState.Squares.Add(newSquareCopy);
+			movingGameState.Squares = movingGameState.Squares.OrderBy(a => a.Index).ToList();
 			return movingGameState;
 		}
 
@@ -125,6 +125,10 @@ namespace chess.v4.engine.service {
 
 			//make the move
 			var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
+			if (stateInfo.IsCastle) {
+				var rookPositions = CastleUtility.GetRookPositionsForCastle(gameState.ActiveColor, piecePosition, newPiecePosition);
+				movingGameState = manageSquares(movingGameState, stateInfo, rookPositions.RookPos, rookPositions.NewRookPos);
+			}
 			this.NotationService.SetGameState_FEN(gameState, movingGameState, piecePosition, newPiecePosition);
 			var currentStateFEN = movingGameState.ToString();
 

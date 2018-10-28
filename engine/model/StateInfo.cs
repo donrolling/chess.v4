@@ -10,6 +10,7 @@ namespace chess.v4.engine.model {
 		public bool IsWhiteCheck { get; set; }
 		public bool IsPawnPromotion { get; set; }
 		public PieceType PawnPromotedTo { get; set; }
+		public bool IsCastle { get; internal set; }
 
 		public StateInfo() {
 		}
