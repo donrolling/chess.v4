@@ -2,14 +2,12 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
-using chess.v4.engine.reference;
 using chess.v4.engine.utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
-
 	public class AttackService : IAttackService {
 		public IDiagonalService DiagonalService { get; }
 		public INotationService NotationService { get; }
@@ -201,44 +199,39 @@ namespace chess.v4.engine.service {
 			int rank = NotationUtility.PositionToRankInt(position);
 
 			var directionIndicator = pieceColor == Color.White ? 1 : -1;
-			var rankIndicator = pieceColor == Color.White ? 2 : 7;
+			var homeRankIndicator = pieceColor == Color.White ? 2 : 7;
 
 			var nextRank = (rank + directionIndicator);
 			var newPosition = NotationUtility.CoordinatePairToPosition(file, nextRank);
 			var attackedSquare = squares.GetSquare(newPosition);
-			var attacks = new List<Square>();
-			attacks.Add(attackedSquare);
-
-			if (file - 1 >= 0) {
-				//get attack square on left
-				var leftPos = NotationUtility.CoordinatePairToPosition(file - 1, nextRank);
-				if (isValidPawnAttack(squares, leftPos, pieceColor)) {
-					attacks.Add(squares.GetSquare(leftPos));
-				}
-			}
-			if (file + 1 <= 7) {
-				//get attack square on right
-				var rightPos = NotationUtility.CoordinatePairToPosition(file + 1, nextRank);
-				if (isValidPawnAttack(squares, rightPos, pieceColor)) {
-					attacks.Add(squares.GetSquare(rightPos));
-				}
-			}
-			//have to plus one here because rank is zero based and coordinate is base 1
-			if (rank + 1 == rankIndicator) {
-				var rankUpPosition = NotationUtility.CoordinatePairToPosition(file, nextRank + directionIndicator);
-				attacks.Add(squares.GetSquare(rankUpPosition));
+			var attacks = new List<AttackedSquare>();
+			if (!attackedSquare.Occupied) {
+				//can't attack going forward
+				attacks.Add(new AttackedSquare(square, attackedSquare));
 			}
 
-			//add en passant position
+			managePawnAttacks(squares, square, pieceColor, file, rank, directionIndicator, homeRankIndicator, nextRank, attacks);
+
+			//add en passant position: -1 indicates null here
 			if (gameState.EnPassantTargetPosition > -1) {
 				var leftPos = NotationUtility.CoordinatePairToPosition(file - 1, nextRank);
 				var rightPos = NotationUtility.CoordinatePairToPosition(file + 1, nextRank);
 				if (gameState.EnPassantTargetPosition == leftPos || gameState.EnPassantTargetPosition == rightPos) {
-					attacks.Add(squares.GetSquare(gameState.EnPassantTargetPosition));
+					var enPassantSquare = squares.GetSquare(gameState.EnPassantTargetPosition);
+					attacks.Add(new AttackedSquare(square, enPassantSquare));
 				}
 			}
 
-			return attacks.Select(a => new AttackedSquare(square, a));
+			return attacks;
+		}
+
+		private void getPawnDiagonalAttack(List<Square> squares, Square square, Color pieceColor, int fileIndicator, int nextRank, List<AttackedSquare> attacks) {
+			var pos = NotationUtility.CoordinatePairToPosition(fileIndicator, nextRank);
+			var _isValidPawnAttack = isValidPawnAttack(squares, pos, pieceColor);
+			if (_isValidPawnAttack) {
+				var s1 = squares.GetSquare(pos);
+				attacks.Add(new AttackedSquare(square, s1));
+			}
 		}
 
 		private IEnumerable<AttackedSquare> getPieceAttacks(GameState gameState, Square square, bool ignoreKing = false) {
@@ -322,6 +315,33 @@ namespace chess.v4.engine.service {
 				return false;
 			}
 			return GeneralUtility.CanAttackPiece(pieceColor, attackedSquare.Piece);
+		}
+
+		private void managePawnAttacks(List<Square> squares, Square square, Color pieceColor, int file, int rank, int directionIndicator, int homeRankIndicator, int nextRank, List<AttackedSquare> attacks) {
+			var notOnFarLeftFile = file - 1 >= 0;
+			var notOnFarRightFile = file + 1 <= 7;
+			if (notOnFarLeftFile) {
+				//get attack square on left
+				var fileIndicator = file - 1;
+				getPawnDiagonalAttack(squares, square, pieceColor, fileIndicator, nextRank, attacks);
+			}
+			if (notOnFarRightFile) {
+				//get attack square on right
+				var fileIndicator = file + 1;
+				getPawnDiagonalAttack(squares, square, pieceColor, fileIndicator, nextRank, attacks);
+			}
+			//have to plus one here because rank is zero based and coordinate is base 1
+			//if this pawn is on it's home rank, then add a second attack square.
+			var isOnHomeRank = rank + 1 == homeRankIndicator;
+			if (isOnHomeRank) {
+				var forwardOne = nextRank + directionIndicator;
+				var rankForwardPosition = NotationUtility.CoordinatePairToPosition(file, forwardOne);
+				var rankForwardSquare = squares.GetSquare(rankForwardPosition);
+				//pawns don't attack forward, so we don't have attacks when people occupy ahead of us
+				if (!rankForwardSquare.Occupied) {
+					attacks.Add(new AttackedSquare(square, rankForwardSquare));
+				}
+			}
 		}
 
 		private void removeKingChecksFromKingMoves(GameState gameState, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {
