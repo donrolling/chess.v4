@@ -339,10 +339,26 @@ namespace chess.v4.engine.service {
 						//has to be diagonal
 						var diagonalAttacksOnKing = attacksOnKing.Where(a => diagonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
 						if (!diagonalAttacksOnKing.Any()) { continue; }
+						var kingSquare = diagonalAttacksOnKing.First();
+						var kingRank = NotationUtility.PositionToRank(kingSquare.Index);
+						var kingFile = NotationUtility.PositionToFile(kingSquare.Index);
 						foreach (var x in diagonalAttacksOnKing) {
 							//diagonal moves: rise LtoR /  or RtoL \ 
-							var isLtoRMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackerSquare.Index, clearMove.Index);
-
+							var attackerRank = NotationUtility.PositionToRank(x.AttackerSquare.Index);
+							var attackerFile = NotationUtility.PositionToFile(x.AttackerSquare.Index);
+							var rankDirection = kingRank < attackerRank ? Direction.RowDown: Direction.RowUp;
+							var fileDirection = kingFile < attackerFile ? Direction.FileDown : Direction.FileUp;
+							var diagonalDirection = DiagonalDirection.Invalid;
+							//figure out from which direction the attack comes
+							if (rankDirection == Direction.RowDown && fileDirection == Direction.FileDown) {
+								diagonalDirection = DiagonalDirection.DownLeft;
+							} else if (rankDirection == Direction.RowDown && fileDirection == Direction.FileUp) {
+								diagonalDirection = DiagonalDirection.DownRight;
+							} else if (rankDirection == Direction.RowUp && fileDirection == Direction.FileDown) {
+								diagonalDirection = DiagonalDirection.UpLeft;
+							} else if (rankDirection == Direction.RowUp && fileDirection == Direction.FileUp) {
+								diagonalDirection = DiagonalDirection.UpRight;
+							}
 						}
 					}
 				}

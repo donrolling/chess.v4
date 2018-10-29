@@ -54,7 +54,7 @@ namespace tests {
 			Assert.IsTrue(gameState.StateInfo.IsCheck);
 			Assert.IsTrue(gameState.StateInfo.IsWhiteCheck);
 			var gameStateResult = GameStateService.MakeMove(gameState, "e3", "f4");
-			Assert.IsTrue(gameStateResult.Failure);
+			Assert.IsTrue(gameStateResult.Failure, "Make Move should result in a failure.");
 		}
 
 		[TestMethod]
@@ -74,7 +74,7 @@ namespace tests {
 			var fen = "rnbqkbnr/1pp2ppp/4p3/p2p4/8/4K3/PPPP1PPP/RNBQ1BNR w kq - 0 4";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e3").ToList();
-			Assert.IsFalse(whiteKingAttacks.Select(a => a.Name).Contains("e4"));
+			Assert.IsFalse(whiteKingAttacks.Select(a => a.Name).Contains("e4"), "King should not be able to move into e4 because a pawn attacks there.");
 		}
 
 		[TestMethod]
