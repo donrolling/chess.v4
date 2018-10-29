@@ -4,13 +4,13 @@ using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
 using chess.v4.engine.utility;
+using System;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.service {
-
 	public class DiagonalService : IDiagonalService {
-		public DiagonalService() {
 
+		public DiagonalService() {
 		}
 
 		public List<Square> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing) {
@@ -44,6 +44,20 @@ namespace chess.v4.engine.service {
 				attacks.AddRange(GetDiagonalLine(gameState, square, square.Piece, direction, ignoreKing));
 			}
 			return attacks;
+		}
+
+		public List<Square> GetEntireDiagonalByFile(GameState gameState, int file, DiagonalDirectionFromFileNumber direction) {
+			var list = new List<Square>();
+			var increment = direction == DiagonalDirectionFromFileNumber.Left ? 7 : 9;
+			var numberOfSquares = direction == DiagonalDirectionFromFileNumber.Left
+				? file + 1
+				: 8 - file;
+			var index = file;
+			for (int i = 0; i < numberOfSquares; i++) {
+				list.Add(gameState.Squares.GetSquare(index));
+				index = index + increment;
+			}
+			return list;
 		}
 
 		private bool canDoDiagonalsFromStartPosition(int startPosition, int direction) {

@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="logs\**" />
+    <EmbeddedResource Remove="logs\**" />
+    <None Remove="logs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="nlog.config" />
   </ItemGroup>
 
@@ -29,10 +35,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\common.csproj" />
     <ProjectReference Include="..\engine\engine.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="logs\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -46,6 +46,18 @@ namespace tests {
 		}
 
 		[TestMethod]
+		public void WhiteKingAttemptsToMoveDiagonallyOutOfCheck_Fails() {
+			//should have one valid move only
+			var fen = "6k1/5pbp/5Qp1/8/r3P3/3PK3/r4PPP/2q5 w - - 0 1";
+			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e3").ToList();
+			Assert.IsTrue(gameState.StateInfo.IsCheck);
+			Assert.IsTrue(gameState.StateInfo.IsWhiteCheck);
+			var gameStateResult = GameStateService.MakeMove(gameState, "e3", "f4");
+			Assert.IsTrue(gameStateResult.Failure);
+		}
+
+		[TestMethod]
 		public void WhiteKingMayCastle() {
 			var fen = "r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PPQPPP/R3KBNR w KQkq - 3 5";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);

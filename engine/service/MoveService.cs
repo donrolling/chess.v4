@@ -337,29 +337,13 @@ namespace chess.v4.engine.service {
 						}
 					} else {
 						//has to be diagonal
-						//var diagonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
-						//if (!diagonalAttacksOnKing.Any()) { continue; }
-						//foreach (var x in diagonalAttacksOnKing) {
-						//	if (isRankMove) {
-						//		var rank = NotationUtility.PositionToRank(x.Index);
-						//		var entireRank = this.OrthogonalService.GetEntireRank(rank);
-						//		//is clearMove going to be on this rank?
-						//		//if so, we're still in check
-						//		var sameRank = entireRank.Contains(clearMoveIndex);
-						//		if (sameRank) {
-						//			clearMoveCount--;
-						//		}
-						//	} else {
-						//		var file = NotationUtility.PositionToFile(x.Index);
-						//		var entireFile = this.OrthogonalService.GetEntireFile(file);
-						//		//is clearMove going to be on this file?
-						//		//if so, we're still in check
-						//		var sameFile = entireFile.Contains(clearMoveIndex);
-						//		if (sameFile) {
-						//			clearMoveCount--;
-						//		}
-						//	}
-						//}
+						var diagonalAttacksOnKing = attacksOnKing.Where(a => diagonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
+						if (!diagonalAttacksOnKing.Any()) { continue; }
+						foreach (var x in diagonalAttacksOnKing) {
+							//diagonal moves: rise LtoR /  or RtoL \ 
+							var isLtoRMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackerSquare.Index, clearMove.Index);
+
+						}
 					}
 				}
 				return clearMoveCount > 0;

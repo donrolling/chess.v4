@@ -15,12 +15,12 @@ namespace chess.v4.engine.service {
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
 	// kingside castling is indicated by the sequence "O-O"; queenside castling is indicated by the sequence "O-O-O"
 	public class PGNService : IPGNService {
-		public IDiagonalService DiagonalService { get; }
+		public IMoveService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
-		public PGNService(IDiagonalService diagonalService, IOrthogonalService orthogonalService) {
+		public PGNService(IMoveService diagonalService, IOrthogonalService orthogonalService) {
 			DiagonalService = diagonalService;
 			OrthogonalService = orthogonalService;
 		}

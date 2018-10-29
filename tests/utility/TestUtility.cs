@@ -4,6 +4,7 @@ using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,11 +29,21 @@ namespace tests.utility {
 
 		internal static void ListContainsSquares(List<AttackedSquare> attacks, List<int> squares, PieceType pieceType) {
 			var found = from a in attacks
-						   join s in squares on a.Index equals s
-						   select s;
+						join s in squares on a.Index equals s
+						select s;
 			var notFound = squares.Except(found);
 			var nf = string.Join(",", notFound.Select(n => n.ToString()).ToArray());
 			var msg = $"{ pieceType } should be able to attack squares: { nf }";
+			Assert.IsFalse(notFound.Any(), msg);
+		}
+
+		internal static void ListContainsSquares(List<Square> diagonalLine, List<int> squares) {
+			var found = from a in diagonalLine
+						join s in squares on a.Index equals s
+						select s;
+			var notFound = squares.Except(found);
+			var nf = string.Join(",", notFound.Select(n => n.ToString()).ToArray());
+			var msg = $"List should contian squares: { nf }";
 			Assert.IsFalse(notFound.Any(), msg);
 		}
 	}
