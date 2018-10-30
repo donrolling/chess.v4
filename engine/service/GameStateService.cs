@@ -139,6 +139,18 @@ namespace chess.v4.engine.service {
 			}
 			var newGameState = newGameStateResult.Result;
 			newGameState.FEN_Records = fenRecords;
+			//make sure we moved out of check.
+			if (gameState.StateInfo.IsCheck && newGameState.StateInfo.IsCheck) {
+				if (gameState.ActiveColor == Color.White) {
+					if (newGameState.StateInfo.IsWhiteCheck) {
+						return Envelope<GameState>.Error("King must move out of check.");
+					}
+				} else {
+					if (newGameState.StateInfo.IsBlackCheck) {
+						return Envelope<GameState>.Error("King must move out of check.");
+					}
+				}
+			}
 			return Envelope<GameState>.Ok(newGameState);
 		}
 	}
