@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
-
 	public class MoveService : IMoveService {
 		public IDiagonalService DiagonalService { get; }
 
@@ -219,37 +218,6 @@ namespace chess.v4.engine.service {
 			return isCapture || isEnPassant;
 		}
 
-		private static int[] getKingCastleCoordinates(Square kingSquare, int destination) {
-			switch (kingSquare.Piece.Color) {
-				case Color.Black:
-					switch (destination) {
-						case 58:
-							return new int[2] { 61, 62 };
-
-						case 62:
-							return new int[2] { 58, 59 };
-
-						default:
-							throw new Exception("Invalid destination.");
-					}
-
-				case Color.White:
-					switch (destination) {
-						case 2:
-							return new int[2] { 2, 3 };
-
-						case 6:
-							return new int[2] { 5, 6 };
-
-						default:
-							throw new Exception("Invalid destination.");
-					}
-
-				default:
-					throw new Exception("Enum not matched.");
-			}
-		}
-
 		private (bool CastleAvailability, int RookPosition) checkCastleAvailability(GameState gameState, int destination, Piece piece) {
 			if (gameState.CastlingAvailability == "-") {
 				return (false, 0);
@@ -290,8 +258,95 @@ namespace chess.v4.engine.service {
 			return gameState.Attacks.Where(a => a.Occupied && a.Piece.Color == color && a.Piece.PieceType == PieceType.King);
 		}
 
+		private List<int> getEntireDiagonalLine(int pos1, int pos2) {
+			//diagonal moves: rise LtoR /  or RtoL \
+			var dxs = new List<int> { pos1, pos2 };
+			var diff = Math.Abs(pos1 - pos2);
+			var ltr = diff % 9 == 0;
+			var rtl = diff % 7 == 0;
+			if (!ltr && !rtl) {
+				throw new Exception("What? This is supposed to be diagonal.");
+			}
+			//smallest # will be closest to the left or right in the line
+			//the left terminating position is evenly divisible by 8
+			//the right terminating position is evently divisible by 7
+			//find terminators
+			//left
+			var increment = ltr ? 9 : 7;
+			var smallest = dxs.Min();
+			var largest = dxs.Max();
+			var nextSmallest = smallest;
+			while (nextSmallest % 8 > 0) {
+				nextSmallest = nextSmallest - increment;
+				if (!dxs.Contains(nextSmallest)) {
+					dxs.Add(nextSmallest);
+				}
+			};
+			//right
+			var nextLargest = largest;
+			while (nextLargest % 7 > 0) {
+				nextLargest = nextLargest + increment;
+				if (!dxs.Contains(nextLargest)) {
+					dxs.Add(nextLargest);
+				}
+			};
+			//fill in the middle
+			var mid = smallest;
+			var nextMid = mid;
+			if (diff > increment) {
+				while (nextMid < largest) {
+					nextMid = nextMid + increment;
+					if (!dxs.Contains(nextMid)) {
+						dxs.Add(nextMid);
+					}
+				}
+			}
+			return dxs;
+		}
+
+		private List<int> getEntireOrthogonalLine(bool isRankMove, AttackedSquare x) {
+			if (isRankMove) {
+				var rank = NotationUtility.PositionToRank(x.Index);
+				return this.OrthogonalService.GetEntireRank(rank);
+			} else {
+				var file = NotationUtility.PositionToFile(x.Index);
+				return this.OrthogonalService.GetEntireFile(file);
+			}
+		}
+
 		private Square getKing(GameState gameState, Color color) {
 			return gameState.Squares.Where(a => a.Occupied && a.Piece.Color == color && a.Piece.PieceType == PieceType.King).First();
+		}
+
+		private int[] getKingCastleCoordinates(Square kingSquare, int destination) {
+			switch (kingSquare.Piece.Color) {
+				case Color.Black:
+					switch (destination) {
+						case 58:
+							return new int[2] { 61, 62 };
+
+						case 62:
+							return new int[2] { 58, 59 };
+
+						default:
+							throw new Exception("Invalid destination.");
+					}
+
+				case Color.White:
+					switch (destination) {
+						case 2:
+							return new int[2] { 2, 3 };
+
+						case 6:
+							return new int[2] { 5, 6 };
+
+						default:
+							throw new Exception("Invalid destination.");
+					}
+
+				default:
+					throw new Exception("Enum not matched.");
+			}
 		}
 
 		private bool isCheckMate(GameState gameState, Color kingColor, IEnumerable<AttackedSquare> attacksOnKing) {
@@ -315,24 +370,10 @@ namespace chess.v4.engine.service {
 						var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
 						if (!orthogonalAttacksOnKing.Any()) { continue; }
 						foreach (var x in orthogonalAttacksOnKing) {
-							if (isRankMove) {
-								var rank = NotationUtility.PositionToRank(x.Index);
-								var entireRank = this.OrthogonalService.GetEntireRank(rank);
-								//is clearMove going to be on this rank?
-								//if so, we're still in check
-								var sameRank = entireRank.Contains(clearMoveIndex);
-								if (sameRank) {
-									clearMoveCount--;
-								}
-							} else {
-								var file = NotationUtility.PositionToFile(x.Index);
-								var entireFile = this.OrthogonalService.GetEntireFile(file);
-								//is clearMove going to be on this file?
-								//if so, we're still in check
-								var sameFile = entireFile.Contains(clearMoveIndex);
-								if (sameFile) {
-									clearMoveCount--;
-								}
+							var oxs = getEntireOrthogonalLine(isRankMove, x);
+							//if oxs contains the clearMove.Index, then the king has not moved out of check
+							if (oxs.Contains(clearMoveIndex)) {
+								clearMoveCount--;
 							}
 						}
 					} else {
@@ -340,24 +381,11 @@ namespace chess.v4.engine.service {
 						var diagonalAttacksOnKing = attacksOnKing.Where(a => diagonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
 						if (!diagonalAttacksOnKing.Any()) { continue; }
 						var kingSquare = diagonalAttacksOnKing.First();
-						var kingRank = NotationUtility.PositionToRank(kingSquare.Index);
-						var kingFile = NotationUtility.PositionToFile(kingSquare.Index);
 						foreach (var x in diagonalAttacksOnKing) {
-							//diagonal moves: rise LtoR /  or RtoL \ 
-							var attackerRank = NotationUtility.PositionToRank(x.AttackerSquare.Index);
-							var attackerFile = NotationUtility.PositionToFile(x.AttackerSquare.Index);
-							var rankDirection = kingRank < attackerRank ? Direction.RowDown: Direction.RowUp;
-							var fileDirection = kingFile < attackerFile ? Direction.FileDown : Direction.FileUp;
-							var diagonalDirection = DiagonalDirection.Invalid;
-							//figure out from which direction the attack comes
-							if (rankDirection == Direction.RowDown && fileDirection == Direction.FileDown) {
-								diagonalDirection = DiagonalDirection.DownLeft;
-							} else if (rankDirection == Direction.RowDown && fileDirection == Direction.FileUp) {
-								diagonalDirection = DiagonalDirection.DownRight;
-							} else if (rankDirection == Direction.RowUp && fileDirection == Direction.FileDown) {
-								diagonalDirection = DiagonalDirection.UpLeft;
-							} else if (rankDirection == Direction.RowUp && fileDirection == Direction.FileUp) {
-								diagonalDirection = DiagonalDirection.UpRight;
+							var dxs = getEntireDiagonalLine(kingSquare.Index, x.AttackerSquare.Index);
+							//if dxs contains the clearMove.Index, then the king has not moved out of check
+							if (dxs.Contains(clearMove.Index)) {
+								clearMoveCount--;
 							}
 						}
 					}
