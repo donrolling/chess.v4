@@ -1,4 +1,5 @@
-﻿using chess.v4.engine.enumeration;
+﻿using System;
+using chess.v4.engine.enumeration;
 
 namespace chess.v4.engine.model {
 
@@ -6,6 +7,7 @@ namespace chess.v4.engine.model {
 		public Color Color { get; set; }
 		public char Identity { get; set; }
 		public PieceType PieceType { get; set; }
+		public int OrderOfOperation { get; set; }
 
 		public Piece() {
 		}
@@ -14,6 +16,26 @@ namespace chess.v4.engine.model {
 			this.PieceType = pieceType;
 			this.Color = color;
 			this.Identity = getIdentityViaPieceType(color, pieceType);
+			this.OrderOfOperation = getOrderOfOperation(pieceType);
+		}
+
+		private int getOrderOfOperation(PieceType pieceType) {
+			switch (pieceType) {
+				case PieceType.Pawn:
+					return 1;
+				case PieceType.Knight:
+					return 2;
+				case PieceType.Bishop:
+					return 3;
+				case PieceType.Rook:
+					return 4;
+				case PieceType.Queen:
+					return 5;
+				case PieceType.King:
+					return 6;
+				default:
+					return -1;
+			}
 		}
 
 		private static char getIdentityViaPieceType(PieceType pieceType) {

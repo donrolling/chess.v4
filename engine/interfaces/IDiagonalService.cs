@@ -9,6 +9,6 @@ namespace chess.v4.engine.interfaces {
 
 		List<Square> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing);
 
-		List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false);
+		void GetDiagonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false);
 	}
 }

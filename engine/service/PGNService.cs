@@ -31,11 +31,11 @@ namespace chess.v4.engine.service {
 				throw new Exception("No squares found.");
 			}
 			if (potentialSquares.Count() == 1) {
-				return potentialSquares.First().AttackerSquare;
+				return potentialSquares.First().AttackingSquare;
 			}
 			//differentiate
 			var potentialPositions = from s in gameState.Squares
-									 join p in potentialSquares on s.Index equals p.AttackerSquare.Index
+									 join p in potentialSquares on s.Index equals p.AttackingSquare.Index
 									 where s.Piece.Identity == piece.Identity
 									 select p;
 			if (!potentialPositions.Any()) {
@@ -378,7 +378,7 @@ namespace chess.v4.engine.service {
 				var iFile = NotationUtility.FileToInt(ambiguityResolver);
 				ambiguityResolutionSet = this.OrthogonalService.GetEntireFile(iFile);
 			}
-			var intersection = potentialPositions.Select(a => a.AttackerSquare.Index).Intersect(ambiguityResolutionSet);
+			var intersection = potentialPositions.Select(a => a.AttackingSquare.Index).Intersect(ambiguityResolutionSet);
 			if (intersection.Count() > 1) {
 				throw new Exception("There should not be more than one item found here.");
 			}
@@ -399,7 +399,7 @@ namespace chess.v4.engine.service {
 			var destinationSquare = gameState.Squares.GetSquare(endPos);
 			var isCapture = destinationSquare.Occupied && destinationSquare.Piece.Color != playerColor;
 
-			var attacks = gameState.Attacks.Where(a => a.AttackerSquare.Index == startPos);
+			var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Index == startPos);
 			if (attacks == null || !attacks.Any() || !attacks.Any(a => a.Index == endPos)) {
 				throw new Exception("No attacks can be made on this ending square.");
 			}

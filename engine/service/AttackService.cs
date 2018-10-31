@@ -20,67 +20,19 @@ namespace chess.v4.engine.service {
 		}
 
 		public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false) {
-			var allAttacks = new List<AttackedSquare>();
-			foreach (var square in gameState.Squares) {
-				var list = this.getPieceAttacks(gameState, square, ignoreKing);
-				if (list.Any()) {
-					allAttacks.AddRange(list);
-				}
+			var accumulator = new List<AttackedSquare>();
+			foreach (var square in gameState.Squares.Where(a => a.Occupied).OrderBy(a => a.Piece.OrderOfOperation)) {
+				this.getPieceAttacks(gameState, square, accumulator, ignoreKing);
 			}
-			return allAttacks;
+			return accumulator;
 		}
 
-		//public IEnumerable<Square> GetKingAttack(AttackedSquare attackedSquare, GameState gameState, Square enemyKing) {
-		//	var theAttack = new List<Square>();
-		//	switch (attackedSquare.AttackerSquare.Piece.PieceType) {
-		//		case PieceType.Pawn | PieceType.Knight | PieceType.King: //you can't interpose a pawn or a knight attack, also a king cannot attack a king
-		//			break;
-
-		//		case PieceType.Bishop:
-		//			foreach (var direction in GeneralReference.DiagonalLines) {
-		//				var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-		//					theAttack.AddRange(potentialAttack);
-		//					break;
-		//				}
-		//			}
-		//			break;
-
-		//		case PieceType.Rook:
-		//			foreach (var direction in GeneralReference.OrthogonalLines) {
-		//				var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-		//					theAttack.AddRange(potentialAttack);
-		//					break;
-		//				}
-		//			}
-		//			break;
-
-		//		case PieceType.Queen:
-		//			foreach (var direction in GeneralReference.DiagonalLines) {
-		//				var potentialAttack = this.DiagonalService.GetDiagonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-		//					theAttack.AddRange(potentialAttack);
-		//					break;
-		//				}
-		//			}
-		//			foreach (var direction in GeneralReference.OrthogonalLines) {
-		//				var potentialAttack = this.OrthogonalService.GetOrthogonalLine(gameState, attackedSquare.AttackerSquare, direction, true);
-		//				if (potentialAttack.Any(a => a.Index == enemyKing.Index)) {
-		//					theAttack.AddRange(potentialAttack);
-		//					break;
-		//				}
-		//			}
-		//			break;
-		//	}
-		//	return theAttack;
-		//}
-
-		public IEnumerable<AttackedSquare> GetKingAttacks(GameState gameState, Square square) {
+		public void GetKingAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator) {
 			var attacks = new List<AttackedSquare>();
 			var squares = gameState.Squares;
 			var position = square.Index;
 			var pieceColor = square.Piece.Color;
+			var opponentPieceColor = pieceColor.Reverse();
 			var castleAvailability = gameState.CastlingAvailability;
 			var positionList = new List<int> { -9, -8, -7, -1, 1, 7, 8, 9 };
 
@@ -141,8 +93,21 @@ namespace chess.v4.engine.service {
 				}
 			}
 
-			//this.removeKingChecksFromKingMoves(gameState, attacks, pieceColor, squares);
-			return attacks;
+			if (attacks.Any()) {
+
+				var conflictingAttacks = from a in accumulator
+										 join k in attacks on a.Index equals k.Index
+										 where 
+											a.AttackingSquare.Piece.Color == opponentPieceColor
+											&& !a.IsPassiveAttack
+										 select a;
+				if (conflictingAttacks.Any()) {
+					var nonCheckingAttacks = attacks.Except(conflictingAttacks);
+					accumulator.AddRange(nonCheckingAttacks.Select(a => new AttackedSquare(square, a)));
+				} else {
+					accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+				}
+			}
 		}
 
 		private bool determineCheck(List<Square> squares, List<int> proposedAttacks, Color pieceColor) {
@@ -152,7 +117,7 @@ namespace chess.v4.engine.service {
 			return proposedAttacks.Contains(king.Index);
 		}
 
-		private IEnumerable<AttackedSquare> getKnightAttacks(GameState gameState, Square square) {
+		private void getKnightAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator) {
 			var squares = gameState.Squares;
 			var currentPosition = square.Index;
 			var pieceColor = square.Piece.Color;
@@ -179,7 +144,9 @@ namespace chess.v4.engine.service {
 					attacks.Add(attackedSquare);
 				}
 			}
-			return attacks.Select(a => new AttackedSquare(square, a));
+			if (attacks.Any()) {
+				accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+			}
 		}
 
 		private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing = false) {
@@ -190,7 +157,7 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private IEnumerable<AttackedSquare> getPawnAttacks(GameState gameState, Square square) {
+		private void getPawnAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator) {
 			var squares = gameState.Squares;
 			var position = square.Index;
 			var pieceColor = square.Piece.Color;
@@ -202,12 +169,12 @@ namespace chess.v4.engine.service {
 			var homeRankIndicator = pieceColor == Color.White ? 2 : 7;
 
 			var nextRank = (rank + directionIndicator);
-			var newPosition = NotationUtility.CoordinatePairToPosition(file, nextRank);
-			var attackedSquare = squares.GetSquare(newPosition);
+			var aheadOneRankPosition = NotationUtility.CoordinatePairToPosition(file, nextRank);
+			var aheadOneRankSquare = squares.GetSquare(aheadOneRankPosition);
 			var attacks = new List<AttackedSquare>();
-			if (!attackedSquare.Occupied) {
+			if (!aheadOneRankSquare.Occupied) {
 				//can't attack going forward
-				attacks.Add(new AttackedSquare(square, attackedSquare));
+				attacks.Add(new AttackedSquare(square, aheadOneRankSquare, true));
 			}
 
 			managePawnAttacks(squares, square, pieceColor, file, rank, directionIndicator, homeRankIndicator, nextRank, attacks);
@@ -221,8 +188,9 @@ namespace chess.v4.engine.service {
 					attacks.Add(new AttackedSquare(square, enPassantSquare));
 				}
 			}
-
-			return attacks;
+			if (attacks.Any()) {
+				accumulator.AddRange(attacks);
+			}
 		}
 
 		private void getPawnDiagonalAttack(List<Square> squares, Square square, Color pieceColor, int fileIndicator, int nextRank, List<AttackedSquare> attacks) {
@@ -234,37 +202,34 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private IEnumerable<AttackedSquare> getPieceAttacks(GameState gameState, Square square, bool ignoreKing = false) {
-			if (!square.Occupied) {
-				return new List<AttackedSquare>();
-			}
-
+		private void getPieceAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false) {
 			switch (square.Piece.PieceType) {
 				case PieceType.Pawn:
-					return getPawnAttacks(gameState, square);
-
+					getPawnAttacks(gameState, square, accumulator);
+					break;
 				case PieceType.Knight:
-					return getKnightAttacks(gameState, square);
+					getKnightAttacks(gameState, square, accumulator);
+					break;
 
 				case PieceType.Bishop:
-					return this.DiagonalService.GetDiagonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
+					this.DiagonalService.GetDiagonals(gameState, square, accumulator, ignoreKing);
+					break;
 
 				case PieceType.Rook:
-					return this.OrthogonalService.GetOrthogonals(gameState, square, ignoreKing).Select(a => new AttackedSquare(square, a));
+					this.OrthogonalService.GetOrthogonals(gameState, square, accumulator, ignoreKing);
+					break;
 
 				case PieceType.Queen:
-					var attacks =
-							this.OrthogonalService.GetOrthogonals(gameState, square, ignoreKing)
-							.Concat(
-								this.DiagonalService.GetDiagonals(gameState, square, ignoreKing)
-							);
-					return attacks.Select(a => new AttackedSquare(square, a));
+					this.OrthogonalService.GetOrthogonals(gameState, square, accumulator, ignoreKing);
+					this.DiagonalService.GetDiagonals(gameState, square, accumulator, ignoreKing);
+					break;
 
 				case PieceType.King:
 					if (ignoreKing) {
-						return new List<AttackedSquare>();
+						return;
 					}
-					return GetKingAttacks(gameState, square);
+					GetKingAttacks(gameState, square, accumulator);
+					break;
 
 				default:
 					throw new Exception("Mismatched Enum!");
@@ -339,41 +304,7 @@ namespace chess.v4.engine.service {
 				var rankForwardSquare = squares.GetSquare(rankForwardPosition);
 				//pawns don't attack forward, so we don't have attacks when people occupy ahead of us
 				if (!rankForwardSquare.Occupied) {
-					attacks.Add(new AttackedSquare(square, rankForwardSquare));
-				}
-			}
-		}
-
-		private void removeKingChecksFromKingMoves(GameState gameState, List<AttackedSquare> kingAttacks, Color color, List<Square> squares) {
-			var oppositePieceColor = color.Reverse();
-			//var allAttacks = GetAttacks(oppositePieceColor, fen, true).Where(a => a.Square.Occupied && a.Square.Piece.PieceType == PieceType.King);
-			var allAttacksExceptKing = GetAttacks(gameState, true);
-			var conflictingAttacks = from a in allAttacksExceptKing
-									 join k in kingAttacks on a.Index equals k.Index
-									 select a;
-
-			foreach (var conflictingAttack in conflictingAttacks) {
-				var attackedSquares = allAttacksExceptKing.Where(a => a.Index == conflictingAttack.Index);
-				if (attackedSquares != null && attackedSquares.Any() && attackedSquares.Count() < 2) {
-					//if there are more than two square attacking here, then it's not possible that we'd need to keep the attack
-					var attackedSquare = attackedSquares.First();
-					if (!attackedSquare.Occupied) {
-						throw new Exception("This is the square that is supposed to have a king on it, why is it empty?");
-					}
-					var piece = attackedSquare.Piece;
-					//this code is here to remove the possibility that the king is said to be in check by
-					//an enemy pawn when he is directly in front of the pawn
-					if (piece.PieceType == PieceType.Pawn) {
-						var directionIndicator = color == Color.White ? -1 : 1; //make this backwards of normal
-						var onSameFile = attackedSquare.Index + (directionIndicator * 8) == conflictingAttack.Index ? true : false;
-						if (!onSameFile) {
-							kingAttacks.Remove(conflictingAttack);
-						}
-					} else {
-						kingAttacks.Remove(conflictingAttack);
-					}
-				} else {
-					kingAttacks.Remove(conflictingAttack);
+					attacks.Add(new AttackedSquare(square, rankForwardSquare, true));
 				}
 			}
 		}

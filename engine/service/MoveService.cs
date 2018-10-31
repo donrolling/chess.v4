@@ -350,8 +350,8 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool isCheckMate(GameState gameState, Color kingColor, IEnumerable<AttackedSquare> attacksOnKing) {
-			var opponentAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Piece.Color == kingColor.Reverse()).ToList();
-			var kingMoves = gameState.Attacks.Where(a => a.AttackerSquare.Piece.PieceType == PieceType.King && a.AttackerSquare.Piece.Color == kingColor).ToList();
+			var opponentAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Piece.Color == kingColor.Reverse()).ToList();
+			var kingMoves = gameState.Attacks.Where(a => a.AttackingSquare.Piece.PieceType == PieceType.King && a.AttackingSquare.Piece.Color == kingColor).ToList();
 			var clearMoves = kingMoves.Select(a => a.Index).Except(opponentAttacks.Select(b => b.Index));
 			if (clearMoves.Any()) {
 				//todo: there is a bug here: when the king is checked like so (5rk1/5pbp/5Qp1/8/8/8/5PPP/3q2K1 w - - 0 1)
@@ -363,11 +363,11 @@ namespace chess.v4.engine.service {
 					var clearMove = kingMoves.GetSquare(clearMoveIndex);
 					//clearMove.AttackerSquare is the king here
 					//clearMove.Index is where he is going
-					var isOrthogonal = GeneralUtility.IsOrthogonal(clearMove.AttackerSquare.Index, clearMove.Index);
+					var isOrthogonal = GeneralUtility.IsOrthogonal(clearMove.AttackingSquare.Index, clearMove.Index);
 					if (isOrthogonal) {
-						var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackerSquare.Index, clearMove.Index);
+						var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackingSquare.Index, clearMove.Index);
 						//find all attackers who attack orthogonally and determine if they are on the same line
-						var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
+						var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
 						if (!orthogonalAttacksOnKing.Any()) { continue; }
 						foreach (var x in orthogonalAttacksOnKing) {
 							var oxs = getEntireOrthogonalLine(isRankMove, x);
@@ -378,11 +378,11 @@ namespace chess.v4.engine.service {
 						}
 					} else {
 						//has to be diagonal
-						var diagonalAttacksOnKing = attacksOnKing.Where(a => diagonalAttackers.Contains(a.AttackerSquare.Piece.PieceType));
+						var diagonalAttacksOnKing = attacksOnKing.Where(a => diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
 						if (!diagonalAttacksOnKing.Any()) { continue; }
 						var kingSquare = diagonalAttacksOnKing.First();
 						foreach (var x in diagonalAttacksOnKing) {
-							var dxs = getEntireDiagonalLine(kingSquare.Index, x.AttackerSquare.Index);
+							var dxs = getEntireDiagonalLine(kingSquare.Index, x.AttackingSquare.Index);
 							//if dxs contains the clearMove.Index, then the king has not moved out of check
 							if (dxs.Contains(clearMove.Index)) {
 								clearMoveCount--;
@@ -393,7 +393,7 @@ namespace chess.v4.engine.service {
 				return clearMoveCount > 0;
 			}
 			//find interpositions
-			var teamAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Piece.Color == kingColor);
+			var teamAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Piece.Color == kingColor);
 			var interpositions = attacksOnKing.Select(a => a.Index).Intersect(teamAttacks.Select(a => a.Index));
 			if (!interpositions.Any()) { return true; }
 			//now see if any of the interpositions stop all attacks

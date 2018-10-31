@@ -22,11 +22,7 @@ namespace chess.v4.engine.model {
 				Index = this.Index,
 				Name = this.Name,
 				Piece = this.Piece != null ?
-					new Piece {
-						Identity = this.Piece.Identity,
-						Color = this.Piece.Color,
-						PieceType = this.Piece.PieceType
-					}
+					new Piece(this.Piece.PieceType, this.Piece.Color)
 					: null
 			};
 		}

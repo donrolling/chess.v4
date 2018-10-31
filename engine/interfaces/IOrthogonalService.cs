@@ -12,6 +12,6 @@ namespace chess.v4.engine.interfaces {
 
 		List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false);
 
-		List<Square> GetOrthogonals(GameState gameState, Square square, bool ignoreKing = false);
+		void GetOrthogonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false);
 	}
 }

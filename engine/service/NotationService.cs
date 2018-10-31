@@ -72,11 +72,7 @@ namespace chess.v4.engine.service {
 			var pieceIdentity = pieceColor == Color.White ? char.ToUpper(piecePromotedTo) : char.ToLower(piecePromotedTo);
 			var square = squares.Where(a => a.Index == newPiecePosition).First();
 			var piece = square.Piece;
-			square.Piece = new Piece {
-				Identity = pieceIdentity,
-				PieceType = piece.PieceType,
-				Color = pieceColor
-			};
+			square.Piece = new Piece(piece.PieceType, pieceColor);
 		}
 
 		private string getCastlingAvailability(GameState gameState, string castlingAvailability, int oldPiecePosition, int newPiecePosition) {

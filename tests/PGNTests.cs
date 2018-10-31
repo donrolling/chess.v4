@@ -72,11 +72,11 @@ namespace tests {
 			Assert.AreEqual(2, rooks.Count());
 			//assert that both white rooks have attacks
 			var rookAttacks = gameState.Attacks.Where(a =>
-											a.AttackerSquare.Piece.PieceType == PieceType.Rook
-											&& a.AttackerSquare.Piece.Color == Color.White);
+											a.AttackingSquare.Piece.PieceType == PieceType.Rook
+											&& a.AttackingSquare.Piece.Color == Color.White);
 			var attackMessage = new StringBuilder();
 			foreach (var rookAttack in rookAttacks) {
-				attackMessage.AppendLine($"\r\n==========================\r\n\tAttackerSquare: { rookAttack.AttackerSquare.Index }\r\n\tAttacked Square: { rookAttack.Index }");
+				attackMessage.AppendLine($"\r\n==========================\r\n\tAttackerSquare: { rookAttack.AttackingSquare.Index }\r\n\tAttacked Square: { rookAttack.Index }");
 			}
 			this.Logger.LogInformation(attackMessage.ToString());
 			Assert.AreEqual(22, rookAttacks.Count());

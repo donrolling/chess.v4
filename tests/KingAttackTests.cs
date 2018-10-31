@@ -28,7 +28,7 @@ namespace tests {
 		public void WhiteKingHasTwoValidMoves() {
 			var fen = "3q1rk1/5pbp/5Qp1/8/8/2B5/5PPP/6K1 w - - 0 1";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "g1").ToList();
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
 			Assert.AreEqual(2, whiteKingAttacks.Count());
 		}
 
@@ -36,7 +36,7 @@ namespace tests {
 		public void WhiteKingIsInCheckmateAndHasNoValidMoves() {
 			var fen = "5rk1/5pbp/5Qp1/8/8/8/5PPP/3q2K1 w - - 0 1";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "g1").ToList();
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
 			//king checkmate make sure that the king has no attacks
 			//Assert.AreEqual(0, whiteKingAttacks.Count());
 			Assert.IsTrue(gameState.StateInfo.IsCheck);
@@ -50,7 +50,7 @@ namespace tests {
 			//should have one valid move only
 			var fen = "6k1/5pbp/5Qp1/8/r3P3/3PK3/r4PPP/2q5 w - - 0 1";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e3").ToList();
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "e3").ToList();
 			Assert.IsTrue(gameState.StateInfo.IsCheck);
 			Assert.IsTrue(gameState.StateInfo.IsWhiteCheck);
 			var gameStateResult = GameStateService.MakeMove(gameState, "e3", "f4");
@@ -61,7 +61,7 @@ namespace tests {
 		public void WhiteKingMayCastle() {
 			var fen = "r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PPQPPP/R3KBNR w KQkq - 3 5";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e1").ToList();
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "e1").ToList();
 			var allSquareIndexs = new int[] { 2, 3 };
 			foreach (var x in allSquareIndexs) {
 				Assert.IsNotNull(whiteKingAttacks.GetSquare(x), $"King should be able to attack square: { x }");
@@ -73,7 +73,7 @@ namespace tests {
 		public void KingMusntMoveIntoPawnAttack() {
 			var fen = "rnbqkbnr/1pp2ppp/4p3/p2p4/8/4K3/PPPP1PPP/RNBQ1BNR w kq - 0 4";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "e3").ToList();
+			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "e3").ToList();
 			Assert.IsFalse(whiteKingAttacks.Select(a => a.Name).Contains("e4"), "King should not be able to move into e4 because a pawn attacks there.");
 		}
 
@@ -158,7 +158,7 @@ namespace tests {
 		public void BlackKingIsInCheckmate_HasNoValidAttacks() {
 			var fen = "2r5/8/2n1Q3/5R1k/3Pp1p1/p1P3Pp/P6P/R1BK4 b - - 1 41";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var blackKingAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Name == "g1").ToList();
+			var blackKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
 			Assert.AreEqual(0, blackKingAttacks.Count());
 			Assert.IsTrue(gameState.StateInfo.IsCheck);
 			Assert.IsTrue(gameState.StateInfo.IsBlackCheck);

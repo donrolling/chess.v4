@@ -1,0 +1,362 @@
+[
+	{
+		"AttackingSquare": {
+			"Index": 57,
+			"Name": "b8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "n",
+				"PieceType": 1,
+				"OrderOfOperation": 2
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 51,
+		"Name": "d7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 57,
+			"Name": "b8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "n",
+				"PieceType": 1,
+				"OrderOfOperation": 2
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 42,
+		"Name": "c6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 57,
+			"Name": "b8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "n",
+				"PieceType": 1,
+				"OrderOfOperation": 2
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 40,
+		"Name": "a6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 62,
+			"Name": "g8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "n",
+				"PieceType": 1,
+				"OrderOfOperation": 2
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 52,
+		"Name": "e7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 62,
+			"Name": "g8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "n",
+				"PieceType": 1,
+				"OrderOfOperation": 2
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 47,
+		"Name": "h6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 62,
+			"Name": "g8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "n",
+				"PieceType": 1,
+				"OrderOfOperation": 2
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 45,
+		"Name": "f6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 58,
+			"Name": "c8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "b",
+				"PieceType": 2,
+				"OrderOfOperation": 3
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 51,
+		"Name": "d7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 61,
+			"Name": "f8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "b",
+				"PieceType": 2,
+				"OrderOfOperation": 3
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 52,
+		"Name": "e7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 61,
+			"Name": "f8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "b",
+				"PieceType": 2,
+				"OrderOfOperation": 3
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 43,
+		"Name": "d6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 61,
+			"Name": "f8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "b",
+				"PieceType": 2,
+				"OrderOfOperation": 3
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 34,
+		"Name": "c5",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 61,
+			"Name": "f8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "b",
+				"PieceType": 2,
+				"OrderOfOperation": 3
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 25,
+		"Name": "b4",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 61,
+			"Name": "f8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "b",
+				"PieceType": 2,
+				"OrderOfOperation": 3
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 16,
+		"Name": "a3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 56,
+			"Name": "a8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "r",
+				"PieceType": 3,
+				"OrderOfOperation": 4
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 48,
+		"Name": "a7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 56,
+			"Name": "a8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "r",
+				"PieceType": 3,
+				"OrderOfOperation": 4
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 40,
+		"Name": "a6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 59,
+			"Name": "d8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "q",
+				"PieceType": 4,
+				"OrderOfOperation": 5
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 51,
+		"Name": "d7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 59,
+			"Name": "d8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "q",
+				"PieceType": 4,
+				"OrderOfOperation": 5
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 43,
+		"Name": "d6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 59,
+			"Name": "d8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "q",
+				"PieceType": 4,
+				"OrderOfOperation": 5
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 52,
+		"Name": "e7",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 59,
+			"Name": "d8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "q",
+				"PieceType": 4,
+				"OrderOfOperation": 5
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 45,
+		"Name": "f6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 59,
+			"Name": "d8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "q",
+				"PieceType": 4,
+				"OrderOfOperation": 5
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 38,
+		"Name": "g5",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 59,
+			"Name": "d8",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "q",
+				"PieceType": 4,
+				"OrderOfOperation": 5
+			}
+		},
+		"IsPassiveAttack": false,
+		"Index": 31,
+		"Name": "h4",
+		"Occupied": false,
+		"Piece": null
+	}
+]

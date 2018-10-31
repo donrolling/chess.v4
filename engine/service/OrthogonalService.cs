@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
-
 	public class OrthogonalService : IOrthogonalService {
 
 		public OrthogonalService() {
@@ -59,7 +58,7 @@ namespace chess.v4.engine.service {
 			return attacks;
 		}
 
-		public List<Square> GetOrthogonals(GameState gameState, Square square, bool ignoreKing = false) {
+		public void GetOrthogonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false) {
 			var attacks = new List<Square>();
 			foreach (var orthogonalLine in GeneralReference.OrthogonalLines) {
 				var line = GetOrthogonalLine(gameState, square, orthogonalLine, ignoreKing);
@@ -67,7 +66,9 @@ namespace chess.v4.engine.service {
 					attacks.AddRange(line);
 				}
 			}
-			return attacks;
+			if (attacks.Any()) {
+				accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+			}
 		}
 
 		private int getEndCondition(Direction direction, int position) {

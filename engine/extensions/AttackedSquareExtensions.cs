@@ -23,11 +23,11 @@ namespace chess.v4.engine.extensions {
 		}
 
 		public static IEnumerable<AttackedSquare> GetAttacks(this List<AttackedSquare> squares, int piecePosition) {
-			return squares.Where(a => a.AttackerSquare.Index == piecePosition);
+			return squares.Where(a => a.AttackingSquare.Index == piecePosition);
 		}
 		
 		public static IEnumerable<AttackedSquare> GetPositionAttacksOnPosition(this List<AttackedSquare> squares, int piecePosition, int newPiecePosition) {
-			return squares.Where(a => a.AttackerSquare.Index == piecePosition && a.Index == newPiecePosition);
+			return squares.Where(a => a.AttackingSquare.Index == piecePosition && a.Index == newPiecePosition);
 		}
 		
 

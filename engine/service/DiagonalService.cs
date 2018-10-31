@@ -4,8 +4,8 @@ using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using chess.v4.engine.reference;
 using chess.v4.engine.utility;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace chess.v4.engine.service {
 	public class DiagonalService : IDiagonalService {
@@ -38,12 +38,14 @@ namespace chess.v4.engine.service {
 			return attacks;
 		}
 
-		public List<Square> GetDiagonals(GameState gameState, Square square, bool ignoreKing = false) {
+		public void GetDiagonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false) {
 			var attacks = new List<Square>();
 			foreach (var direction in GeneralReference.DiagonalLines) {
 				attacks.AddRange(GetDiagonalLine(gameState, square, square.Piece, direction, ignoreKing));
 			}
-			return attacks;
+			if (attacks.Any()) {
+				accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+			}
 		}
 
 		public List<Square> GetEntireDiagonalByFile(GameState gameState, int file, DiagonalDirectionFromFileNumber direction) {

@@ -35,11 +35,7 @@ namespace chess.v4.engine.utility {
 		}
 
 		public static Piece GetPieceFromCharacter(char c) {
-			return new Piece {
-				Identity = c,
-				Color = GetColorFromCharacter(c),
-				PieceType = GetPieceTypeFromCharacter(c)
-			};
+			return new Piece (GetPieceTypeFromCharacter(c),	GetColorFromCharacter(c));
 		}
 
 		public static PieceType GetPieceTypeFromCharacter(char c) {

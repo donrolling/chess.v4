@@ -26,7 +26,7 @@ namespace tests {
 		public void WhiteRookAttacksEmptyBoardFromD4() {
 			var fen = "7k/8/8/8/3R4/8/8/7K b - - 0 32";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var whiteRookAttacks = gameState.Attacks.Where(a => a.AttackerSquare.Index == 27).ToList();
+			var whiteRookAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Index == 27).ToList();
 			var allSquareIndexs = new int[] { 24, 25, 26, 28, 29, 30, 31, 59, 51, 43, 35, 19, 11, 3 };
 			foreach (var x in allSquareIndexs) {
 				TestUtility.ListContainsSquare(whiteRookAttacks, PieceType.Rook, x);
