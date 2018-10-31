@@ -94,16 +94,18 @@ namespace chess.v4.engine.service {
 			}
 
 			if (attacks.Any()) {
-
 				var conflictingAttacks = from a in accumulator
 										 join k in attacks on a.Index equals k.Index
-										 where 
+										 where
 											a.AttackingSquare.Piece.Color == opponentPieceColor
 											&& !a.IsPassiveAttack
 										 select a;
 				if (conflictingAttacks.Any()) {
-					var nonCheckingAttacks = attacks.Except(conflictingAttacks);
-					accumulator.AddRange(nonCheckingAttacks.Select(a => new AttackedSquare(square, a)));
+					var nonCheckingAttacks = attacks.Select(a => a.Index).Except(conflictingAttacks.Select(a => a.Index));
+					var trimmedAttacks = attacks
+							.Where(a => nonCheckingAttacks.Contains(a.Index))
+							.Select(a => new AttackedSquare(square, a));
+					accumulator.AddRange(trimmedAttacks);
 				} else {
 					accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
 				}
@@ -195,10 +197,11 @@ namespace chess.v4.engine.service {
 
 		private void getPawnDiagonalAttack(List<Square> squares, Square square, Color pieceColor, int fileIndicator, int nextRank, List<AttackedSquare> attacks) {
 			var pos = NotationUtility.CoordinatePairToPosition(fileIndicator, nextRank);
-			var _isValidPawnAttack = isValidPawnAttack(squares, pos, pieceColor);
+			var attackedSquare = squares.GetSquare(pos);
+			var _isValidPawnAttack = GeneralUtility.CanAttackPiece(pieceColor, attackedSquare.Piece);
 			if (_isValidPawnAttack) {
 				var s1 = squares.GetSquare(pos);
-				attacks.Add(new AttackedSquare(square, s1));
+				attacks.Add(new AttackedSquare(square, s1, false, true));
 			}
 		}
 
@@ -272,14 +275,6 @@ namespace chess.v4.engine.service {
 			} else {
 				return false;
 			}
-		}
-
-		private bool isValidPawnAttack(List<Square> squares, int position, Color pieceColor) {
-			var attackedSquare = squares.GetSquare(position);
-			if (!attackedSquare.Occupied) {
-				return false;
-			}
-			return GeneralUtility.CanAttackPiece(pieceColor, attackedSquare.Piece);
 		}
 
 		private void managePawnAttacks(List<Square> squares, Square square, Color pieceColor, int file, int rank, int directionIndicator, int homeRankIndicator, int nextRank, List<AttackedSquare> attacks) {
