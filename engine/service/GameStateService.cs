@@ -122,7 +122,15 @@ namespace chess.v4.engine.service {
 			if (!attacks.Any()) {
 				return Envelope<GameState>.Error($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
 			}
-
+			var badPawnAttack = attacks.Any(a =>
+											a.AttackingSquare.Index == piecePosition
+											&& a.Index == newPiecePosition
+											&& a.Piece == null
+											&& a.CanOnlyMoveHereIfOccupied
+										);
+			if (badPawnAttack) {
+				return Envelope<GameState>.Error($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+			}
 			//make the move
 			var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
 			if (stateInfo.IsCastle) {
