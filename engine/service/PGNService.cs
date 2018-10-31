@@ -26,7 +26,11 @@ namespace chess.v4.engine.service {
 		}
 
 		public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove) {
-			var potentialSquares = gameState.Attacks.Where(a => a.Index == newPiecePosition);
+			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.
+			var potentialSquares = gameState.Attacks.Where(a => 
+														a.Index == newPiecePosition 
+														&& !a.CanOnlyMoveHereIfOccupied
+													);
 			if (!potentialSquares.Any()) {
 				throw new Exception("No squares found.");
 			}
