@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[Game] (
 	[Id]			bigint NOT NULL PRIMARY KEY Identity,
-	[GameId]		bigint NOT NULL,
 	[IsFinished]	bit NOT NULL DEFAULT 0,
 	[Event]			nvarchar(50) NULL,
 	[Site]			nvarchar(50) NULL,
@@ -23,6 +22,5 @@
     [CreatedById] BIGINT           NULL,
     [CreatedDate] DATETIME         NULL,
     [UpdatedById] BIGINT           NULL,
-    [UpdatedDate] DATETIME         NULL,
-    CONSTRAINT [PK_Game] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [UpdatedDate] DATETIME         NULL
 )
