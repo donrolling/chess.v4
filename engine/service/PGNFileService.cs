@@ -1,4 +1,5 @@
-﻿using chess.v4.engine.enumeration;
+﻿
+using chess.v4.engine.enumeration;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.model;
 using System;
@@ -14,19 +15,19 @@ namespace chess.v4.engine.service {
 		public string CurrentDirectory { get; }
 		private const string movePattern = @"\d*[.]((\s)?|[\r\n]|\n)[\w\d-\/+]*(\s|[\r\n]|\n)[\w\d-\/+]*";
 		private const string nodePattern = @"(?<=\[)(.*?)(?=\])";
-		private const string PGNDirectory = @"\PGNFiles\";
+		private const string testData = @"\data\tests\";
 		private const string removeComments = @"\{[\w\d\s.]*\}\s\d*...\s";
-		private const string SaveDirectory = @"\SavedTests\";
+		private const string saveDirectory = @"\data\output\";
 
 		public PGNFileService() {
 			this.CurrentDirectory = Environment.CurrentDirectory;
 		}
 
 		public string ConvertToPGN(GameMetaData metaData) {
-			StringBuilder sb = GetGameHeader(metaData);
+			var sb = GetGameHeader(metaData);
 
 			int i = 1;
-			foreach (KeyValuePair<int, string> move in metaData.Moves) {
+			foreach (var move in metaData.Moves) {
 				sb.Append(move.Value + " ");
 				if (i % 7 == 0) {
 					sb.Append("\n");
@@ -38,18 +39,23 @@ namespace chess.v4.engine.service {
 		}
 
 		public void DisplayPGNFileHeader(GameMetaData metaData) {
-			Console.WriteLine("[Event \"" + metaData.Event + "\"]");
-			Console.WriteLine("[Site \"" + metaData.Site + "\"]");
-			Console.WriteLine("[Date \"" + metaData.Date + "\"]");
-			Console.WriteLine("[Round \"" + metaData.Round + "\"]");
-			Console.WriteLine("[White \"" + metaData.White + "\"]");
-			Console.WriteLine("[Black \"" + metaData.Black + "\"]");
-			Console.WriteLine("[Result \"" + metaData.Result + "\"]");
-			Console.WriteLine("[WhiteELO \"" + metaData.WhiteELO + "\"]");
-			Console.WriteLine("[BlackELO \"" + metaData.BlackELO + "\"]");
-			Console.WriteLine("[ECO \"" + metaData.ECO + "\"]");
+			var pgnFileHeader = GetPGNFileHeader(metaData);
+			Console.WriteLine($"{ pgnFileHeader }\r\n");
+		}
 
-			Console.WriteLine("");
+		public string GetPGNFileHeader(GameMetaData metaData) {
+			var sb = new StringBuilder();
+			sb.AppendLine($"[Event \"{ metaData.Event }\"]");
+			sb.AppendLine($"[Site \"{ metaData.Site }\"]");
+			sb.AppendLine($"[Date \"{ metaData.Date }\"]");
+			sb.AppendLine($"[Round \"{ metaData.Round }\"]");
+			sb.AppendLine($"[White \"{ metaData.White }\"]");
+			sb.AppendLine($"[Black \"{ metaData.Black }\"]");
+			sb.AppendLine($"[Result \"{ metaData.Result }\"]");
+			sb.AppendLine($"[WhiteELO \"{ metaData.WhiteELO }\"]");
+			sb.AppendLine($"[BlackELO \"{ metaData.BlackELO }\"]");
+			sb.AppendLine($"[ECO \"{ metaData.ECO }\"]");
+			return sb.ToString();
 		}
 
 		public string GetBaseEnvironmentPath(string directory) {
@@ -59,7 +65,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public StringBuilder GetGameHeader(GameMetaData gameMetaData) {
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			//write meta data
 			var types = Enum.GetNames(typeof(MetaType));
 			foreach (var type in types) {
@@ -73,8 +79,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public string GetPGNFilePath(string filename) {
-			string path = string.Concat(GetBaseEnvironmentPath(PGNDirectory), filename);
-			return path;
+			return string.Concat(GetBaseEnvironmentPath(testData), filename);
 		}
 
 		public GameMetaData ParsePGNData(string input) {
@@ -108,15 +113,15 @@ namespace chess.v4.engine.service {
 			modInput = Regex.Replace(modInput, @"\r\n", " ");
 
 			//so far this messes up with comments
-			Regex moveNode = new Regex(movePattern, RegexOptions.Multiline);
-			Match moveMatch = moveNode.Match(modInput);
+			var moveNode = new Regex(movePattern, RegexOptions.Multiline);
+			var moveMatch = moveNode.Match(modInput);
 
 			while (moveMatch.Success) {
-				Group group = moveMatch.Groups[0];
-				CaptureCollection captureCollection = group.Captures;
+				var group = moveMatch.Groups[0];
+				var captureCollection = group.Captures;
 				for (int j = 0; j < captureCollection.Count; j++) {
-					Capture c = captureCollection[j];
-					string move = c.Value;
+					var c = captureCollection[j];
+					var move = c.Value;
 
 					if (!string.IsNullOrEmpty(move)) {
 						metaData.Moves.Add(moveNum, move);
@@ -130,21 +135,21 @@ namespace chess.v4.engine.service {
 		}
 
 		public GameMetaData ReadPGNFromFile(string fullpath) {
-			string fileContents = string.Empty;
-			using (StreamReader textFile = new StreamReader(fullpath)) {
+			var fileContents = string.Empty;
+			using (var textFile = new StreamReader(fullpath)) {
 				fileContents = textFile.ReadToEnd();
 			}
 			return ParsePGNData(fileContents);
 		}
 
 		public void SaveFile(string filename, string data) {
-			DirectoryInfo di = new DirectoryInfo(CurrentDirectory);
-			string basePath = di.Parent.FullName;
+			var di = new DirectoryInfo(CurrentDirectory);
+			var basePath = di.Parent.FullName;
 			if (di.Parent.Name == "bin") {
 				basePath = di.Parent.Parent.FullName;
 			}
-			string savePath = string.Concat(basePath, @"\", SaveDirectory, @"\", filename);
-			using (StreamWriter textFile = new StreamWriter(savePath)) {
+			var savePath = string.Concat(basePath, @"\", saveDirectory, @"\", filename);
+			using (var textFile = new StreamWriter(savePath)) {
 				textFile.Write(data);
 			}
 		}
