@@ -21,8 +21,11 @@ namespace tests {
 		[TestMethod]
 		public void InsertTest() {
 			var game = new Game();
-			var result = this.GameRepository.Insert(game);
-			Assert.AreNotEqual(0, result);
+			var insertResult = this.GameRepository.Insert(game);
+			Assert.AreNotEqual(0, insertResult.Result);
+			var selectResult = this.GameRepository.SelectById(insertResult.Result);
+			Assert.IsTrue(selectResult.Success);
+			Assert.IsNotNull(selectResult.Result);
 		}
 	}
 }

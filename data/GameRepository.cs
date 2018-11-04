@@ -15,55 +15,53 @@ namespace data {
 
 		public Envelope<long> Insert(Game game) {
 			var sql = @"INSERT INTO [dbo].[Game](
-							[GameId]
-						   ,[IsFinished]
-						   ,[Event]
-						   ,[Site]
-						   ,[Date]
-						   ,[Round]
-						   ,[White]
-						   ,[Black]
-						   ,[Result]
-						   ,[ECO]
-						   ,[WhiteElo]
-						   ,[BlackElo]
-						   ,[NaturalKey]
-						   ,[FileName]
-						   ,[Annotator]
-						   ,[Source]
-						   ,[Remark]
-						   ,[PGN]
-						   ,[FEN]
-						   ,[IsActive]
-						   ,[CreatedById]
-						   ,[CreatedDate]
-						   ,[UpdatedById]
-						   ,[UpdatedDate])
-					 VALUES (
-							@GameId,
-						   ,@IsFinished,
-						   ,@Event,
-						   ,@Site,
-						   ,@Date,
-						   ,@Round,
-						   ,@White,
-						   ,@Black,
-						   ,@Result,
-						   ,@ECO,
-						   ,@WhiteElo,
-						   ,@BlackElo,
-						   ,@NaturalKey,
-						   ,@FileName,
-						   ,@Annotator,
-						   ,@Source,
-						   ,@Remark,
-						   ,@PGN,
-						   ,@FEN,
-						   ,@IsActive,
-						   ,@CreatedById,
-						   ,@CreatedDate,
-						   ,@UpdatedById,
-						   ,@UpdatedDate)
+						   [IsFinished]
+						   , [Event]
+						   , [Site]
+						   , [Date]
+						   , [Round]
+						   , [White]
+						   , [Black]
+						   , [Result]
+						   , [ECO]
+						   , [WhiteElo]
+						   , [BlackElo]
+						   , [NaturalKey]
+						   , [FileName]
+						   , [Annotator]
+						   , [Source]
+						   , [Remark]
+						   , [PGN]
+						   , [FEN]
+						   , [IsActive]
+						   , [CreatedById]
+						   , [CreatedDate]
+						   , [UpdatedById]
+						   , [UpdatedDate]
+					 ) VALUES (
+						   @IsFinished
+						   , @Event
+						   , @Site
+						   , @Date
+						   , @Round
+						   , @White
+						   , @Black
+						   , @Result
+						   , @ECO
+						   , @WhiteElo
+						   , @BlackElo
+						   , @NaturalKey
+						   , @FileName
+						   , @Annotator
+						   , @Source
+						   , @Remark
+						   , @PGN
+						   , @FEN
+						   , @IsActive
+						   , @CreatedById
+						   , @CreatedDate
+						   , @UpdatedById
+						   , @UpdatedDate)
 					   select cast(scope_identity() as bigint)";
 			long result = 0;
 			using (var cnn = new SqlConnection(this.ConnectionString)) {
