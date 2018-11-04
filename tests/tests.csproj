@@ -43,5 +43,9 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="data\output\" />
+  </ItemGroup>
+
 
 </Project>
