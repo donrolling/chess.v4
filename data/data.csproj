@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>chess.v4.engine</AssemblyName>
-    <RootNamespace>chess.v4.engine</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

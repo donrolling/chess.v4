@@ -1,7 +1,7 @@
-﻿using chess.v4.engine.enumeration;
+﻿using chess.v4.models.enumeration;
 using System;
 
-namespace chess.v4.engine.model {
+namespace chess.v4.models {
 
 	/// <summary>
 	/// Definition

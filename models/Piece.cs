@@ -1,7 +1,7 @@
 ﻿using System;
-using chess.v4.engine.enumeration;
+using chess.v4.models.enumeration;
 
-namespace chess.v4.engine.model {
+namespace chess.v4.models {
 
 	public class Piece {
 		public Color Color { get; set; }

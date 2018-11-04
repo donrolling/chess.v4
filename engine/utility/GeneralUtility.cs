@@ -1,6 +1,6 @@
-﻿using chess.v4.engine.enumeration;
+﻿using chess.v4.models.enumeration;
 using chess.v4.engine.extensions;
-using chess.v4.engine.model;
+using chess.v4.models;
 using System;
 using System.Collections.Generic;
 

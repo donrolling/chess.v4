@@ -8,6 +8,7 @@ using System;
 namespace tests.setup {
 
 	internal class TestSetup {
+		public const string ConnectionString = @"Data Source=971JT039H2\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;";
 
 		internal IServiceProvider Setup() {
 			var services = new ServiceCollection();

@@ -1,4 +1,4 @@
-﻿using chess.v4.engine.enumeration;
+﻿using chess.v4.models.enumeration;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.reference {

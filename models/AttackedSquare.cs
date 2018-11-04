@@ -1,4 +1,4 @@
-﻿namespace chess.v4.engine.model {
+﻿namespace chess.v4.models {
 	public class AttackedSquare : Square {
 		public Square AttackingSquare { get; set; }
 		public bool CanOnlyMoveHereIfOccupied { get; }

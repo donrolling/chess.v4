@@ -1,5 +1,5 @@
-﻿using chess.v4.engine.enumeration;
-using chess.v4.engine.model;
+﻿using chess.v4.models.enumeration;
+using chess.v4.models;
 using System;
 
 namespace chess.v4.engine.utility {

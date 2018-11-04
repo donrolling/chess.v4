@@ -6,7 +6,7 @@ using System.Linq;
 using tests.setup;
 using tests.utility;
 using System.Collections.Generic;
-using chess.v4.engine.enumeration;
+using chess.v4.models.enumeration;
 
 namespace tests {
 

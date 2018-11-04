@@ -1,7 +1,7 @@
-﻿using chess.v4.engine.enumeration;
+﻿using chess.v4.models.enumeration;
 using System.Collections.Generic;
 
-namespace chess.v4.engine.model {
+namespace chess.v4.models {
 
 	public class GameMetaData {
 		public string Annotator { get; set; }

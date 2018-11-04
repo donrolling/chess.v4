@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace chess.v4.engine.model {
+namespace chess.v4.models {
 
 	public class Square : ICloneable {
 		public int Index { get; set; }

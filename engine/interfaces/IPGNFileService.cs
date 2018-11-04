@@ -1,4 +1,4 @@
-﻿using chess.v4.engine.model;
+﻿using chess.v4.models;
 using System.Text;
 
 namespace chess.v4.engine.interfaces {
