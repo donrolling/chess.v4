@@ -60,8 +60,24 @@
     <Folder Include="Properties" />
     <Folder Include="dbo" />
     <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\Functions" />
+    <Folder Include="dbo\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Game.sql" />
+    <Build Include="dbo\Functions\Game_ReadAll.sql" />
+    <Build Include="dbo\Functions\Game_SelectById.sql" />
+    <Build Include="dbo\Stored Procedures\Game_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Game_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\Game_Update.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Functions\User_SelectById.sql" />
+    <Build Include="dbo\Functions\User_ReadAll.sql" />
+    <Build Include="dbo\Stored Procedures\User_Update.sql" />
+    <Build Include="dbo\Stored Procedures\User_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\User_Delete.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="local.scmp" />
   </ItemGroup>
 </Project>
