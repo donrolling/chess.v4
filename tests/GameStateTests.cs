@@ -1,22 +1,28 @@
 ﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
-using Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Tests.Setup;
+using Tests.Models;
 
 namespace Tests {
-
 	[TestClass]
-	public class GameStateTests {
-		
+	public class GameStateTests : TestBase {
 		public IGameStateService GameStateService { get; }
 
 		public GameStateTests() {
-			var serviceProvider = new TestSetup().Setup();
-			
-			this.GameStateService = serviceProvider.GetService<IGameStateService>();
+			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
+		}
+
+		[TestMethod]
+		public void Given_ProblematicStartPosition() {
+			var fen = "r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4";
+			var gameStateResult = GameStateService.Initialize(fen);
+			Assert.IsTrue(gameStateResult.Success);
+			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "c1", "a3");
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
+			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR b KQkq - 2 4", gameStateResult.Result.ToString());
 		}
 
 		[TestMethod]
@@ -74,16 +80,6 @@ namespace Tests {
 		}
 
 		[TestMethod]
-		public void Given_ProblematicStartPosition() {
-			var fen = "r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4";
-			var gameStateResult = GameStateService.Initialize(fen);
-			Assert.IsTrue(gameStateResult.Success);
-			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "c1", "a3");
-			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
-			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR b KQkq - 2 4", gameStateResult.Result.ToString());
-		}
-
-		[TestMethod]
 		public void Given_StartPosition_WhenMakeMove_FEN_MatchesExpectation_CastleAvailability_IsCorrect() {
 			var fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2";
 			var gameStateResult = GameStateService.Initialize(fen);
@@ -91,23 +87,23 @@ namespace Tests {
 			//testing castle availability
 			//1. e4 c5 2. Nc3 b5
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "b7", "b5");
-			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);			
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
 			Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq b6 0 3", gameStateResult.Result.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "b2", "b3");
-			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);			
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
 			Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR b KQkq - 0 3", gameStateResult.Result.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "b8", "c6");
-			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);			
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
 			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/1PN5/P1PP1PPP/R1BQKBNR w KQkq - 1 4", gameStateResult.Result.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "c1", "a3");
-			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);			
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
 			Assert.AreEqual("r1bqkbnr/p2ppppp/2n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR b KQkq - 2 4", gameStateResult.Result.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "c8", "a6");
-			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);			
+			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
 			Assert.AreEqual("r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/R2QKBNR w KQkq - 3 5", gameStateResult.Result.ToString());
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "a1", "b1");
@@ -116,7 +112,7 @@ namespace Tests {
 			//1. e4 c5 2. Nc3 b5 3. b3 Nc6 4. Ba3 Ba6 5. Rb1 Rb8
 			gameStateResult = GameStateService.MakeMove(gameStateResult.Result, "a8", "b8");
 			Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
-			
+
 			Assert.AreEqual("1r1qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PP1PPP/1R1QKBNR w Kk - 5 6", gameStateResult.Result.ToString());
 		}
 

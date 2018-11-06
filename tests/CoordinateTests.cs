@@ -1,13 +1,14 @@
 ﻿using chess.v4.engine.interfaces;
 using Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Tests.Setup;
+using Tests.Models;
 
 namespace Tests {
 
 	[TestClass]
-	public class CoordinateTests {
+	public class CoordinateTests : TestBase{
 		public IAttackService AttackService { get; }
 		
 		public IGameStateService GameStateService { get; }
@@ -15,12 +16,10 @@ namespace Tests {
 		public IOrthogonalService OrthogonalService { get; }
 
 		public CoordinateTests() {
-			var serviceProvider = new TestSetup().Setup();
-			
-			this.OrthogonalService = serviceProvider.GetService<IOrthogonalService>();
-			this.AttackService = serviceProvider.GetService<IAttackService>();
-			this.GameStateService = serviceProvider.GetService<IGameStateService>();
-			this.MoveService = serviceProvider.GetService<IMoveService>();
+			this.OrthogonalService = this.ServiceProvider.GetService<IOrthogonalService>();
+			this.AttackService = this.ServiceProvider.GetService<IAttackService>();
+			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
+			this.MoveService = this.ServiceProvider.GetService<IMoveService>();
 		}
 
 		[TestMethod]

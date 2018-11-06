@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\data\Data.csproj" />
     <ProjectReference Include="..\engine\Engine.csproj" />
@@ -45,7 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="data\output\" />
+    <Folder Include="Data\output\" />
+    <Folder Include="Setup\" />
   </ItemGroup>
 
 

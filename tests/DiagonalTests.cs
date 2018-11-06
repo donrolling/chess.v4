@@ -3,22 +3,22 @@ using chess.v4.engine.reference;
 using chess.v4.models;
 using chess.v4.models.enumeration;
 using Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using Tests.Setup;
+using Tests.Models;
 using Tests.Utility;
 
 namespace Tests {
 	[TestClass]
-	public class DiagonalTests {
+	public class DiagonalTests  : TestBase {
 		public IDiagonalService DiagonalService { get; }
 		public GameState GameState { get; }
 		public IGameStateService GameStateService { get; }
 
 		public DiagonalTests() {
-			var serviceProvider = new TestSetup().Setup();
-			this.GameStateService = serviceProvider.GetService<IGameStateService>();
-			this.DiagonalService = serviceProvider.GetService<IDiagonalService>();
+			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
+			this.DiagonalService = this.ServiceProvider.GetService<IDiagonalService>();
 			this.GameState = TestUtility.GetGameState(this.GameStateService, GeneralReference.Starting_FEN_Position);
 		}
 

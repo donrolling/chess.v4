@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace data {
+namespace Data.Repository.Dapper {
 	public class GameRepository {
 		public string ConnectionString { get; }
 

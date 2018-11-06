@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Models.Application;
 using Models.Entities;
 
-namespace Data.Repository.Interfaces {
+namespace Data.Repository.Dapper {
 	public class UserDapperRepository : UserDapperBaseRepository, IUserRepository {
 
 		public UserDapperRepository(IOptions<AppSettings> appSettings, ILoggerFactory loggerFactory) : base(appSettings, loggerFactory) {

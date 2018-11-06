@@ -2,24 +2,22 @@
 using chess.v4.models;
 using chess.v4.models.enumeration;
 using Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Text;
-using Tests.models;
-using Tests.Setup;
+using Tests.Models;
 
 namespace Tests {
 	[TestClass]
-	public class PGNTests : BaseTest {
+	public class PGNTests : TestBase {
 		public IGameStateService GameStateService { get; }
 		public IPGNService PGNService { get; }
 
 		public PGNTests() {
-			var serviceProvider = new TestSetup().Setup();
-
-			this.GameStateService = serviceProvider.GetService<IGameStateService>();
-			this.PGNService = serviceProvider.GetService<IPGNService>();
+			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
+			this.PGNService = this.ServiceProvider.GetService<IPGNService>();
 		}
 
 		[TestMethod]

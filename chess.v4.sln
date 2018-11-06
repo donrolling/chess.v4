@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{8A831EC6-F367-4903-A448-D3CF1D5EC30A}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{AB5DF550-1A1E-4073-A58F-852BA3767EF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,12 @@ Global
 		{8A831EC6-F367-4903-A448-D3CF1D5EC30A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A831EC6-F367-4903-A448-D3CF1D5EC30A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A831EC6-F367-4903-A448-D3CF1D5EC30A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB5DF550-1A1E-4073-A58F-852BA3767EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB5DF550-1A1E-4073-A58F-852BA3767EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB5DF550-1A1E-4073-A58F-852BA3767EF7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AB5DF550-1A1E-4073-A58F-852BA3767EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB5DF550-1A1E-4073-A58F-852BA3767EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB5DF550-1A1E-4073-A58F-852BA3767EF7}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
 {
-	"ConnectionString": "",
-	"ProcessTemplateStubs": false,
+	"ConnectionString": "Data Source=971JT039H2\\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;",
+	"ProcessTemplateStubs": true,
 	"OutputDirectory": "",
 	"IncludeTheseTablesOnly": [],
 	"IncludeTheseTemplatesOnly": [],

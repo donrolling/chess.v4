@@ -1,21 +1,19 @@
 ﻿using chess.v4.engine.interfaces;
-using Common.Extensions;
-using data;
+using Data.Repository.Dapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using models;
-using Tests.Setup;
+using Tests.Models;
 
 namespace Tests {
 	[TestClass]
-	public class DatabaseStorageTests {
+	public class DatabaseStorageTests : TestBase {
 		public GameRepository GameRepository { get; }
 		public IGameStateService GameStateService { get; }
 
 		public DatabaseStorageTests() {
-			var testSetup = new TestSetup();
-			var serviceProvider = testSetup.Setup();
-			this.GameStateService = serviceProvider.GetService<IGameStateService>();
-			this.GameRepository = new GameRepository(TestSetup.ConnectionString);
+			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
+			this.GameRepository = new GameRepository(this.AppSettings.Value.ConnectionStrings.DefaultConnection);
 		}
 
 		[TestMethod]

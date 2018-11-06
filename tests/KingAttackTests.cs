@@ -2,24 +2,24 @@
 using chess.v4.engine.interfaces;
 using chess.v4.engine.Utility;
 using Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Tests.Setup;
+using Tests.Models;
 using Tests.Utility;
 
 namespace Tests {
 	[TestClass]
-	public class KingAttackTests {
+	public class KingAttackTests : TestBase {
 		public IAttackService AttackService { get; }
 
 		public IGameStateService GameStateService { get; }
 		public IMoveService MoveService { get; }
 
 		public KingAttackTests() {
-			var serviceProvider = new TestSetup().Setup();
-			this.AttackService = serviceProvider.GetService<IAttackService>();
-			this.GameStateService = serviceProvider.GetService<IGameStateService>();
-			this.MoveService = serviceProvider.GetService<IMoveService>();
+			this.AttackService = this.ServiceProvider.GetService<IAttackService>();
+			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
+			this.MoveService = this.ServiceProvider.GetService<IMoveService>();
 		}
 
 		[TestMethod]
