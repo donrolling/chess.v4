@@ -1,3 +1,4 @@
+using AutoFixture;
 using Business.Service.EntityServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

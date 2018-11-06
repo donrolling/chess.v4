@@ -1,7 +1,7 @@
 ﻿using Business.Interfaces;
 using Business.Services.Cookies;
 using Business.Services.EntityServices.Base;
-using Data.Repository.Dapper.Interfaces;
+using Data.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
