@@ -1,7 +1,6 @@
 ﻿using Data.Dapper.Models;
-using Data.Interfaces;
 using Models.Entities;
-using System;
+using Models.Interfaces;
 using System.Threading.Tasks;
 
 namespace @Model.Namespace {

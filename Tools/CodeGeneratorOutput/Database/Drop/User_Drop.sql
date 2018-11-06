@@ -1,29 +1,29 @@
 BEGIN TRY  
-	DROP PROCEDURE [Membership].[Client_Delete]
+	DROP PROCEDURE [dbo].[User_Delete]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP PROCEDURE [Membership].[Client_Insert]
+	DROP PROCEDURE [dbo].[User_Insert]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP PROCEDURE [Membership].[Client_Update]
+	DROP PROCEDURE [dbo].[User_Update]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP Function [Membership].[Client_ReadAll]
+	DROP Function [dbo].[User_ReadAll]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP Function [Membership].[Client_SelectById]
+	DROP Function [dbo].[User_SelectById]
 END TRY  
 BEGIN CATCH  
 

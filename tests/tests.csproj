@@ -1,54 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.1</TargetFramework>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="logs\**" />
-    <EmbeddedResource Remove="logs\**" />
-    <None Remove="logs\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="logs\**" />
+		<EmbeddedResource Remove="logs\**" />
+		<None Remove="logs\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="nlog.config" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="nlog.config" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="nlog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="nlog.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
-    <PackageReference Include="NLog" Version="4.5.10" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoFixture" Version="4.5.0" />
+		<PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+		<PackageReference Include="Microsoft.VisualStudio.TestPlatform" Version="14.0.0.1" />
+		<PackageReference Include="Moq" Version="4.10.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+		<PackageReference Include="NLog" Version="4.5.10" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Business\Business.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\data\Data.csproj" />
-    <ProjectReference Include="..\engine\Engine.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Business\Business.csproj" />
+		<ProjectReference Include="..\Common\Common.csproj" />
+		<ProjectReference Include="..\data\Data.csproj" />
+		<ProjectReference Include="..\engine\Engine.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="PGNTests.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="PGNTests.cs">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\output\" />
-    <Folder Include="Setup\" />
-  </ItemGroup>
-
-
+	<ItemGroup>
+		<Folder Include="Data\output\" />
+		<Folder Include="Setup\" />
+	</ItemGroup>
 </Project>

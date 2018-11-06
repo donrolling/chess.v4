@@ -1,8 +1,6 @@
-
 $json = (Get-Content 'CodeGenerator\config.json') -join "`n" | ConvertFrom-Json
 $outputDirectory = $json | Select -expand OutputDirectory
-
-$destinationPath = "C:\Projects\IdentityServer\"
+$destinationPath = $json | Select -expand DestinationDirectory
 
 $path = "$outputDirectory\Business\"
 Copy-Item -Path $path -Destination $destinationPath -Recurse -Force

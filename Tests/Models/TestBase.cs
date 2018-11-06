@@ -1,17 +1,24 @@
 ﻿using Business.Interfaces;
+using Business.Service.EntityServices.Interfaces;
+using Business.Services.EntityServices;
+using Business.Services.Membership;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.service;
-using Common.Logging;
+using Common.IO;
+using Data.Repository.Dapper;
+using Data.Repository.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Models.Application;
 using NLog;
+using NLog.Config;
 using System;
 
 namespace Tests.Models {
-
 	public class TestBase {
 		public IOptions<AppSettings> AppSettings { get; }
 		public Microsoft.Extensions.Logging.ILogger Logger { get; }
@@ -26,7 +33,26 @@ namespace Tests.Models {
 		}
 
 		public TestBase() {
+			//basic config
+			var pathToNLogConfig = FileUtility.GetFullPath_FromRelativePath<TestBase>("nlog.config");
+			var pathToAppSettingsConfig = FileUtility.GetFullPath_FromRelativePath<TestBase>("appsettings.json");
+			var provider = new PhysicalFileProvider(pathToNLogConfig.path);
+			LogManager.Configuration = new XmlLoggingConfiguration(pathToNLogConfig.filePath);
+
 			var services = new ServiceCollection();
+			services.AddLogging();
+			var config = new ConfigurationBuilder().AddJsonFile(pathToAppSettingsConfig.filePath).Build();
+			services.Configure<AppSettings>(config.GetSection("AppSettings"));
+			services.AddSingleton<IFileProvider>(provider);
+
+			//generated
+			//services.AddTransient<IAppCacheService, AppCacheService>();
+			//services.AddTransient<ISessionCacheService, SessionCacheService>();
+			services.AddTransient<IMembershipService, MembershipService>();
+			services.AddTransient<IAuthenticationPersistenceService, DummyAuthenticationPersistenceService>();
+			services.AddTransient<IMembershipService, MembershipService>();
+
+			//chess services
 			services.AddTransient<IAttackService, AttackService>();
 			services.AddTransient<IDiagonalService, DiagonalService>();
 			services.AddTransient<IGameStateService, GameStateService>();
@@ -37,9 +63,14 @@ namespace Tests.Models {
 			services.AddTransient<IPGNService, PGNService>();
 			services.AddTransient<ILoggerFactory, LoggerFactory>();
 
-			this.AppSettings = this.ServiceProvider.GetService<IOptions<AppSettings>>();
+			//generated
+			services.AddTransient<IGameService, GameService>();
+			services.AddTransient<IGameRepository, GameDapperRepository>();
 
 			this.ServiceProvider = services.BuildServiceProvider();
+
+			//settings
+			this.AppSettings = this.ServiceProvider.GetService<IOptions<AppSettings>>();
 		}
 	}
 }

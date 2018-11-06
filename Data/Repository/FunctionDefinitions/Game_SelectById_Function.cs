@@ -4,14 +4,14 @@ using Data.Repository.Dapper.Base;
 using System;
 
 namespace Data.Repository.FunctionDefinitions {
-	public class User_SelectById_Function : BaseFunction, ISelectByIdFunction {
+	public class Game_SelectById_Function : BaseFunction, ISelectByIdFunction {
 		public long Id { get; protected set; }
 		public override string Signature { get; protected set; } = "@id";
 
-		public User_SelectById_Function(long id) {
+		public Game_SelectById_Function(long id) {
 			this.Id = id;
 			this.DatabaseSchema = "dbo";
-			this.UserDefinedFunctionName = "User_SelectById";
+			this.UserDefinedFunctionName = "Game_SelectById";
 		}
 
 		public override DynamicParameters DynamicParameters() {

@@ -1,10 +1,11 @@
 {
 	"ConnectionString": "Data Source=971JT039H2\\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;",
 	"ProcessTemplateStubs": true,
-	"OutputDirectory": "",
+	"OutputDirectory": "C:\\Projects\\chess.v4\\Tools\\CodeGeneratorOutput",
+	"DestinationDirectory": "C:\\Projects\\chess.v4\\",
 	"IncludeTheseTablesOnly": [],
 	"IncludeTheseTemplatesOnly": [],
-	"ExcludeTheseTables": [ "User" ],
+	"ExcludeTheseTables": [ "Game" ],
 	"ExcludeTheseTemplates": [],
 	"PostProcessScripts": [ "UpdateSQLProject.ps1" ],
 	"Templates": [
@@ -38,10 +39,10 @@
 		{
 			"Type": "Model",
 			"Name": "Model",
-			"Namespace": "Data.Models.Entities",
+			"Namespace": "Models.Entities",
 			"Location": "\\Model\\Model.txt",
 			"OutputFilename": "{0}.cs",
-			"RelativeOutputPath": "Data\\Models\\Entities",
+			"RelativeOutputPath": "Models\\Entities",
 			"Language": "csharp",
 			"RunOnce": false,
 			"IsStub": false,

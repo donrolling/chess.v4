@@ -1,7 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Services.Cookies;
 using Business.Services.EntityServices.Base;
-using Common.Interfaces;
 using Data.Repository.Dapper.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
@@ -14,10 +13,8 @@ using System.Threading.Tasks;
 
 namespace Business.Services.Membership {
 	public class MembershipService : EntityServiceBase, IMembershipService {
-		public IAppCacheService AppCacheManager { get; private set; }
 		public IOptions<AppSettings> AppSettings { get; set; }
 		public IAuthenticationPersistenceService AuthenticationPersistenceService { get; }
-		public IAuthorizationProcessor AuthorizationProcessor { get; private set; }
 		public ICookieManager CookieManager { get; set; }
 		public IFileProvider FileProvider { get; private set; }
 		public IHttpContextAccessor HttpContextAccessor { get; }
@@ -32,8 +29,6 @@ namespace Business.Services.Membership {
 		};
 
 		public MembershipService(
-			IAppCacheService appCacheService,
-			IAuthorizationProcessor authorizationProcessor,
 			IAuthenticationPersistenceService authenticationPersistenceService,
 			ICookieManager cookieManager,
 			IUserRepository userRepository,
@@ -42,9 +37,7 @@ namespace Business.Services.Membership {
 			IOptions<AppSettings> appSettings,
 			ILoggerFactory loggerFactory
 		) : base(_auditing, loggerFactory) {
-			this.AppCacheManager = appCacheService;
-			this.AuthorizationProcessor = authorizationProcessor;
-			AuthenticationPersistenceService = authenticationPersistenceService;
+			this.AuthenticationPersistenceService = authenticationPersistenceService;
 			this.CookieManager = cookieManager;
 			this.UserRepository = userRepository;
 			this.FileProvider = fileProvider;
