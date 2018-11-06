@@ -7,6 +7,7 @@ using chess.v4.engine.service;
 using Common.IO;
 using Data.Repository.Dapper;
 using Data.Repository.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -17,6 +18,7 @@ using Models.Application;
 using NLog;
 using NLog.Config;
 using System;
+using Tests.Utilities;
 
 namespace Tests.Models {
 	public class TestBase {
@@ -48,8 +50,9 @@ namespace Tests.Models {
 			//generated
 			//services.AddTransient<IAppCacheService, AppCacheService>();
 			//services.AddTransient<ISessionCacheService, SessionCacheService>();
+			services.AddTransient<IHttpContextAccessor, FakeHttpContextAccessor>();
 			services.AddTransient<IMembershipService, MembershipService>();
-			services.AddTransient<IAuthenticationPersistenceService, DummyAuthenticationPersistenceService>();
+			services.AddTransient<IAuthenticationPersistenceService, Test_AuthenticationPersistenceService>();
 			services.AddTransient<IMembershipService, MembershipService>();
 
 			//chess services
@@ -66,6 +69,8 @@ namespace Tests.Models {
 			//generated
 			services.AddTransient<IGameService, GameService>();
 			services.AddTransient<IGameRepository, GameDapperRepository>();
+			services.AddTransient<IUserService, UserService>();
+			services.AddTransient<IUserRepository, UserDapperRepository>();
 
 			this.ServiceProvider = services.BuildServiceProvider();
 

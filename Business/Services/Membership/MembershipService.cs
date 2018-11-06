@@ -15,7 +15,6 @@ namespace Business.Services.Membership {
 	public class MembershipService : EntityServiceBase, IMembershipService {
 		public IOptions<AppSettings> AppSettings { get; set; }
 		public IAuthenticationPersistenceService AuthenticationPersistenceService { get; }
-		public ICookieManager CookieManager { get; set; }
 		public IFileProvider FileProvider { get; private set; }
 		public IHttpContextAccessor HttpContextAccessor { get; }
 		public IUserRepository UserRepository { get; private set; }
@@ -30,7 +29,6 @@ namespace Business.Services.Membership {
 
 		public MembershipService(
 			IAuthenticationPersistenceService authenticationPersistenceService,
-			ICookieManager cookieManager,
 			IUserRepository userRepository,
 			IFileProvider fileProvider,
 			IHttpContextAccessor httpContextAccessor,
@@ -38,7 +36,6 @@ namespace Business.Services.Membership {
 			ILoggerFactory loggerFactory
 		) : base(_auditing, loggerFactory) {
 			this.AuthenticationPersistenceService = authenticationPersistenceService;
-			this.CookieManager = cookieManager;
 			this.UserRepository = userRepository;
 			this.FileProvider = fileProvider;
 			this.HttpContextAccessor = httpContextAccessor;

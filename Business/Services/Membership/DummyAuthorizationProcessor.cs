@@ -16,19 +16,16 @@ namespace Business.Services.Membership {
 	public class DummyAuthenticationPersistenceService : LoggingWorker, IAuthenticationPersistenceService {
 		public IOptions<AppSettings> AppSettings { get; }
 		public ICookieManager CookieManager { get; set; }
-		public IHttpContextAccessor HttpContextAccessor { get; }
 		public IUserRepository UserRepository { get; }
 		public const string AUTH_SESSION_KEY = "AuthenticationPersistenceService";
 		public const string AuthenticationPersistenceCookie = "AuthenticationPersistenceCookie";
 
 		public DummyAuthenticationPersistenceService(
 			IUserRepository userRepository,
-			IHttpContextAccessor httpContextAccessor,
 			IOptions<AppSettings> appSettings,
 			ICookieManager cookieManager,
 			ILoggerFactory loggerFactory
 		) : base(loggerFactory) {
-			this.HttpContextAccessor = httpContextAccessor;
 			AppSettings = appSettings;
 			UserRepository = userRepository;
 			this.CookieManager = cookieManager;
