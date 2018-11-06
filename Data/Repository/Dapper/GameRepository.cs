@@ -1,4 +1,5 @@
-﻿using common;
+﻿using Common;
+using Common.Models;
 using Dapper;
 using models;
 using System.Collections.Generic;

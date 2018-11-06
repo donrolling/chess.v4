@@ -1,26 +1,23 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.interfaces;
+﻿using chess.v4.engine.interfaces;
 using chess.v4.models;
-using common;
+using chess.v4.models.enumeration;
+using Common.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NLog;
 using System.Linq;
 using System.Text;
-using tests.models;
-using tests.setup;
+using Tests.models;
+using Tests.Setup;
 
-namespace tests {
-
+namespace Tests {
 	[TestClass]
 	public class PGNTests : BaseTest {
-		
 		public IGameStateService GameStateService { get; }
 		public IPGNService PGNService { get; }
 
 		public PGNTests() {
 			var serviceProvider = new TestSetup().Setup();
-			
+
 			this.GameStateService = serviceProvider.GetService<IGameStateService>();
 			this.PGNService = serviceProvider.GetService<IPGNService>();
 		}

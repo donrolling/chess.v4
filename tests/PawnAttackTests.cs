@@ -1,14 +1,13 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.interfaces;
-using common;
+﻿using chess.v4.engine.interfaces;
+using chess.v4.models.enumeration;
+using Common.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using tests.setup;
-using tests.utility;
+using Tests.Setup;
+using Tests.Utility;
 
-namespace tests {
-
+namespace Tests {
 	[TestClass]
 	public class PawnAttackTests {
 		public IAttackService AttackService { get; }
@@ -25,18 +24,6 @@ namespace tests {
 		}
 
 		[TestMethod]
-		public void PawnAnomalies() {
-			var fen = "1k3r2/7p/4BPp1/1N1R4/8/2P5/PP3PPP/R5K1 w  - 3 26";
-			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-			var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "f2" && !a.CanOnlyMoveHereIfOccupied).ToList();
-			var squares = new List<int> { 21, 29 };
-			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
-			Assert.AreEqual(2, attacks.Count());
-			var gameStateResult = this.GameStateService.MakeMove(gameState, 13, 20);
-			Assert.IsTrue(gameStateResult.Failure, "This move was invalid, so the attempt to make it should fail.");
-		}
-
-		[TestMethod]
 		public void GameStart_Verify_PawnAttack() {
 			var gameState = TestUtility.GetGameState(this.GameStateService);
 			//white queenside rook pawn, opening moves
@@ -50,12 +37,24 @@ namespace tests {
 			squares = new List<int> { 20, 28 };
 			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
 			Assert.AreEqual(2, attacks.Count());
-			
+
 			//black
 			attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d7" && !a.CanOnlyMoveHereIfOccupied).ToList();
 			squares = new List<int> { 35, 43 };
 			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
 			Assert.AreEqual(2, attacks.Count());
+		}
+
+		[TestMethod]
+		public void PawnAnomalies() {
+			var fen = "1k3r2/7p/4BPp1/1N1R4/8/2P5/PP3PPP/R5K1 w  - 3 26";
+			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+			var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "f2" && !a.CanOnlyMoveHereIfOccupied).ToList();
+			var squares = new List<int> { 21, 29 };
+			TestUtility.ListContainsSquares(attacks, squares, PieceType.Pawn);
+			Assert.AreEqual(2, attacks.Count());
+			var gameStateResult = this.GameStateService.MakeMove(gameState, 13, 20);
+			Assert.IsTrue(gameStateResult.Failure, "This move was invalid, so the attempt to make it should fail.");
 		}
 
 		[TestMethod]

@@ -15,7 +15,7 @@ namespace chess.v4.engine.service {
 		public string CurrentDirectory { get; }
 		private const string movePattern = @"\d*[.]((\s)?|[\r\n]|\n)[\w\d-\/+]*(\s|[\r\n]|\n)[\w\d-\/+]*";
 		private const string nodePattern = @"(?<=\[)(.*?)(?=\])";
-		private const string testData = @"\data\tests\";
+		private const string testData = @"\data\Tests\";
 		private const string removeComments = @"\{[\w\d\s.]*\}\s\d*...\s";
 		private const string saveDirectory = @"\data\output\";
 

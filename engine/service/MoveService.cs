@@ -2,11 +2,12 @@
 using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.models;
-using chess.v4.engine.utility;
-using common;
+using chess.v4.engine.Utility;
+using Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Models;
 
 namespace chess.v4.engine.service {
 	public class MoveService : IMoveService {
@@ -34,7 +35,7 @@ namespace chess.v4.engine.service {
 			if (isValidCastleAttempt.Success) {
 				stateInfo.IsCastle = isValidCastleAttempt.Result;
 			} else {
-				return Envelope<StateInfo>.Error(isValidCastleAttempt.Message);
+				return Envelope<StateInfo>.Fail(isValidCastleAttempt.Message);
 			}
 
 			stateInfo.IsPawnPromotion = this.isPawnPromotion(oldSquare, newPiecePosition);
@@ -182,17 +183,17 @@ namespace chess.v4.engine.service {
 
 			var castleInfo = checkCastleAvailability(gameState, destination, piece);
 			if (!castleInfo.CastleAvailability) {
-				return Envelope<bool>.Error("Castling is not available.");
+				return Envelope<bool>.Fail("Castling is not available.");
 			}
 
 			//validate the move
 			if (gameState.StateInfo.IsCheck) {
-				return Envelope<bool>.Error("Can't castle out of check.");
+				return Envelope<bool>.Fail("Can't castle out of check.");
 			}
 
 			var castleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, square.Index, castleInfo.RookPosition);
 			if (castleThroughCheck) {
-				return Envelope<bool>.Error("Can't castle through check.");
+				return Envelope<bool>.Fail("Can't castle through check.");
 			}
 
 			return Envelope<bool>.Ok(isCastleAttempt);

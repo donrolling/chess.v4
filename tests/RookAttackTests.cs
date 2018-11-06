@@ -1,12 +1,12 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.interfaces;
-using common;
+﻿using chess.v4.engine.interfaces;
+using chess.v4.models.enumeration;
+using Common.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using tests.setup;
-using tests.utility;
+using Tests.Setup;
+using Tests.Utility;
 
-namespace tests {
+namespace Tests {
 	[TestClass]
 	public class RookAttackTests {
 		public IAttackService AttackService { get; }

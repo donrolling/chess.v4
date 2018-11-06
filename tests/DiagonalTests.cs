@@ -1,14 +1,14 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.interfaces;
-using chess.v4.models;
+﻿using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
-using common;
+using chess.v4.models;
+using chess.v4.models.enumeration;
+using Common.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using tests.setup;
-using tests.utility;
+using Tests.Setup;
+using Tests.Utility;
 
-namespace tests {
+namespace Tests {
 	[TestClass]
 	public class DiagonalTests {
 		public IDiagonalService DiagonalService { get; }

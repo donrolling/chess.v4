@@ -1,11 +1,11 @@
 ﻿using chess.v4.engine.interfaces;
-using common;
+using Common.Extensions;
 using data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using models;
-using tests.setup;
+using Tests.Setup;
 
-namespace tests {
+namespace Tests {
 	[TestClass]
 	public class DatabaseStorageTests {
 		public GameRepository GameRepository { get; }

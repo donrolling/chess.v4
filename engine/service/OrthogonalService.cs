@@ -2,7 +2,7 @@
 using chess.v4.engine.interfaces;
 using chess.v4.models;
 using chess.v4.engine.reference;
-using chess.v4.engine.utility;
+using chess.v4.engine.Utility;
 using System.Collections.Generic;
 using System.Linq;
 

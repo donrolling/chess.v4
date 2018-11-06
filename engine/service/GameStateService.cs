@@ -3,9 +3,11 @@ using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.models;
 using chess.v4.engine.reference;
-using chess.v4.engine.utility;
-using common;
+using chess.v4.engine.Utility;
+using Common;
 using System.Linq;
+using Common.Models;
+using Common.Extensions;
 
 namespace chess.v4.engine.service {
 	/// <summary>
@@ -47,7 +49,7 @@ namespace chess.v4.engine.service {
 		public Envelope<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType = null) {
 			var stateInfo = this.getStateInfo(gameState, piecePosition, newPiecePosition, piecePromotionType);
 			if (stateInfo.Failure) {
-				return Envelope<GameState>.Error(stateInfo.Message);
+				return Envelope<GameState>.Fail(stateInfo.Message);
 			}
 			return this.makeMove(gameState, piecePosition, stateInfo.Result, newPiecePosition);
 		}
@@ -79,29 +81,29 @@ namespace chess.v4.engine.service {
 		private Envelope<StateInfo> getStateInfo(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType) {
 			var square = gameState.Squares.GetSquare(piecePosition);
 			if (!square.Occupied) {
-				return Envelope<StateInfo>.Error("Square was empty.");
+				return Envelope<StateInfo>.Fail("Square was empty.");
 			}
 			var moveInfoResult = this.MoveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
 			if (moveInfoResult.Failure) {
-				return Envelope<StateInfo>.Error(moveInfoResult.Message);
+				return Envelope<StateInfo>.Fail(moveInfoResult.Message);
 			}
 			var moveInfo = moveInfoResult.Result;
 			if (moveInfo.IsPawnPromotion) {
 				if (!piecePromotionType.HasValue) {
-					return Envelope<StateInfo>.Error("Must provide pawn promotion piece type in order to promote a pawn.");
+					return Envelope<StateInfo>.Fail("Must provide pawn promotion piece type in order to promote a pawn.");
 				}
 				moveInfo.PawnPromotedTo = piecePromotionType.Value;
 			}
 			//var putsOwnKingInCheck = false;
 			if (moveInfo.IsCheck) {
-				return Envelope<StateInfo>.Error("Must move out of check. Must not move into check.");
+				return Envelope<StateInfo>.Fail("Must move out of check. Must not move into check.");
 			}
 			return Envelope<StateInfo>.Ok(moveInfo);
 		}
 
 		private Envelope<GameState> hydrateGameState(FEN_Record fenRecord, string errorMessage = null) {
 			if (!string.IsNullOrEmpty(errorMessage)) {
-				return Envelope<GameState>.Error(errorMessage);
+				return Envelope<GameState>.Fail(errorMessage);
 			}
 			var gameState = new GameState(fenRecord);
 			gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
@@ -120,7 +122,7 @@ namespace chess.v4.engine.service {
 			var oldSquare = gameState.Squares.GetSquare(piecePosition);
 			var attacks = gameState.Attacks.GetPositionAttacksOnPosition(piecePosition, newPiecePosition);
 			if (!attacks.Any()) {
-				return Envelope<GameState>.Error($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+				return Envelope<GameState>.Fail($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
 			}
 			var badPawnAttack = attacks.Any(a =>
 											a.AttackingSquare.Index == piecePosition
@@ -129,7 +131,7 @@ namespace chess.v4.engine.service {
 											&& a.CanOnlyMoveHereIfOccupied
 										);
 			if (badPawnAttack) {
-				return Envelope<GameState>.Error($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+				return Envelope<GameState>.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
 			}
 			//make the move
 			var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
@@ -140,7 +142,7 @@ namespace chess.v4.engine.service {
 			this.NotationService.SetGameState_FEN(gameState, movingGameState, piecePosition, newPiecePosition);
 			var currentStateFEN = movingGameState.ToString();
 
-			//setup new gamestate
+			//Setup new gamestate
 			var newGameStateResult = hydrateGameState(new FEN_Record(currentStateFEN));
 			if (newGameStateResult.Failure) {
 				throw new System.Exception(newGameStateResult.Message);
@@ -151,11 +153,11 @@ namespace chess.v4.engine.service {
 			if (gameState.StateInfo.IsCheck && newGameState.StateInfo.IsCheck) {
 				if (gameState.ActiveColor == Color.White) {
 					if (newGameState.StateInfo.IsWhiteCheck) {
-						return Envelope<GameState>.Error("King must move out of check.");
+						return Envelope<GameState>.Fail("King must move out of check.");
 					}
 				} else {
 					if (newGameState.StateInfo.IsBlackCheck) {
-						return Envelope<GameState>.Error("King must move out of check.");
+						return Envelope<GameState>.Fail("King must move out of check.");
 					}
 				}
 			}

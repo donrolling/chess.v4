@@ -33,9 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\common.csproj" />
-    <ProjectReference Include="..\data\data.csproj" />
-    <ProjectReference Include="..\engine\engine.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\data\Data.csproj" />
+    <ProjectReference Include="..\engine\Engine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

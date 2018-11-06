@@ -4,7 +4,7 @@ using chess.v4.models;
 using System;
 using System.Collections.Generic;
 
-namespace chess.v4.engine.utility {
+namespace chess.v4.engine.Utility {
 
 	public static class GeneralUtility {
 

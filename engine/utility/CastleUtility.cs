@@ -4,7 +4,7 @@ using chess.v4.models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace chess.v4.engine.utility {
+namespace chess.v4.engine.Utility {
 
 	public static class CastleUtility {
 	

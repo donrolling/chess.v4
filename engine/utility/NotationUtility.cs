@@ -2,7 +2,7 @@
 using chess.v4.models;
 using System;
 
-namespace chess.v4.engine.utility {
+namespace chess.v4.engine.Utility {
 
 	public static class NotationUtility {
 

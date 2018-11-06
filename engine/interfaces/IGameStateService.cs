@@ -1,6 +1,7 @@
 ﻿using chess.v4.models.enumeration;
 using chess.v4.models;
-using common;
+using Common;
+using Common.Models;
 
 namespace chess.v4.engine.interfaces {
 

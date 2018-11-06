@@ -1,7 +1,8 @@
 ﻿using chess.v4.models.enumeration;
 using chess.v4.models;
-using common;
+using Common;
 using System.Collections.Generic;
+using Common.Models;
 
 namespace chess.v4.engine.interfaces {
 

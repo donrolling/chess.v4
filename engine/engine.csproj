@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\common.csproj" />
-    <ProjectReference Include="..\models\models.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\models\Models.csproj" />
   </ItemGroup>
 
 </Project>

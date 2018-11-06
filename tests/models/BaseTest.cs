@@ -1,11 +1,10 @@
-﻿using common;
+﻿using Common.Extensions;
 using Common.Logging;
 using Microsoft.Extensions.Logging;
 using System;
-using tests.setup;
+using Tests.Setup;
 
-namespace tests.models {
-
+namespace Tests.models {
 	public class BaseTest {
 		public ILogger Logger { get; }
 		public ILoggerFactory LoggerFactory { get; }

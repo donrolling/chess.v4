@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace tests.utility {
+namespace Tests.Utility {
 	internal class TestUtility {
 
 		internal static GameState GetGameState(IGameStateService gameStateService, string fen = "") {

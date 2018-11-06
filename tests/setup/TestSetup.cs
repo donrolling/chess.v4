@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using System;
 
-namespace tests.setup {
+namespace Tests.Setup {
 
 	internal class TestSetup {
 		public const string ConnectionString = @"Data Source=971JT039H2\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;";

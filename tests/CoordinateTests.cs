@@ -1,10 +1,10 @@
 ﻿using chess.v4.engine.interfaces;
-using common;
+using Common.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using tests.setup;
+using Tests.Setup;
 
-namespace tests {
+namespace Tests {
 
 	[TestClass]
 	public class CoordinateTests {
