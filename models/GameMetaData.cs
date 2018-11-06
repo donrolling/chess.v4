@@ -12,7 +12,7 @@ namespace chess.v4.models {
 		public string Event { get; set; }
 		public string Filename { get; set; }
 		public string ID { get; set; }
-		public SortedList<int, string> Moves { get; set; }
+		public SortedList<int, string> Moves { get; set; } = new SortedList<int, string>();
 		public string Remark { get; set; }
 		public string Result { get; set; }
 		public string Round { get; set; }
