@@ -26,7 +26,7 @@ namespace PGNImport {
 		}
 
 		public async Task<bool> Import() {
-			var data = FileUtility.ReadTextFile<Importer>("sample.pgn", "Data\\Games");
+			var data = FileUtility.ReadTextFile<Importer>("December1.pgn", "Data\\Games");
 			//Console.WriteLine(data);
 			var groups = data.Split("\r\n\r\n");
 			for (int i = 0; i < groups.Length; i = i + 2) {
@@ -37,21 +37,6 @@ namespace PGNImport {
 				game.InjectFrom(gameData);
 				var gameStateResult = this.GameStateService.Initialize();
 				var gameState = gameStateResult.Result;
-				foreach (var move in gameData.Moves) {
-					var xs = move.Value.Split('.')[1].Split(' ');
-					var a = xs[0];
-					var b = xs[1];
-					var pair1 = this.PGNService.PGNMoveToSquarePair(gameState, a);
-					gameStateResult = this.GameStateService.MakeMove(gameState, pair1.piecePosition, pair1.newPiecePosition);
-					gameState = gameStateResult.Result;
-					//var pieceType = this.PGNService.GetPieceTypeFromPGNMove(move.Value);
-					//var piece = new Piece(pieceType, gameState.ActiveColor);
-					//var end = this.PGNService.GetPositionFromPGNMove(move.Value, gameState.ActiveColor);
-					//var start = this.PGNService.GetCurrentPositionFromPGNMove(gameState, piece, end, move.Value);
-					var pair2 = this.PGNService.PGNMoveToSquarePair(gameState, b);
-					gameStateResult = this.GameStateService.MakeMove(gameState, pair2.piecePosition, pair2.newPiecePosition);
-					gameState = gameStateResult.Result;
-				}
 				game.FEN = gameState.ToString();
 				game.PGN = moves;
 				var saveResult = await this.GameService.Create(game);

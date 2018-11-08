@@ -14,14 +14,14 @@ namespace Models.Entities {
 		[StringLength(50, ErrorMessage = "Date cannot be longer than 50 characters.")]
 		[Display(Name = "Date")]
 		public string Date { get; set; }
-		[Display(Name = "E C O")]
+		[Display(Name = "  O")]
 		public int? ECO { get; set; }
 		[StringLength(50, ErrorMessage = "Event cannot be longer than 50 characters.")]
 		[Display(Name = "Event")]
 		public string Event { get; set; }
 		[Required]
 		[StringLength(100, ErrorMessage = "F E N cannot be longer than 100 characters.")]
-		[Display(Name = "F E N")]
+		[Display(Name = "FEN")]
 		public string FEN { get; set; }
 		[StringLength(150, ErrorMessage = "File Name cannot be longer than 150 characters.")]
 		[Display(Name = "File Name")]
