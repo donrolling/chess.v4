@@ -277,17 +277,17 @@ namespace chess.v4.engine.service {
 			var smallest = dxs.Min();
 			var largest = dxs.Max();
 			var nextSmallest = smallest;
-			while (nextSmallest % 8 > 0) {
+			while (nextSmallest % 8 > 0 && nextSmallest >= 0) {
 				nextSmallest = nextSmallest - increment;
-				if (!dxs.Contains(nextSmallest)) {
+				if (nextSmallest >= 0 && !dxs.Contains(nextSmallest)) {
 					dxs.Add(nextSmallest);
 				}
 			};
 			//right
 			var nextLargest = largest;
-			while (nextLargest % 7 > 0) {
+			while (nextLargest % 7 > 0 && nextLargest <= 63) {
 				nextLargest = nextLargest + increment;
-				if (!dxs.Contains(nextLargest)) {
+				if (nextLargest <= 63 && !dxs.Contains(nextLargest)) {
 					dxs.Add(nextLargest);
 				}
 			};

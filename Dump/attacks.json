@@ -11,6 +11,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 16,
 		"Name": "a3",
@@ -29,6 +30,26 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 17,
+		"Name": "b3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 8,
+			"Name": "a2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 24,
 		"Name": "a4",
@@ -47,6 +68,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 17,
 		"Name": "b3",
@@ -65,6 +87,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 16,
+		"Name": "a3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 9,
+			"Name": "b2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 9,
+			"Name": "b2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 25,
 		"Name": "b4",
@@ -83,6 +144,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 18,
 		"Name": "c3",
@@ -101,6 +163,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 17,
+		"Name": "b3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 10,
+			"Name": "c2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 19,
+		"Name": "d3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 10,
+			"Name": "c2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 26,
 		"Name": "c4",
@@ -119,6 +220,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 19,
 		"Name": "d3",
@@ -137,9 +239,124 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 18,
+		"Name": "c3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 11,
+			"Name": "d2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 20,
+		"Name": "e3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 11,
+			"Name": "d2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 27,
 		"Name": "d4",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 12,
+			"Name": "e2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
+		"IsPassiveAttack": true,
+		"Index": 20,
+		"Name": "e3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 12,
+			"Name": "e2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 19,
+		"Name": "d3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 12,
+			"Name": "e2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 21,
+		"Name": "f3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 12,
+			"Name": "e2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
+		"IsPassiveAttack": true,
+		"Index": 28,
+		"Name": "e4",
 		"Occupied": false,
 		"Piece": null
 	},
@@ -155,6 +372,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 21,
 		"Name": "f3",
@@ -173,6 +391,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 20,
+		"Name": "e3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 13,
+			"Name": "f2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 22,
+		"Name": "g3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 13,
+			"Name": "f2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 29,
 		"Name": "f4",
@@ -191,6 +448,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 22,
 		"Name": "g3",
@@ -209,6 +467,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 21,
+		"Name": "f3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 14,
+			"Name": "g2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 23,
+		"Name": "h3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 14,
+			"Name": "g2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 30,
 		"Name": "g4",
@@ -227,6 +524,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 23,
 		"Name": "h3",
@@ -245,6 +543,26 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 22,
+		"Name": "g3",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 15,
+			"Name": "h2",
+			"Occupied": true,
+			"Piece": {
+				"Color": 1,
+				"Identity": "P",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 31,
 		"Name": "h4",
@@ -253,8 +571,8 @@
 	},
 	{
 		"AttackingSquare": {
-			"Index": 32,
-			"Name": "a5",
+			"Index": 48,
+			"Name": "a7",
 			"Occupied": true,
 			"Piece": {
 				"Color": 0,
@@ -263,16 +581,17 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
-		"Index": 24,
-		"Name": "a4",
+		"Index": 40,
+		"Name": "a6",
 		"Occupied": false,
 		"Piece": null
 	},
 	{
 		"AttackingSquare": {
-			"Index": 35,
-			"Name": "d5",
+			"Index": 48,
+			"Name": "a7",
 			"Occupied": true,
 			"Piece": {
 				"Color": 0,
@@ -281,16 +600,17 @@
 				"OrderOfOperation": 1
 			}
 		},
-		"IsPassiveAttack": true,
-		"Index": 27,
-		"Name": "d4",
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 41,
+		"Name": "b6",
 		"Occupied": false,
 		"Piece": null
 	},
 	{
 		"AttackingSquare": {
-			"Index": 44,
-			"Name": "e6",
+			"Index": 48,
+			"Name": "a7",
 			"Occupied": true,
 			"Piece": {
 				"Color": 0,
@@ -299,9 +619,10 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
-		"Index": 36,
-		"Name": "e5",
+		"Index": 32,
+		"Name": "a5",
 		"Occupied": false,
 		"Piece": null
 	},
@@ -317,6 +638,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 41,
 		"Name": "b6",
@@ -335,6 +657,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 40,
+		"Name": "a6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 49,
+			"Name": "b7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 42,
+		"Name": "c6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 49,
+			"Name": "b7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 33,
 		"Name": "b5",
@@ -353,6 +714,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 42,
 		"Name": "c6",
@@ -371,9 +733,200 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 41,
+		"Name": "b6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 50,
+			"Name": "c7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 43,
+		"Name": "d6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 50,
+			"Name": "c7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 34,
 		"Name": "c5",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 51,
+			"Name": "d7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
+		"IsPassiveAttack": true,
+		"Index": 43,
+		"Name": "d6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 51,
+			"Name": "d7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 42,
+		"Name": "c6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 51,
+			"Name": "d7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 44,
+		"Name": "e6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 51,
+			"Name": "d7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
+		"IsPassiveAttack": true,
+		"Index": 35,
+		"Name": "d5",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 52,
+			"Name": "e7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
+		"IsPassiveAttack": true,
+		"Index": 44,
+		"Name": "e6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 52,
+			"Name": "e7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 43,
+		"Name": "d6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 52,
+			"Name": "e7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 45,
+		"Name": "f6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 52,
+			"Name": "e7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
+		"IsPassiveAttack": true,
+		"Index": 36,
+		"Name": "e5",
 		"Occupied": false,
 		"Piece": null
 	},
@@ -389,6 +942,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 45,
 		"Name": "f6",
@@ -407,6 +961,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 44,
+		"Name": "e6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 53,
+			"Name": "f7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 46,
+		"Name": "g6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 53,
+			"Name": "f7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 37,
 		"Name": "f5",
@@ -425,6 +1018,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 46,
 		"Name": "g6",
@@ -443,6 +1037,45 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 45,
+		"Name": "f6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 54,
+			"Name": "g7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 47,
+		"Name": "h6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 54,
+			"Name": "g7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 38,
 		"Name": "g5",
@@ -461,6 +1094,7 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 47,
 		"Name": "h6",
@@ -479,6 +1113,26 @@
 				"OrderOfOperation": 1
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": true,
+		"IsPassiveAttack": false,
+		"Index": 46,
+		"Name": "g6",
+		"Occupied": false,
+		"Piece": null
+	},
+	{
+		"AttackingSquare": {
+			"Index": 55,
+			"Name": "h7",
+			"Occupied": true,
+			"Piece": {
+				"Color": 0,
+				"Identity": "p",
+				"PieceType": 0,
+				"OrderOfOperation": 1
+			}
+		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": true,
 		"Index": 39,
 		"Name": "h5",
@@ -497,6 +1151,7 @@
 				"OrderOfOperation": 2
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 16,
 		"Name": "a3",
@@ -515,6 +1170,7 @@
 				"OrderOfOperation": 2
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 18,
 		"Name": "c3",
@@ -533,24 +1189,7 @@
 				"OrderOfOperation": 2
 			}
 		},
-		"IsPassiveAttack": false,
-		"Index": 12,
-		"Name": "e2",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 6,
-			"Name": "g1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "N",
-				"PieceType": 1,
-				"OrderOfOperation": 2
-			}
-		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 21,
 		"Name": "f3",
@@ -569,6 +1208,7 @@
 				"OrderOfOperation": 2
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 23,
 		"Name": "h3",
@@ -587,24 +1227,7 @@
 				"OrderOfOperation": 2
 			}
 		},
-		"IsPassiveAttack": false,
-		"Index": 51,
-		"Name": "d7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 57,
-			"Name": "b8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "n",
-				"PieceType": 1,
-				"OrderOfOperation": 2
-			}
-		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 42,
 		"Name": "c6",
@@ -623,6 +1246,7 @@
 				"OrderOfOperation": 2
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 40,
 		"Name": "a6",
@@ -641,24 +1265,7 @@
 				"OrderOfOperation": 2
 			}
 		},
-		"IsPassiveAttack": false,
-		"Index": 52,
-		"Name": "e7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 62,
-			"Name": "g8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "n",
-				"PieceType": 1,
-				"OrderOfOperation": 2
-			}
-		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 47,
 		"Name": "h6",
@@ -677,441 +1284,10 @@
 				"OrderOfOperation": 2
 			}
 		},
+		"CanOnlyMoveHereIfOccupied": false,
 		"IsPassiveAttack": false,
 		"Index": 45,
 		"Name": "f6",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 5,
-			"Name": "f1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "B",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 12,
-		"Name": "e2",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 5,
-			"Name": "f1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "B",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 19,
-		"Name": "d3",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 5,
-			"Name": "f1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "B",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 26,
-		"Name": "c4",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 5,
-			"Name": "f1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "B",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 33,
-		"Name": "b5",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 5,
-			"Name": "f1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "B",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 40,
-		"Name": "a6",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 58,
-			"Name": "c8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "b",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 51,
-		"Name": "d7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 61,
-			"Name": "f8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "b",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 52,
-		"Name": "e7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 61,
-			"Name": "f8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "b",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 43,
-		"Name": "d6",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 61,
-			"Name": "f8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "b",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 34,
-		"Name": "c5",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 61,
-			"Name": "f8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "b",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 25,
-		"Name": "b4",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 61,
-			"Name": "f8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "b",
-				"PieceType": 2,
-				"OrderOfOperation": 3
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 16,
-		"Name": "a3",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 56,
-			"Name": "a8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "r",
-				"PieceType": 3,
-				"OrderOfOperation": 4
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 48,
-		"Name": "a7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 56,
-			"Name": "a8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "r",
-				"PieceType": 3,
-				"OrderOfOperation": 4
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 40,
-		"Name": "a6",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 3,
-			"Name": "d1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "Q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 4,
-		"Name": "e1",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 3,
-			"Name": "d1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "Q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 12,
-		"Name": "e2",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 3,
-			"Name": "d1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "Q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 21,
-		"Name": "f3",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 3,
-			"Name": "d1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "Q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 30,
-		"Name": "g4",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 3,
-			"Name": "d1",
-			"Occupied": true,
-			"Piece": {
-				"Color": 1,
-				"Identity": "Q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 39,
-		"Name": "h5",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 59,
-			"Name": "d8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 51,
-		"Name": "d7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 59,
-			"Name": "d8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 43,
-		"Name": "d6",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 59,
-			"Name": "d8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 52,
-		"Name": "e7",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 59,
-			"Name": "d8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 45,
-		"Name": "f6",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 59,
-			"Name": "d8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 38,
-		"Name": "g5",
-		"Occupied": false,
-		"Piece": null
-	},
-	{
-		"AttackingSquare": {
-			"Index": 59,
-			"Name": "d8",
-			"Occupied": true,
-			"Piece": {
-				"Color": 0,
-				"Identity": "q",
-				"PieceType": 4,
-				"OrderOfOperation": 5
-			}
-		},
-		"IsPassiveAttack": false,
-		"Index": 31,
-		"Name": "h4",
 		"Occupied": false,
 		"Piece": null
 	}

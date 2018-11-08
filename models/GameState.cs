@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
 namespace chess.v4.models {
-
 	public class GameState : FEN_Record {
 		public List<AttackedSquare> Attacks { get; set; } = new List<AttackedSquare>();
 		public List<FEN_Record> FEN_Records { get; set; } = new List<FEN_Record>();
-		public StateInfo StateInfo { get; set; }
 		public string PGN { get; set; }
 		public List<Square> Squares { get; set; } = new List<Square>();
+		public StateInfo StateInfo { get; set; }
 
 		public GameState() {
 		}

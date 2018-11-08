@@ -27,9 +27,16 @@ namespace chess.v4.engine.service {
 
 		public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove) {
 			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.
+			if (pgnMove == "Bd4+") {
+				var test = "test";
+			}
 			var potentialSquares = gameState.Attacks.Where(a => 
 														a.Index == newPiecePosition 
-														&& !a.CanOnlyMoveHereIfOccupied
+														&& (
+															a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
+														)
+														&& a.AttackingSquare.Piece.PieceType == piece.PieceType
+														&& a.AttackingSquare.Piece.Color == piece.Color
 													);
 			if (!potentialSquares.Any()) {
 				throw new Exception("No squares found.");

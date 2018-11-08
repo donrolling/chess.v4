@@ -1,13 +1,12 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.extensions;
+﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
-using chess.v4.models;
 using chess.v4.engine.reference;
 using chess.v4.engine.Utility;
-using Common;
-using System.Linq;
-using Common.Models;
+using chess.v4.models;
+using chess.v4.models.enumeration;
 using Common.Extensions;
+using Common.Models;
+using System.Linq;
 
 namespace chess.v4.engine.service {
 	/// <summary>
@@ -17,13 +16,13 @@ namespace chess.v4.engine.service {
 	/// </summary>
 	public class GameStateService : IGameStateService {
 		public IAttackService AttackService { get; }
-
 		public IMoveService MoveService { get; }
 		public INotationService NotationService { get; }
+		public IPGNService PGNService { get; }
 
-		public GameStateService(INotationService notationService, IMoveService moveService, IAttackService attackService) {
+		public GameStateService(INotationService notationService, IPGNService pgnService, IMoveService moveService, IAttackService attackService) {
 			NotationService = notationService;
-
+			PGNService = pgnService;
 			MoveService = moveService;
 			AttackService = attackService;
 		}
@@ -58,6 +57,12 @@ namespace chess.v4.engine.service {
 			var pos1 = NotationUtility.CoordinateToPosition(beginning);
 			var pos2 = NotationUtility.CoordinateToPosition(destination);
 			return this.MakeMove(gameState, pos1, pos2, piecePromotionType);
+		}
+
+		public Envelope<GameState> MakeMove(GameState gameState, string pgnMove) {
+			var pair = this.PGNService.PGNMoveToSquarePair(gameState, pgnMove);
+			//todo: what about piece promotion?
+			return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition);
 		}
 
 		private static GameState manageSquares(GameState gameState, StateInfo stateInfo, int piecePosition, int newPiecePosition) {

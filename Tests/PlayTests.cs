@@ -2,10 +2,12 @@
 using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
 using chess.v4.models;
+using Common.Models;
 using Data.Dapper.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Models.Entities;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,26 +40,12 @@ namespace Tests {
 			var gameState = gameStateResult.Result;
 			game.FEN = GeneralReference.Starting_FEN_Position;
 			foreach (var move in gameData.Moves) {
-				gameStateResult = playMove(ref gameState, move);
-				Assert.IsTrue(gameStateResult.Success, "Move should succeed.");
+				gameState = playMove(gameState, game, move.Value);
 			}
-		}
-
-		private Common.Models.Envelope<GameState> playMove(ref GameState gameState, System.Collections.Generic.KeyValuePair<int, string> move) {
-			Common.Models.Envelope<GameState> gameStateResult;
-			var xs = move.Value.Split('.')[1].Split(' ');
-			var a = xs[0];
-			var b = xs[1];
-
-			var pair1 = this.PGNService.PGNMoveToSquarePair(gameState, a);
-			gameStateResult = this.GameStateService.MakeMove(gameState, pair1.piecePosition, pair1.newPiecePosition);
-			Assert.IsTrue(gameStateResult.Success, "Move should succeed.");
-			gameState = gameStateResult.Result;
-			var pieceType = this.PGNService.GetPieceTypeFromPGNMove(move.Value);
-			var piece = new Piece(pieceType, gameState.ActiveColor);
-			var end = this.PGNService.GetPositionFromPGNMove(move.Value, gameState.ActiveColor);
-			var start = this.PGNService.GetCurrentPositionFromPGNMove(gameState, piece, end, move.Value);
-			return gameStateResult;
+			//learning that PGN notation always clearly indicate a draw.
+			//The first game that I've tested seems to be a draw, but I don't have a way of knowing that now.
+			Assert.IsTrue(gameState.StateInfo.IsCheckmate || gameState.StateInfo.IsDraw, $"Game should be completed. { game.FEN }");
+			Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same. { game.FEN }");
 		}
 
 		private string getGameString(Game game) {
@@ -80,6 +68,21 @@ namespace Tests {
 			sb.AppendLine("");
 			sb.AppendLine(game.PGN);
 			return sb.ToString();
+		}
+
+		private GameState playMove(GameState gameState, Game game, string move) {
+			var xs = move.Split('.')[1].Split(' ');
+			var a = xs[0];
+			var gameStateResult = this.GameStateService.MakeMove(gameState, a);
+			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { a } | { game.FEN }");
+			//record and save the FEN at every step so I can figure out where things went wrong.
+			game.FEN = gameStateResult.Result.ToString();
+			var b = xs[1];
+			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
+			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN }");
+			//record and save the FEN at every step so I can figure out where things went wrong.
+			game.FEN = gameStateResult.Result.ToString();
+			return gameStateResult.Result;
 		}
 	}
 }
