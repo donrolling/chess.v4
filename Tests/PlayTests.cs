@@ -54,9 +54,17 @@ namespace Tests {
 			if (hasCheckmate) {
 				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { finalMove }.\r\n{ game.FEN }");
 				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }");
+			} else if (isDraw) {
+				Assert.IsTrue(gameState.StateInfo.IsDraw, $"Game should be marked as a draw.\r\n{ game.FEN }");
+				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }");
 			} else {
 				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game must have ended in a resignation or a draw. Final move was { finalMove }.\r\n{ game.FEN }");
 			}
+			game.FEN = gameState.ToString();
+			//so we don't run this test again
+			game.IsActive = false;
+			var updateResult = await this.GameService.Update(game);
+			Assert.IsTrue(updateResult.Success, updateResult.Message);
 		}
 
 		private string getGameString(Game game) {
