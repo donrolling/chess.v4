@@ -17,6 +17,7 @@ namespace Tests.Tests.Entity {
 
 		[TestMethod]
 		public async Task CRUD_Game_GivenValidValues_Succeeds() {
+
 			var fixture = new Fixture();
 			var game = fixture.Build<Game>()
 				.Without(a => a.Id)
@@ -31,14 +32,15 @@ namespace Tests.Tests.Entity {
 			var createResult = await this.GameService.Create(game);
 			Assert.IsTrue(createResult.Success);
 
-			try {
+			try{
 				//select object by id to ensure that it was saved to db
 				var newGame = await this.GameService.SelectById(createResult.Id);
 				Assert.IsNotNull(newGame);
 
 				//update object to ensure that it can be modified and saved to db
-				newGame.Annotator = "Don";
-
+				//DO STUFF HERE - SUCH AS:
+				//newGame.Name = "Something Random";
+			
 				//update the item in the database
 				var updateResult = await this.GameService.Update(newGame);
 				Assert.IsTrue(updateResult.Success);
@@ -46,8 +48,9 @@ namespace Tests.Tests.Entity {
 				//verify that the data in the newly updated object is not the same as it was previously.
 				var postUpdatedGame = this.GameService.SelectById(createResult.Id);
 				Assert.IsNotNull(postUpdatedGame);
-				Assert.AreNotEqual(game.Annotator, newGame.Annotator);
-			} finally {
+				//DO STUFF HERE TO ASSERT THAT THE CHANGES WERE MADE - SUCH AS:
+				//Assert.AreNotEqual(game.Name, newGame.Name);
+				} finally {
 				//delete the item in the database
 				var deleteResult = await this.GameService.Delete(createResult.Id);
 				Assert.IsTrue(deleteResult.Success);
@@ -56,6 +59,6 @@ namespace Tests.Tests.Entity {
 				var deleteConfirmGame = this.GameService.SelectById(createResult.Id);
 				Assert.IsNull(deleteConfirmGame.Result);
 			}
-		}
+					}
 	}
 }

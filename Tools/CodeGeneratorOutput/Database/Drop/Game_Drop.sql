@@ -1,29 +1,29 @@
 BEGIN TRY  
-	DROP PROCEDURE [dbo].[User_Delete]
+	DROP PROCEDURE [dbo].[Game_Delete]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP PROCEDURE [dbo].[User_Insert]
+	DROP PROCEDURE [dbo].[Game_Insert]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP PROCEDURE [dbo].[User_Update]
+	DROP PROCEDURE [dbo].[Game_Update]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP Function [dbo].[User_ReadAll]
+	DROP Function [dbo].[Game_ReadAll]
 END TRY  
 BEGIN CATCH  
 
 END CATCH;
 BEGIN TRY  
-	DROP Function [dbo].[User_SelectById]
+	DROP Function [dbo].[Game_SelectById]
 END TRY  
 BEGIN CATCH  
 

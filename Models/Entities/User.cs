@@ -1,9 +1,10 @@
 using Models.Base;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Models.Entities {
 	public class User : Entity<long> {
-		[Required]
+			[Required]
 		[StringLength(150, ErrorMessage = "Login cannot be longer than 150 characters.")]
 		[Display(Name = "Login")]
 		public string Login { get; set; }

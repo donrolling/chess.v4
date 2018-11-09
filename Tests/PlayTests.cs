@@ -2,12 +2,10 @@
 using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
 using chess.v4.models;
-using Common.Models;
 using Data.Dapper.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Models.Entities;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,17 +33,30 @@ namespace Tests {
 			var game = gamesResult.Data.First();
 			Assert.IsNotNull(game);
 			var gameString = this.getGameString(game);
+			var result = gameString.Split(" ").Last();
 			var gameData = this.PGNFileService.ParsePGNData(gameString);
 			var gameStateResult = this.GameStateService.Initialize();
 			var gameState = gameStateResult.Result;
 			game.FEN = GeneralReference.Starting_FEN_Position;
+			var hasCheckmate = false;
+			var isDraw = game.Result == "1/2-1/2";
+			var finalMove = string.Empty;
+			var count = gameData.Moves.Count();
+			var moveCount = 1;
 			foreach (var move in gameData.Moves) {
+				if (moveCount == count) {
+					finalMove = move.Value;
+					hasCheckmate = move.Value.Contains('#');
+				}
 				gameState = playMove(gameState, game, move.Value);
+				moveCount++;
 			}
-			//learning that PGN notation always clearly indicate a draw.
-			//The first game that I've tested seems to be a draw, but I don't have a way of knowing that now.
-			Assert.IsTrue(gameState.StateInfo.IsCheckmate || gameState.StateInfo.IsDraw, $"Game should be completed. { game.FEN }");
-			Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same. { game.FEN }");
+			if (hasCheckmate) {
+				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { finalMove }.\r\n{ game.FEN }");
+				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }");
+			} else {
+				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game must have ended in a resignation or a draw. Final move was { finalMove }.\r\n{ game.FEN }");
+			}
 		}
 
 		private string getGameString(Game game) {
@@ -67,7 +78,7 @@ namespace Tests {
 			sb.AppendLine($"[Remark \"{ game.Remark }\"]");
 			sb.AppendLine("");
 			sb.AppendLine(game.PGN);
-			return sb.ToString();
+			return sb.ToString().Trim('\n').Trim('\r');
 		}
 
 		private GameState playMove(GameState gameState, Game game, string move) {

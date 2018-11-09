@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[Game_Insert] (
+CREATE PROCEDURE [dbo].[Game_Insert] (
 	@isFinished bit,
 	@event nvarchar(50),
 	@site nvarchar(50),

@@ -65,6 +65,7 @@ namespace chess.v4.engine.service {
 				var isCheckMate = this.isCheckMate(gameState, Color.White, whiteKingAttacks);
 				if (isCheckMate) {
 					stateInfo.IsCheckmate = true;
+					stateInfo.Result = "0-1";
 				}
 			} else {
 				var blackKingAttacks = getAttacksOnKing(gameState, Color.Black);
@@ -73,6 +74,7 @@ namespace chess.v4.engine.service {
 					var isCheckMate = this.isCheckMate(gameState, Color.Black, blackKingAttacks);
 					if (isCheckMate) {
 						stateInfo.IsCheckmate = true;
+						stateInfo.Result = "1-0";
 					}
 				}
 			}

@@ -1,11 +1,11 @@
 {
-	"ConnectionString": "Data Source=971JT039H2\\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;",
+	"ConnectionString": "Server=971JT039H2\\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;",
 	"ProcessTemplateStubs": true,
 	"OutputDirectory": "C:\\Projects\\chess.v4\\Tools\\CodeGeneratorOutput",
 	"DestinationDirectory": "C:\\Projects\\chess.v4\\",
 	"IncludeTheseTablesOnly": [],
 	"IncludeTheseTemplatesOnly": [],
-	"ExcludeTheseTables": [ "Game" ],
+	"ExcludeTheseTables": [ "User" ],
 	"ExcludeTheseTemplates": [],
 	"PostProcessScripts": [ "UpdateSQLProject.ps1" ],
 	"Templates": [

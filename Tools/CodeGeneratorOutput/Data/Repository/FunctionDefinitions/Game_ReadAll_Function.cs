@@ -2,10 +2,10 @@ using Data.Repository.Dapper.Base;
 using System;
 
 namespace Data.Repository.FunctionDefinitions {
-	public class User_ReadAll_Function : BasePageableFunction {	
-		public User_ReadAll_Function() {
+	public class Game_ReadAll_Function : BasePageableFunction {	
+		public Game_ReadAll_Function() {
 			this.DatabaseSchema = "dbo";
-			this.UserDefinedFunctionName = "User_ReadAll";
+			this.UserDefinedFunctionName = "Game_ReadAll";
 			this.Signature = "@readActive, @readInactive";
 		}
 	}
