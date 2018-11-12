@@ -1,15 +1,14 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.extensions;
+﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
-using chess.v4.models;
 using chess.v4.engine.Utility;
+using chess.v4.models;
+using chess.v4.models.enumeration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace chess.v4.engine.service {
-
 	// Pawn promotions are notated by appending an "=" to the destination square, followed by the piece the pawn is promoted to.
 	// "e8=Q". If the move is a checking move, the plus sign "+" is also appended;
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
@@ -30,8 +29,8 @@ namespace chess.v4.engine.service {
 			if (pgnMove == "Bd4+") {
 				var test = "test";
 			}
-			var potentialSquares = gameState.Attacks.Where(a => 
-														a.Index == newPiecePosition 
+			var potentialSquares = gameState.Attacks.Where(a =>
+														a.Index == newPiecePosition
 														&& (
 															a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
 														)
@@ -180,9 +179,39 @@ namespace chess.v4.engine.service {
 		public (int piecePosition, int newPiecePosition) PGNMoveToSquarePair(GameState gameState, string pgnMove) {
 			var newPiecePosition = GetPositionFromPGNMove(pgnMove, gameState.ActiveColor);
 			var pieceType = GetPieceTypeFromPGNMove(pgnMove);
-			var piece = new Piece(pieceType, gameState.ActiveColor);
-			var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove);
-			return (piecePosition.Index, newPiecePosition);
+			var pieceIndicator = pgnMove[0];
+			if (pieceIndicator == 'b') {
+				if (gameState.ActiveColor == Color.White) {
+					//this is a pawn move, not a bishop because a white bishop would be B, not b
+					pieceType = PieceType.Pawn;
+				} else {
+					var potentialBishopSquares = gameState.Attacks.Where(a =>
+											a.Index == newPiecePosition
+											&& a.AttackingSquare.Piece.Color == gameState.ActiveColor
+											&& (
+												a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
+											)
+											&& a.AttackingSquare.Piece.PieceType == PieceType.Bishop
+										);
+					var potentialPawnSquares = gameState.Attacks.Where(a =>
+											a.Index == newPiecePosition
+											&& a.AttackingSquare.Piece.Color == gameState.ActiveColor
+											&& (
+												a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
+											)
+											&& a.AttackingSquare.Piece.PieceType == PieceType.Pawn
+										);
+					if (!potentialBishopSquares.Any() && !potentialPawnSquares.Any()) {
+						throw new Exception("No squares found.");
+					}
+					//todo: finish this thought
+					//pick between bishop or pawn
+				}
+			} else {
+				var piece = new Piece(pieceType, gameState.ActiveColor);
+				var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove);
+				return (piecePosition.Index, newPiecePosition);
+			}
 		}
 
 		public List<string> PGNSplit(string pgn) {
