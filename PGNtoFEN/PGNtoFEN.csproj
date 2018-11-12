@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\data\Data.csproj" />
+    <ProjectReference Include="..\engine\Engine.csproj" />
+    <ProjectReference Include="..\models\Models.csproj" />
+    <ProjectReference Include="..\tests\Tests.csproj" />
+  </ItemGroup>
+
+</Project>

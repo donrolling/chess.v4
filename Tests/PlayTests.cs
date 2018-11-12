@@ -34,16 +34,21 @@ namespace Tests {
 			Assert.IsNotNull(game);
 			var gameString = this.getGameString(game);
 			var result = gameString.Split(" ").Last();
-			var gameData = this.PGNFileService.ParsePGNData(gameString);
 			var gameStateResult = this.GameStateService.Initialize();
 			var gameState = gameStateResult.Result;
 			game.FEN = GeneralReference.Starting_FEN_Position;
+			
+			var moveCount = 1;
 			var hasCheckmate = false;
 			var isDraw = game.Result == "1/2-1/2";
 			var finalMove = string.Empty;
+			
+			var gameData = this.PGNFileService.ParsePGNData(gameString);
 			var count = gameData.Moves.Count();
-			var moveCount = 1;
 			foreach (var move in gameData.Moves) {
+				if (move.Value.Contains('-')) {
+					continue;
+				}
 				if (moveCount == count) {
 					finalMove = move.Value;
 					hasCheckmate = move.Value.Contains('#');
@@ -90,6 +95,9 @@ namespace Tests {
 		}
 
 		private GameState playMove(GameState gameState, Game game, string move) {
+			if (move.Contains('-')) {
+				return gameState;
+			}
 			var xs = move.Split('.')[1].Split(' ');
 			var a = xs[0];
 			var gameStateResult = this.GameStateService.MakeMove(gameState, a);

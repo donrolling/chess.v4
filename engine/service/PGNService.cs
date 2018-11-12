@@ -25,10 +25,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove) {
-			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.
-			if (pgnMove == "Bd4+") {
-				var test = "test";
-			}
+			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.			
 			var potentialSquares = gameState.Attacks.Where(a =>
 														a.Index == newPiecePosition
 														&& (
@@ -38,7 +35,8 @@ namespace chess.v4.engine.service {
 														&& a.AttackingSquare.Piece.Color == piece.Color
 													);
 			if (!potentialSquares.Any()) {
-				throw new Exception("No squares found.");
+				var msg = $"No squares found. PGN Move: { pgnMove }";
+				throw new Exception(msg);
 			}
 			if (potentialSquares.Count() == 1) {
 				return potentialSquares.First().AttackingSquare;
@@ -49,7 +47,8 @@ namespace chess.v4.engine.service {
 									 where s.Piece.Identity == piece.Identity
 									 select p;
 			if (!potentialPositions.Any()) {
-				throw new Exception("No squares found.");
+				var msg = $"No squares found. PGN Move: { pgnMove }";
+				throw new Exception(msg);
 			}
 			//x means capture and shouldn't be used in the equation below
 			var capture = isCapture(pgnMove);
@@ -185,33 +184,32 @@ namespace chess.v4.engine.service {
 					//this is a pawn move, not a bishop because a white bishop would be B, not b
 					pieceType = PieceType.Pawn;
 				} else {
-					var potentialBishopSquares = gameState.Attacks.Where(a =>
-											a.Index == newPiecePosition
-											&& a.AttackingSquare.Piece.Color == gameState.ActiveColor
-											&& (
-												a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
-											)
-											&& a.AttackingSquare.Piece.PieceType == PieceType.Bishop
-										);
+					//the code above will think that this move is done by a bishop
+					//so here we see if any pawn can do the job
+					//the attacking pawn would have to be on the b file for confusion to occur here
+					//****************************************************
+					//I'm concerned that there might be a situation where the pgn move differentiates between
+					//the pawn and bishop move, yet we haven't looked close enough.
+					//should probably attempt to induce this scenario
+					var bFile = this.OrthogonalService.GetEntireFile(1);
 					var potentialPawnSquares = gameState.Attacks.Where(a =>
 											a.Index == newPiecePosition
+											&& bFile.Contains(a.AttackingSquare.Index)
 											&& a.AttackingSquare.Piece.Color == gameState.ActiveColor
 											&& (
 												a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
 											)
 											&& a.AttackingSquare.Piece.PieceType == PieceType.Pawn
 										);
-					if (!potentialBishopSquares.Any() && !potentialPawnSquares.Any()) {
-						throw new Exception("No squares found.");
+					if (potentialPawnSquares.Any()) {
+						//if there are pawn pieces that can fulfill here, then make the pieceType = Pawn
+						pieceType = PieceType.Pawn;
 					}
-					//todo: finish this thought
-					//pick between bishop or pawn
 				}
-			} else {
-				var piece = new Piece(pieceType, gameState.ActiveColor);
-				var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove);
-				return (piecePosition.Index, newPiecePosition);
 			}
+			var piece = new Piece(pieceType, gameState.ActiveColor);
+			var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove);
+			return (piecePosition.Index, newPiecePosition);
 		}
 
 		public List<string> PGNSplit(string pgn) {
