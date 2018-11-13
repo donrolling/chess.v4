@@ -5,6 +5,7 @@ using Business.Services.Membership;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.service;
 using Common.IO;
+using Common.Logging;
 using Data.Repository.Dapper;
 using Data.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -76,6 +77,8 @@ namespace Tests.Models {
 
 			//settings
 			this.AppSettings = this.ServiceProvider.GetService<IOptions<AppSettings>>();
+			var loggerFactory = this.ServiceProvider.GetService<ILoggerFactory>();
+			this.Logger = LogUtility.GetLogger(loggerFactory, this.GetType());
 		}
 	}
 }
