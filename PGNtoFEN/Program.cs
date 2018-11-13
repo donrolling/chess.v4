@@ -3,15 +3,21 @@
 namespace PGNtoFEN {
 	class Program {
 		static void Main(string[] args) {
-			Console.WriteLine("Paste PGN string here:");
+			Console.WriteLine("Convert PGN to FEN!");
+			repl();
+			Console.WriteLine("Goodnight.");
+		}
+
+		private static void repl() {
+			Console.WriteLine("Paste PGN string here or type exit:");
 			var pgn = Console.ReadLine();
-			Console.WriteLine("Converting PGN to FEN...");
+			if (pgn == "exit") {
+				return;
+			}
 			var converter = new Converter();
 			var result = converter.Convert(pgn);
-			Console.WriteLine("Done!");
 			Console.WriteLine(result);
-			Console.WriteLine("Press any key to exit.");
-			Console.ReadLine();
+			repl();
 		}
 	}
 }
