@@ -381,9 +381,12 @@ namespace chess.v4.engine.service {
 						}
 					} else {
 						//has to be diagonal
-						var diagonalAttacksOnKing = attacksOnKing.Where(a => diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
+						var kingSquare = (Square)attacksOnKing.First();
+						var diagonalAttacksOnKing = attacksOnKing.Where(a => 
+							diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
+							&& GeneralUtility.IsDiagonal(kingSquare.Index, a.Index)
+						);
 						if (!diagonalAttacksOnKing.Any()) { continue; }
-						var kingSquare = diagonalAttacksOnKing.First();
 						foreach (var x in diagonalAttacksOnKing) {
 							var dxs = getEntireDiagonalLine(kingSquare.Index, x.AttackingSquare.Index);
 							//if dxs contains the clearMove.Index, then the king has not moved out of check
