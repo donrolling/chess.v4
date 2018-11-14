@@ -1,6 +1,8 @@
 ﻿using chess.v4.engine.interfaces;
 using chess.v4.models;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Tests.Models;
 
 namespace PGNtoFEN {
@@ -35,6 +37,10 @@ namespace PGNtoFEN {
 			var fen = string.Empty;
 			var xs = move.Split('.')[1].Split(' ');
 			var a = xs[0];
+			var regex = new Regex(@"\d\-\d");
+			if (regex.Matches(a).Any()) {
+				return (gameState, fen);
+			}
 			var gameStateResult = this.GameStateService.MakeMove(gameState, a);
 			//record and save the FEN at every step so I can figure out where things went wrong.
 			fen = gameStateResult.Result.ToString();
@@ -42,6 +48,12 @@ namespace PGNtoFEN {
 				return (gameStateResult.Result, fen);
 			}
 			var b = xs[1];
+			if (string.IsNullOrEmpty(b)) {
+				return (gameStateResult.Result, fen);
+			}
+			if (regex.Matches(b).Any()) {
+				return (gameState, fen);
+			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
 			//record and save the FEN at every step so I can figure out where things went wrong.
 			fen = gameStateResult.Result.ToString();

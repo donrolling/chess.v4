@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Models.Entities;
 using Omu.ValueInjecter;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tests.Models;
 
@@ -32,7 +33,8 @@ namespace PGNImport {
 			var groups = data.Split("\r\n\r\n");
 			for (int i = 0; i < groups.Length; i = i + 2) {
 				var metadata = groups[i];
-				var moves = groups[i + 1];
+				var regex = new Regex("[ ]{2,}", RegexOptions.None);
+				var moves = regex.Replace(groups[i + 1].Replace('\r', ' ').Replace('\n', ' '), " ");
 				var result = moves.Split(" ").Last();
 				var gameData = this.PGNFileService.ParsePGNData($"{ metadata }\r\n\r\n{ moves }");
 				var game = new Game();

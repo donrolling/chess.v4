@@ -15,7 +15,7 @@
 	@annotator nvarchar(50),
 	@source nvarchar(50),
 	@remark nvarchar(max),
-	@pGN nvarchar(1000),
+	@pGN nvarchar(3000),
 	@fEN nvarchar(100),
 	@isActive bit,
 	@createdById bigint,

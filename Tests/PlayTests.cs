@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Models.Entities;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tests.Models;
 
@@ -100,11 +101,24 @@ namespace Tests {
 			}
 			var xs = move.Split('.')[1].Split(' ');
 			var a = xs[0];
+			var regex = new Regex(@"\d\-\d");
+			if (regex.Matches(a).Any()) {
+				return (gameState);
+			}
 			var gameStateResult = this.GameStateService.MakeMove(gameState, a);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { a } | { game.FEN }");
 			//record and save the FEN at every step so I can figure out where things went wrong.
 			game.FEN = gameStateResult.Result.ToString();
+			if (xs.Length == 1) {
+				return (gameStateResult.Result);
+			}
 			var b = xs[1];
+			if (string.IsNullOrEmpty(b)) {
+				return (gameStateResult.Result);
+			}
+			if (regex.Matches(b).Any()) {
+				return (gameStateResult.Result);
+			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN }");
 			//record and save the FEN at every step so I can figure out where things went wrong.

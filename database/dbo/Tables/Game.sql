@@ -16,7 +16,7 @@
     [Annotator]   NVARCHAR (50)   NULL,
     [Source]      NVARCHAR (50)   NULL,
     [Remark]      NVARCHAR (MAX)  NULL,
-    [PGN]         NVARCHAR (1000) NULL,
+    [PGN]         NVARCHAR (3000) NULL,
     [FEN]         NVARCHAR (100)  NOT NULL,
     [IsActive]    BIT             CONSTRAINT [DF_Client_IsActive] DEFAULT ((1)) NULL,
     [CreatedById] BIGINT          NULL,
@@ -25,4 +25,6 @@
     [UpdatedDate] DATETIME        NULL,
     CONSTRAINT [PK__MetaData__3214EC07C6DD192B] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
