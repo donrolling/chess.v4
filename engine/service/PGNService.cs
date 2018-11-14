@@ -47,7 +47,7 @@ namespace chess.v4.engine.service {
 									 where s.Piece.Identity == piece.Identity
 									 select p;
 			if (!potentialPositions.Any()) {
-				var msg = $"No squares found. PGN Move: { pgnMove }";
+				var msg = $"Attempting to differentiate. No squares found. PGN Move: { pgnMove }";
 				throw new Exception(msg);
 			}
 			//x means capture and shouldn't be used in the equation below
@@ -56,7 +56,6 @@ namespace chess.v4.engine.service {
 			var castleKingside = isCastleKingside(pgnMove);
 			var castleQueenside = isCastleQueenside(pgnMove);
 			var isCastle = castleKingside || castleQueenside;
-			var newPgnMove = pgnMove.Replace("x", "").Replace("+", "");
 			if (isCastle) {
 				return getOriginationPositionForCastling(gameState, piece.Color);
 			}
@@ -64,6 +63,7 @@ namespace chess.v4.engine.service {
 			//todo: refactor to eliminate redundancy
 			//look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
 			//this should only happen if there are two pieces of the same type that can attack here.
+			var newPgnMove = pgnMove.Replace("x", "").Replace("+", "");
 			var moveLength = newPgnMove.Length;
 			switch (moveLength) {
 				case 2:
@@ -397,11 +397,11 @@ namespace chess.v4.engine.service {
 		private Square pgnLength3(IEnumerable<AttackedSquare> potentialPositions, string newPgnMove) {
 			var ambiguityResolver = newPgnMove[0];
 			var files = this.OrthogonalService.GetEntireFile(NotationUtility.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
-			var potentialSquare = potentialPositions.Where(a => files.Contains(a.Index)).ToList();
-			if (potentialSquare.Count() > 1) {
+			var potentialSquares = potentialPositions.Where(a => files.Contains(a.AttackingSquare.Index)).ToList();
+			if (potentialSquares.Count() > 1) {
 				throw new Exception("There should not be more than one item found here.");
 			}
-			return potentialSquare.First();
+			return potentialSquares.First().AttackingSquare;
 		}
 
 		private Square pgnLength4(GameState gameState, IEnumerable<AttackedSquare> potentialPositions, string newPgnMove) {
