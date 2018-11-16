@@ -56,7 +56,7 @@ namespace Tests {
 			game.FEN = GeneralReference.Starting_FEN_Position;
 
 			var moveCount = 1;
-			var hasCheckmate = false;
+			var hasCheckmate = gameString.Split("\r\n\r\n")[1].Contains('#');
 			var isDraw = game.Result == "1/2-1/2";
 			var finalMove = string.Empty;
 
@@ -68,7 +68,6 @@ namespace Tests {
 				}
 				if (moveCount == count) {
 					finalMove = move.Value;
-					hasCheckmate = move.Value.Contains('#');
 				}
 				gameState = playMove(gameState, game, move.Value);
 				moveCount++;
