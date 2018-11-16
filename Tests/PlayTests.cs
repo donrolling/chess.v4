@@ -69,17 +69,24 @@ namespace Tests {
 				if (moveCount == count) {
 					finalMove = move.Value;
 				}
-				gameState = playMove(gameState, game, move.Value);
+				try {
+					gameState = playMove(gameState, game, move.Value);
+				} catch (System.Exception ex) {
+					Assert.IsTrue(false, $"Game engine failed to play a PGN move. Move: { move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
+				}
 				moveCount++;
 			}
+			//I wanted to make more assertions around whether or not the game was a draw, 
+			//but the engine doesn't currently recognize a draw because it 
+			//is an agreement between players, not a game state.
+			if (isDraw) {
+				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game has ended in a draw. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
+			}
 			if (hasCheckmate) {
-				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { finalMove }.\r\n{ game.FEN }");
-				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }");
-			} else if (isDraw) {
-				Assert.IsTrue(gameState.StateInfo.IsDraw, $"Game should be marked as a draw.\r\n{ game.FEN }");
-				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }");
+				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
+				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }\r\n{ gameString }");
 			} else {
-				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game must have ended in a resignation or a draw. Final move was { finalMove }.\r\n{ game.FEN }");
+				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game must have ended in a resignation or a draw. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
 			}
 			game.FEN = gameState.ToString();
 			//so we don't run this test again
