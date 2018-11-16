@@ -62,7 +62,12 @@ namespace chess.v4.engine.service {
 		public Envelope<GameState> MakeMove(GameState gameState, string pgnMove) {
 			var pair = this.PGNService.PGNMoveToSquarePair(gameState, pgnMove);
 			//todo: what about piece promotion?
+			if (pair.promotedPiece == '-') {
 			return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition);
+
+			}
+			var promotedPieceType = NotationUtility.GetPieceTypeFromCharacter(pair.promotedPiece);
+			return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition, promotedPieceType);
 		}
 
 		private static GameState manageSquares(GameState gameState, StateInfo stateInfo, int piecePosition, int newPiecePosition) {

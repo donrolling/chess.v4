@@ -16,6 +16,7 @@ namespace chess.v4.engine.service {
 	public class PGNService : IPGNService {
 		public IMoveService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
+		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbkqRBKQ]");
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
@@ -25,7 +26,7 @@ namespace chess.v4.engine.service {
 		}
 
 		public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove) {
-			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.			
+			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.
 			var potentialSquares = gameState.Attacks.Where(a =>
 														a.Index == newPiecePosition
 														&& (
@@ -69,7 +70,9 @@ namespace chess.v4.engine.service {
 				case 2:
 					return pgnLength2(piece, potentialPositions, capture);
 
-				case 3: //this should be a pawn attack that can be made by two pawns
+				case 3:
+					//this should be a pawn attack that can be made by two pawns
+					//this can also be a pawn promotion
 					return pgnLength3(potentialPositions, newPgnMove);
 
 				case 4: //this would be any other piece
@@ -148,35 +151,43 @@ namespace chess.v4.engine.service {
 			return PieceType.Pawn;
 		}
 
-		public int GetPositionFromPGNMove(string pgnMove, Color playerColor) {
+		public (int position, char promotedPiece) GetPositionFromPGNMove(string pgnMove, Color playerColor) {
+			var promotedPiece = '-';
 			if (pgnMove == "O-O" || pgnMove == "O-O-O") {
 				if (playerColor == Color.White) {
 					if (pgnMove == "O-O") {
-						return 6;
+						return (6, promotedPiece);
 					} else {
-						return 2;
+						return (2, promotedPiece);
 					}
 				} else {
 					if (pgnMove == "O-O") {
-						return 62;
+						return (62, promotedPiece);
 					} else {
-						return 58;
+						return (58, promotedPiece);
 					}
 				}
 			}
 			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
-			var result = pgnMove.Contains("=")
-							? NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 4, 2))
-							: NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - 2, 2));
-			return result;
+			var x = pgnMove.Contains("=") ? 4 : 2;
+
+			if (pgnMove.Length == 3) {
+				if (pawnPromotionPattern.IsMatch(pgnMove)) {
+					promotedPiece = pgnMove.Last();
+					return (NotationUtility.CoordinateToPosition(pgnMove.Substring(0, 2)), promotedPiece);
+				}
+			}
+			return (NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece);
 		}
 
 		public bool IsRank(char potentialRank) {
 			return char.IsNumber(potentialRank);
 		}
 
-		public (int piecePosition, int newPiecePosition) PGNMoveToSquarePair(GameState gameState, string pgnMove) {
-			var newPiecePosition = GetPositionFromPGNMove(pgnMove, gameState.ActiveColor);
+		public (int piecePosition, int newPiecePosition, char promotedPiece) PGNMoveToSquarePair(GameState gameState, string pgnMove) {
+			var positionFromPGNMove = GetPositionFromPGNMove(pgnMove, gameState.ActiveColor);
+			var newPiecePosition = positionFromPGNMove.position;
+			var promotedPiece = positionFromPGNMove.promotedPiece;
 			var pieceType = GetPieceTypeFromPGNMove(pgnMove);
 			var pieceIndicator = pgnMove[0];
 			if (pieceIndicator == 'b') {
@@ -209,7 +220,7 @@ namespace chess.v4.engine.service {
 			}
 			var piece = new Piece(pieceType, gameState.ActiveColor);
 			var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove);
-			return (piecePosition.Index, newPiecePosition);
+			return (piecePosition.Index, newPiecePosition, promotedPiece);
 		}
 
 		public List<string> PGNSplit(string pgn) {

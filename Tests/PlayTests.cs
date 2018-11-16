@@ -3,6 +3,7 @@ using Business.Service.EntityServices.Interfaces;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
 using chess.v4.models;
+using Common.IO;
 using Data.Dapper.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -48,6 +49,7 @@ namespace Tests {
 		private async Task playGame_ArriveAtSameresult(Game game) {
 			Assert.IsNotNull(game);
 			var gameString = game.GameToString();
+			FileUtility.WriteFile<PlayTests>("playGame.pgn", "Output", gameString);
 			var result = gameString.Split(" ").Last();
 			var gameStateResult = this.GameStateService.Initialize();
 			var gameState = gameStateResult.Result;
@@ -108,7 +110,10 @@ namespace Tests {
 				return (gameStateResult.Result);
 			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
-			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN }");
+			if (!gameStateResult.Success) {
+				var mag = "test";
+			}
+			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN } \r\n{ gameStateResult.Message }");
 			//record and save the FEN at every step so I can figure out where things went wrong.
 			game.FEN = gameStateResult.Result.ToString();
 			return gameStateResult.Result;

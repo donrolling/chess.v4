@@ -51,6 +51,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Output\" />
 		<Folder Include="Setup\" />
 	</ItemGroup>
 </Project>

@@ -1,9 +1,8 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.models;
+﻿using chess.v4.models;
+using chess.v4.models.enumeration;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.interfaces {
-
 	public interface IPGNService {
 
 		Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove);
@@ -12,11 +11,9 @@ namespace chess.v4.engine.interfaces {
 
 		PieceType GetPieceTypeFromPGNMove(string pgnMove);
 
-		int GetPositionFromPGNMove(string pgnMove, Color playerColor);
-
 		bool IsRank(char potentialRank);
 
-		(int piecePosition, int newPiecePosition) PGNMoveToSquarePair(GameState gameState, string pgnMove);
+		(int piecePosition, int newPiecePosition, char promotedPiece) PGNMoveToSquarePair(GameState gameState, string pgnMove);
 
 		List<string> PGNSplit(string pgn);
 
