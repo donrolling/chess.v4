@@ -13,7 +13,7 @@ namespace chess.v4.engine.service {
 
 	public class PGNFileService : IPGNFileService {
 		public string CurrentDirectory { get; }
-		private const string movePattern = @"\d*[.]((\s)?|[\r\n]|\n)[\w\d-\/+]*(\s|[\r\n]|\n)[\w\d-\/+]*";
+		private const string movePattern = @"\d*\.\s?(([\w\d-+#]*\s[\w\d-+#]*)|(\d-\d))";
 		private const string nodePattern = @"(?<=\[)(.*?)(?=\])";
 		private const string testData = @"\data\Tests\";
 		private const string removeComments = @"\{[\w\d\s.]*\}\s\d*...\s";
@@ -111,6 +111,7 @@ namespace chess.v4.engine.service {
 			int moveNum = 1;
 			var modInput = Regex.Replace(input, removeComments, string.Empty);
 			modInput = Regex.Replace(modInput, @"\r\n", " ");
+			modInput = Regex.Replace(modInput, @"\s\s", " ");
 
 			//so far this messes up with comments
 			var moveNode = new Regex(movePattern, RegexOptions.Multiline);
