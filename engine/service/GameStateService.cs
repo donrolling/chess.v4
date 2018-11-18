@@ -138,7 +138,7 @@ namespace chess.v4.engine.service {
 											a.AttackingSquare.Index == piecePosition
 											&& a.Index == newPiecePosition
 											&& a.Piece == null
-											&& a.CanOnlyMoveHereIfOccupied
+											&& a.MayOnlyMoveHereIfOccupiedByEnemy
 										);
 			if (badPawnAttack) {
 				return Envelope<GameState>.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");

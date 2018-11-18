@@ -179,7 +179,7 @@ namespace chess.v4.engine.service {
 				attacks.Add(new AttackedSquare(square, aheadOneRankSquare, true));
 			}
 
-			managePawnAttacks(squares, square, pieceColor, file, rank, directionIndicator, homeRankIndicator, nextRank, attacks);
+			managePawnAttacks(squares, square, pieceColor, file, rank, directionIndicator, homeRankIndicator, nextRank, attacks, aheadOneRankSquare.Occupied);
 
 			//add en passant position: -1 indicates null here
 			if (gameState.EnPassantTargetPosition > -1) {
@@ -277,7 +277,7 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private void managePawnAttacks(List<Square> squares, Square square, Color pieceColor, int file, int rank, int directionIndicator, int homeRankIndicator, int nextRank, List<AttackedSquare> attacks) {
+		private void managePawnAttacks(List<Square> squares, Square square, Color pieceColor, int file, int rank, int directionIndicator, int homeRankIndicator, int nextRank, List<AttackedSquare> attacks, bool aheadOneRankSquareOccupied) {
 			var notOnFarLeftFile = file - 1 >= 0;
 			var notOnFarRightFile = file + 1 <= 7;
 			if (notOnFarLeftFile) {
@@ -289,6 +289,10 @@ namespace chess.v4.engine.service {
 				//get attack square on right
 				var fileIndicator = file + 1;
 				getPawnDiagonalAttack(squares, square, pieceColor, fileIndicator, nextRank, attacks);
+			}
+			//can't move ahead two if the one in front of you is blocked.
+			if (aheadOneRankSquareOccupied) {
+				return;
 			}
 			//have to plus one here because rank is zero based and coordinate is base 1
 			//if this pawn is on it's home rank, then add a second attack square.

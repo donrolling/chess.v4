@@ -70,9 +70,9 @@ namespace Tests {
 					finalMove = move.Value;
 				}
 				try {
-					gameState = playMove(gameState, game, move.Value);
+					gameState = playMove(gameState, game, move.Value, moveCount);
 				} catch (System.Exception ex) {
-					Assert.IsTrue(false, $"Game engine failed to play a PGN move. Move: { move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
+					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
 				}
 				moveCount++;
 			}
@@ -95,7 +95,7 @@ namespace Tests {
 			Assert.IsTrue(updateResult.Success, updateResult.Message);
 		}
 
-		private GameState playMove(GameState gameState, Game game, string move) {
+		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
 			var xs = move.Split('.')[1].Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {
@@ -115,10 +115,10 @@ namespace Tests {
 			if (endgamePattern.Matches(b).Any()) {
 				return (gameStateResult.Result);
 			}
-			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
-			if (!gameStateResult.Success) {
-				var mag = "test";
+			if (moveCount == 24) {
+				var test = "";
 			}
+			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN } \r\n{ gameStateResult.Message }");
 			//record and save the FEN at every step so I can figure out where things went wrong.
 			game.FEN = gameStateResult.Result.ToString();

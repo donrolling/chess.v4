@@ -30,7 +30,7 @@ namespace chess.v4.engine.service {
 			var potentialSquares = gameState.Attacks.Where(a =>
 														a.Index == newPiecePosition
 														&& (
-															a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
+															a.Occupied || (!a.Occupied && !a.MayOnlyMoveHereIfOccupiedByEnemy)
 														)
 														&& a.AttackingSquare.Piece.PieceType == piece.PieceType
 														&& a.AttackingSquare.Piece.Color == piece.Color
@@ -208,7 +208,7 @@ namespace chess.v4.engine.service {
 											&& bFile.Contains(a.AttackingSquare.Index)
 											&& a.AttackingSquare.Piece.Color == gameState.ActiveColor
 											&& (
-												a.Occupied || (!a.Occupied && !a.CanOnlyMoveHereIfOccupied)
+												a.Occupied || (!a.Occupied && !a.MayOnlyMoveHereIfOccupiedByEnemy)
 											)
 											&& a.AttackingSquare.Piece.PieceType == PieceType.Pawn
 										);
