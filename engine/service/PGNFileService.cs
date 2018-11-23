@@ -108,30 +108,16 @@ namespace chess.v4.engine.service {
 				nodeMatch = nodeMatch.NextMatch();
 			}
 
-			int moveNum = 1;
-			var modInput = Regex.Replace(input, removeComments, string.Empty);
-			modInput = Regex.Replace(modInput, @"\r\n", " ");
-			modInput = Regex.Replace(modInput, @"\s\s", " ");
-
 			//so far this messes up with comments
-			var moveNode = new Regex(movePattern, RegexOptions.Multiline);
-			var moveMatch = moveNode.Match(modInput);
-
-			while (moveMatch.Success) {
-				var group = moveMatch.Groups[0];
-				var captureCollection = group.Captures;
-				for (int j = 0; j < captureCollection.Count; j++) {
-					var c = captureCollection[j];
-					var move = c.Value;
-
-					if (!string.IsNullOrEmpty(move)) {
-						metaData.Moves.Add(moveNum, move);
-						moveNum++;
-					}
-				}
-				moveMatch = moveMatch.NextMatch();
+			var modInput = Regex.Replace(input, removeComments, string.Empty);
+			var twoParts = modInput.Split("\r\n\r\n");
+			var justPGN = twoParts[1];
+			var moves = new Regex(@"\d*\.\s?").Split(justPGN).ToList().Where(a => !string.IsNullOrEmpty(a));
+			var moveNum = 1;
+			foreach (var move in moves) {
+				metaData.Moves.Add(moveNum, move);
+				moveNum++;
 			}
-
 			return metaData;
 		}
 
