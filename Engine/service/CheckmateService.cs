@@ -187,7 +187,7 @@ namespace chess.v4.engine.service {
 					}
 				} else {
 					//has to be diagonal
-					_mayKingMoveHere = this.mayKingMoveDiagonallyHere(clearMove, clearMoveIndex, attacksOnKing);
+					_mayKingMoveHere = this.mayKingMoveDiagonallyHere(clearMove, attacksOnKing);
 					if (_mayKingMoveHere) {
 						return true;
 					} else {
@@ -198,7 +198,7 @@ namespace chess.v4.engine.service {
 			return clearMoveCount > 0;
 		}
 
-		private bool mayKingMoveDiagonallyHere(AttackedSquare clearMove, int clearMoveIndex, IEnumerable<AttackedSquare> attacksOnKing) {
+		private bool mayKingMoveDiagonallyHere(AttackedSquare clearMove, IEnumerable<AttackedSquare> attacksOnKing) {
 			var kingSquare = (Square)attacksOnKing.First();
 			var diagonalAttacksOnKing = attacksOnKing.Where(a =>
 				diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
@@ -206,7 +206,7 @@ namespace chess.v4.engine.service {
 			);
 			if (!diagonalAttacksOnKing.Any()) { return true; }
 			foreach (var x in diagonalAttacksOnKing) {
-				var dxs = getEntireDiagonalLine(kingSquare.Index, x.AttackingSquare.Index);
+				var dxs = getEntireDiagonalLine(x.Index, x.AttackingSquare.Index);
 				//if dxs contains the clearMove.Index, then the king has not moved out of check
 				if (dxs.Contains(clearMove.Index)) {
 					return false;
