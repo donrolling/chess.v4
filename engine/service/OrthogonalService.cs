@@ -13,27 +13,11 @@ namespace chess.v4.engine.service {
 		}
 
 		public List<int> GetEntireFile(int file) {
-			var attacks = new List<int>();
-
-			var ind = file % 8;
-			attacks.Add(ind);
-			for (var i = 1; i < 8; i++) {
-				attacks.Add((i * 8) + ind);
-			}
-
-			return attacks;
+			return GeneralUtility.GetEntireFile(file);
 		}
 
 		public List<int> GetEntireRank(int rank) {
-			var attacks = new List<int>();
-
-			var ind = (rank % 8) * 8;
-			attacks.Add(ind);
-			for (var i = 1; i < 8; i++) {
-				attacks.Add(ind + i);
-			}
-
-			return attacks;
+			return GeneralUtility.GetEntireRank(rank);
 		}
 
 		public List<Square> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false) {

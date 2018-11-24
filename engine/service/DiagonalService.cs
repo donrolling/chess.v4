@@ -49,16 +49,9 @@ namespace chess.v4.engine.service {
 		}
 
 		public List<Square> GetEntireDiagonalByFile(GameState gameState, int file, DiagonalDirectionFromFileNumber direction) {
+			var indexes = GeneralUtility.GetEntireDiagonalByFile(file, direction);
 			var list = new List<Square>();
-			var increment = direction == DiagonalDirectionFromFileNumber.Left ? 7 : 9;
-			var numberOfSquares = direction == DiagonalDirectionFromFileNumber.Left
-				? file + 1
-				: 8 - file;
-			var index = file;
-			for (int i = 0; i < numberOfSquares; i++) {
-				list.Add(gameState.Squares.GetSquare(index));
-				index = index + increment;
-			}
+			indexes.ForEach(a => list.Add(gameState.Squares.GetSquare(a)));
 			return list;
 		}
 
