@@ -1,28 +1,20 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.extensions;
+﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
-using chess.v4.models;
 using chess.v4.engine.Utility;
-using Common;
+using chess.v4.models;
+using chess.v4.models.enumeration;
+using Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Models;
 
 namespace chess.v4.engine.service {
 	public class MoveService : IMoveService {
 		public IDiagonalService DiagonalService { get; }
+		public ICheckmateService CheckmateService { get; }
 
-		public IOrthogonalService OrthogonalService { get; }
-
-		//kings don't count here
-		private List<PieceType> diagonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Pawn, PieceType.Bishop };
-
-		//kings don't count here
-		private List<PieceType> orthogonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Rook };
-
-		public MoveService(IOrthogonalService orthogonalService, IDiagonalService diagonalService) {
-			OrthogonalService = orthogonalService;
+		public MoveService(ICheckmateService checkmateService, IDiagonalService diagonalService) {
+			CheckmateService = checkmateService;
 			DiagonalService = diagonalService;
 		}
 
@@ -62,7 +54,7 @@ namespace chess.v4.engine.service {
 			var whiteKingAttacks = getAttacksOnKing(gameState, Color.White);
 			stateInfo.IsWhiteCheck = whiteKingAttacks.Any();
 			if (stateInfo.IsWhiteCheck) {
-				var isCheckMate = this.isCheckMate(gameState, Color.White, whiteKingAttacks);
+				var isCheckMate = this.CheckmateService.IsCheckMate(gameState, Color.White, whiteKingAttacks);
 				if (isCheckMate) {
 					stateInfo.IsCheckmate = true;
 					stateInfo.Result = "0-1";
@@ -71,7 +63,7 @@ namespace chess.v4.engine.service {
 				var blackKingAttacks = getAttacksOnKing(gameState, Color.Black);
 				stateInfo.IsBlackCheck = blackKingAttacks.Any();
 				if (stateInfo.IsBlackCheck) {
-					var isCheckMate = this.isCheckMate(gameState, Color.Black, blackKingAttacks);
+					var isCheckMate = this.CheckmateService.IsCheckMate(gameState, Color.Black, blackKingAttacks);
 					if (isCheckMate) {
 						stateInfo.IsCheckmate = true;
 						stateInfo.Result = "1-0";
@@ -259,154 +251,6 @@ namespace chess.v4.engine.service {
 
 		private IEnumerable<AttackedSquare> getAttacksOnKing(GameState gameState, Color color) {
 			return gameState.Attacks.Where(a => a.Occupied && a.Piece.Color == color && a.Piece.PieceType == PieceType.King);
-		}
-
-		private List<int> getEntireDiagonalLine(int pos1, int pos2) {
-			//diagonal moves: rise LtoR /  or RtoL \
-			var dxs = new List<int> { pos1, pos2 };
-			var diff = Math.Abs(pos1 - pos2);
-			var ltr = diff % 9 == 0;
-			var rtl = diff % 7 == 0;
-			if (!ltr && !rtl) {
-				throw new Exception("What? This is supposed to be diagonal.");
-			}
-			//smallest # will be closest to the left or right in the line
-			//the left terminating position is evenly divisible by 8
-			//the right terminating position is evently divisible by 7
-			//find terminators
-			//left
-			var increment = ltr ? 9 : 7;
-			var smallest = dxs.Min();
-			var largest = dxs.Max();
-			var nextSmallest = smallest;
-			while (nextSmallest % 8 > 0 && nextSmallest >= 0) {
-				nextSmallest = nextSmallest - increment;
-				if (nextSmallest >= 0 && !dxs.Contains(nextSmallest)) {
-					dxs.Add(nextSmallest);
-				}
-			};
-			//right
-			var nextLargest = largest;
-			while (nextLargest % 7 > 0 && nextLargest <= 63) {
-				nextLargest = nextLargest + increment;
-				if (nextLargest <= 63 && !dxs.Contains(nextLargest)) {
-					dxs.Add(nextLargest);
-				}
-			};
-			//fill in the middle
-			var mid = smallest;
-			var nextMid = mid;
-			if (diff > increment) {
-				while (nextMid < largest) {
-					nextMid = nextMid + increment;
-					if (!dxs.Contains(nextMid)) {
-						dxs.Add(nextMid);
-					}
-				}
-			}
-			return dxs;
-		}
-
-		private List<int> getEntireOrthogonalLine(bool isRankMove, AttackedSquare x) {
-			if (isRankMove) {
-				var rank = NotationUtility.PositionToRank(x.Index);
-				return this.OrthogonalService.GetEntireRank(rank);
-			} else {
-				var file = NotationUtility.PositionToFile(x.Index);
-				return this.OrthogonalService.GetEntireFile(file);
-			}
-		}
-
-		private Square getKing(GameState gameState, Color color) {
-			return gameState.Squares.Where(a => a.Occupied && a.Piece.Color == color && a.Piece.PieceType == PieceType.King).First();
-		}
-
-		private int[] getKingCastleCoordinates(Square kingSquare, int destination) {
-			switch (kingSquare.Piece.Color) {
-				case Color.Black:
-					switch (destination) {
-						case 58:
-							return new int[2] { 61, 62 };
-
-						case 62:
-							return new int[2] { 58, 59 };
-
-						default:
-							throw new Exception("Invalid destination.");
-					}
-
-				case Color.White:
-					switch (destination) {
-						case 2:
-							return new int[2] { 2, 3 };
-
-						case 6:
-							return new int[2] { 5, 6 };
-
-						default:
-							throw new Exception("Invalid destination.");
-					}
-
-				default:
-					throw new Exception("Enum not matched.");
-			}
-		}
-
-		private bool isCheckMate(GameState gameState, Color kingColor, IEnumerable<AttackedSquare> attacksOnKing) {
-			var opponentAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Piece.Color == kingColor.Reverse()).ToList();
-			var kingMoves = gameState.Attacks.Where(a => a.AttackingSquare.Piece.PieceType == PieceType.King && a.AttackingSquare.Piece.Color == kingColor).ToList();
-			var clearMoves = kingMoves.Select(a => a.Index).Except(opponentAttacks.Select(b => b.Index));
-			if (clearMoves.Any()) {
-				//todo: there is a bug here: when the king is checked like so (5rk1/5pbp/5Qp1/8/8/8/5PPP/3q2K1 w - - 0 1)
-				//he is boxed in, but h1 looks a valid move for him because the Queen doesn't currently have it as an attack square
-				//because the King is blocking it.
-				//fix this by examining if the king is moving orthoganally or diagonally and determine if any attackers are on that line as well
-				var clearMoveCount = clearMoves.Count();
-				foreach (var clearMoveIndex in clearMoves) {
-					var clearMove = kingMoves.GetSquare(clearMoveIndex);
-					//clearMove.AttackerSquare is the king here
-					//clearMove.Index is where he is going
-					var isOrthogonal = GeneralUtility.IsOrthogonal(clearMove.AttackingSquare.Index, clearMove.Index);
-					if (isOrthogonal) {
-						var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackingSquare.Index, clearMove.Index);
-						//find all attackers who attack orthogonally and determine if they are on the same line
-						var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
-						if (!orthogonalAttacksOnKing.Any()) { continue; }
-						foreach (var x in orthogonalAttacksOnKing) {
-							var oxs = getEntireOrthogonalLine(isRankMove, x);
-							//if oxs contains the clearMove.Index, then the king has not moved out of check
-							if (oxs.Contains(clearMoveIndex)) {
-								clearMoveCount--;
-							}
-						}
-					} else {
-						//has to be diagonal
-						var kingSquare = (Square)attacksOnKing.First();
-						var diagonalAttacksOnKing = attacksOnKing.Where(a => 
-							diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
-							&& GeneralUtility.IsDiagonal(kingSquare.Index, a.Index)
-						);
-						if (!diagonalAttacksOnKing.Any()) { continue; }
-						foreach (var x in diagonalAttacksOnKing) {
-							var dxs = getEntireDiagonalLine(kingSquare.Index, x.AttackingSquare.Index);
-							//if dxs contains the clearMove.Index, then the king has not moved out of check
-							if (dxs.Contains(clearMove.Index)) {
-								clearMoveCount--;
-							}
-						}
-					}
-				}
-				return clearMoveCount > 0;
-			}
-			//find interpositions
-			var teamAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Piece.Color == kingColor);
-			var interpositions = attacksOnKing.Select(a => a.Index).Intersect(teamAttacks.Select(a => a.Index));
-			if (!interpositions.Any()) { return true; }
-			//now see if any of the interpositions stop all attacks
-			foreach (var interposition in interpositions) {
-				//todo:
-			}
-			return false;
 		}
 
 		private bool isPawnPromotion(Square square, int newPiecePosition) {

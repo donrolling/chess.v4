@@ -1,11 +1,9 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.extensions;
+﻿using chess.v4.engine.extensions;
 using chess.v4.models;
-using System;
+using chess.v4.models.enumeration;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.Utility {
-
 	public static class GeneralUtility {
 
 		public static bool BreakAfterAction(bool ignoreKing, Piece piece, Color activeColor) {
@@ -33,6 +31,23 @@ namespace chess.v4.engine.Utility {
 				return true;
 			}
 			return attackedPiece.Color != pieceColor;
+		}
+
+		public static (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
+			if (!GeneralUtility.IsValidCoordinate(newPosition)) {
+				return (false, false, false, null);
+			}
+			var newSquare = gameState.Squares.GetSquare(newPosition);
+			if (!newSquare.Occupied) {
+				return (true, false, true, newSquare);
+			}
+			var blockingPiece = newSquare.Piece;
+			var canAttackPiece = GeneralUtility.CanAttackPiece(attackingPiece.Color, blockingPiece);
+			if (!canAttackPiece) {
+				return (true, true, false, null);
+			}
+			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
+			return (true, breakAfterAction, true, newSquare);
 		}
 
 		public static char GetCharFromPieceType(PieceType pieceType, Color color) {
@@ -65,40 +80,63 @@ namespace chess.v4.engine.Utility {
 			return Color.White;
 		}
 
-		public static bool IsValidCoordinate(int position) {
-			return position >= 0 && position <= 63;
+		public static List<int> GetEntireFile(int file) {
+			var attacks = new List<int>();
+
+			var ind = file % 8;
+			attacks.Add(ind);
+			for (var i = 1; i < 8; i++) {
+				attacks.Add((i * 8) + ind);
+			}
+
+			return attacks;
 		}
 
-		public static bool IsDiagonal(int p1, int p2) {
-			var positions = new List<int> { 7, 9, -7, -9 };
-			return positions.Contains(p1 - p2);
+		public static List<int> GetEntireRank(int rank) {
+			var attacks = new List<int>();
+
+			var ind = (rank % 8) * 8;
+			attacks.Add(ind);
+			for (var i = 1; i < 8; i++) {
+				attacks.Add(ind + i);
+			}
+
+			return attacks;
 		}
 
-		public static bool IsOrthogonal(int p1, int p2) {
-			var positions = new List<int> { 8, -8, 1, -1 };
-			return positions.Contains(p1 - p2);
-		}
-
-		public static bool GivenOrthogonalMove_IsItARankMove(int p1, int p2) {			
+		public static bool GivenOrthogonalMove_IsItARankMove(int p1, int p2) {
 			var positions = new List<int> { 8, -8 };
 			return positions.Contains(p1 - p2);
 		}
 
-		public static (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
-			if (!GeneralUtility.IsValidCoordinate(newPosition)) {
-				return (false, false, false, null);
+		public static bool IsDiagonal(int p1, int p2) {
+			var file = NotationUtility.PositionToFileInt(p1);
+			var dxs = GetEntireDiagonalByFile(file);
+			return dxs.Contains(p2);
+		}
+
+		public static List<int> GetEntireDiagonalByFile(int file, DiagonalDirectionFromFileNumber direction) {
+			var list = new List<int>();
+			var increment = direction == DiagonalDirectionFromFileNumber.Left ? 7 : 9;
+			var numberOfSquares = direction == DiagonalDirectionFromFileNumber.Left
+				? file + 1
+				: 8 - file;
+			var index = file;
+			for (int i = 0; i < numberOfSquares; i++) {
+				list.Add(index);
+				index = index + increment;
 			}
-			var newSquare = gameState.Squares.GetSquare(newPosition);
-			if (!newSquare.Occupied) {
-				return (true, false, true, newSquare);
-			}
-			var blockingPiece = newSquare.Piece;
-			var canAttackPiece = GeneralUtility.CanAttackPiece(attackingPiece.Color, blockingPiece);
-			if (!canAttackPiece) {
-				return (true, true, false, null);
-			}
-			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
-			return (true, breakAfterAction, true, newSquare);
+			return list;
+		}
+
+		public static bool IsOrthogonal(int p1, int p2) {
+			var rank = GetEntireRank(NotationUtility.PositionToRankInt(p1));
+			var file = GetEntireFile(p1);
+			return rank.Contains(p2) || file.Contains(p2);
+		}
+
+		public static bool IsValidCoordinate(int position) {
+			return position >= 0 && position <= 63;
 		}
 	}
 }

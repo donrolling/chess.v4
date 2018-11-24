@@ -69,12 +69,16 @@ namespace Tests {
 				try {
 					gameState = playMove(gameState, game, move.Value, moveCount);
 				} catch (System.Exception ex) {
-					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
+					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Key }.{ move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
+				}
+				if (moveCount != count) {
+					//check to see if we're in checkmate as long as this isn't the last move.
+					Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"The engine thinks this is checkmate, though it is not. Move: { move.Key }.{ move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
 				}
 				moveCount++;
 			}
-			//I wanted to make more assertions around whether or not the game was a draw, 
-			//but the engine doesn't currently recognize a draw because it 
+			//I wanted to make more assertions around whether or not the game was a draw,
+			//but the engine doesn't currently recognize a draw because it
 			//is an agreement between players, not a game state.
 			if (isDraw) {
 				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game has ended in a draw. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
@@ -91,9 +95,6 @@ namespace Tests {
 		}
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
-			if (moveCount >= 22) {
-				var test = "";
-			}
 			var xs = move.Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {
@@ -112,6 +113,9 @@ namespace Tests {
 			}
 			if (endgamePattern.Matches(b).Any()) {
 				return (gameStateResult.Result);
+			}
+			if (moveCount >= 88) {
+				var test = "";
 			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN } \r\n{ gameStateResult.Message }");

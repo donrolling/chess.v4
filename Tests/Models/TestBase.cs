@@ -61,6 +61,7 @@ namespace Tests.Models {
 			services.AddTransient<IDiagonalService, DiagonalService>();
 			services.AddTransient<IGameStateService, GameStateService>();
 			services.AddTransient<IMoveService, MoveService>();
+			services.AddTransient<ICheckmateService, CheckmateService>();
 			services.AddTransient<INotationService, NotationService>();
 			services.AddTransient<IOrthogonalService, OrthogonalService>();
 			services.AddTransient<IPGNFileService, PGNFileService>();
