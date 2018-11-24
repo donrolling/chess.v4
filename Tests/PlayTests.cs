@@ -117,7 +117,7 @@ namespace Tests {
 			if (endgamePattern.Matches(b).Any()) {
 				return (gameStateResult.Result);
 			}
-			if (moveCount >= 88) {
+			if (moveCount >= 33) {
 				var test = "";
 			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);

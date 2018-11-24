@@ -33,11 +33,16 @@ namespace chess.v4.engine.service {
 			var _checkBreakingAttacksExist = this.checkBreakingAttacksExist(attacksOnKing, teamAttacks);
 			if (_checkBreakingAttacksExist) { return false; }
 
-			return false;
+			return true;
 		}
 
 		private bool checkBreakingAttacksExist(IEnumerable<AttackedSquare> attacksOnKing, IEnumerable<AttackedSquare> teamAttacks) {
-			throw new NotImplementedException();
+			var attackCount = attacksOnKing.Count();
+			if (attackCount > 1) {
+				return false;
+			}
+			var attackOnKing = attacksOnKing.First();
+			return teamAttacks.Any(a => a.Index == attackOnKing.Index);
 		}
 
 		private List<int> getEntireDiagonalLine(int pos1, int pos2) {
@@ -86,14 +91,21 @@ namespace chess.v4.engine.service {
 			return dxs;
 		}
 
-		private List<int> getEntireOrthogonalLine(bool isRankMove, AttackedSquare x) {
+		private List<int> getEntireOrthogonalLine(bool isRankMove, AttackedSquare x, bool trim = false) {
+			List<int> result;
 			if (isRankMove) {
-				var rank = NotationUtility.PositionToRank(x.Index);
-				return this.OrthogonalService.GetEntireRank(rank);
-			} else {
 				var file = NotationUtility.PositionToFile(x.Index);
-				return this.OrthogonalService.GetEntireFile(file);
+				result = this.OrthogonalService.GetEntireFile(file);
+			} else {
+				var rank = NotationUtility.PositionToRank(x.Index);
+				result = this.OrthogonalService.GetEntireRank(rank);
 			}
+			if (!trim) {
+				return result;
+			}
+			var low = x.Index > x.AttackingSquare.Index ? x.AttackingSquare.Index : x.Index;
+			var high = x.Index < x.AttackingSquare.Index ? x.AttackingSquare.Index : x.Index;
+			return result.Where(a => a > low && a < high).ToList();
 		}
 
 		private Square getKing(GameState gameState, Color color) {
@@ -145,7 +157,7 @@ namespace chess.v4.engine.service {
 				var range = new List<Square>();
 				if (attackIsOrthogonal) {
 					var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
-					var oxs = getEntireOrthogonalLine(isRankMove, attackOnKing);
+					var oxs = getEntireOrthogonalLine(isRankMove, attackOnKing, true);
 					var ixs = teamAttacks.Select(a => a.Index).Intersect(oxs);
 					if (ixs.Any()) {
 						return true;
@@ -199,10 +211,9 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool mayKingMoveDiagonallyHere(AttackedSquare clearMove, IEnumerable<AttackedSquare> attacksOnKing) {
-			var kingSquare = (Square)attacksOnKing.First();
 			var diagonalAttacksOnKing = attacksOnKing.Where(a =>
 				diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
-				&& DiagonalUtility.IsDiagonal(kingSquare.Index, a.Index)
+				&& DiagonalUtility.IsDiagonal(a.Index, a.AttackingSquare.Index)
 			);
 			if (!diagonalAttacksOnKing.Any()) { return true; }
 			foreach (var x in diagonalAttacksOnKing) {
@@ -221,8 +232,8 @@ namespace chess.v4.engine.service {
 			//find all attackers who attack orthogonally and determine if they are on the same line
 			var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
 			if (!orthogonalAttacksOnKing.Any()) { return true; }
-			foreach (var x in orthogonalAttacksOnKing) {
-				var oxs = getEntireOrthogonalLine(isRankMove, x);
+			foreach (var x in orthogonalAttacksOnKing) {			
+				var oxs = getEntireOrthogonalLine(isRankMove ? false : true, x);
 				//if oxs contains the clearMove.Index, then the king has not moved out of check
 				if (oxs.Contains(clearMoveIndex)) {
 					return false;
