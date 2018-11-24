@@ -62,6 +62,7 @@
     <Folder Include="dbo\Tables" />
     <Folder Include="dbo\Functions" />
     <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Game.sql" />
@@ -76,6 +77,9 @@
     <Build Include="dbo\Stored Procedures\User_Update.sql" />
     <Build Include="dbo\Stored Procedures\User_Insert.sql" />
     <Build Include="dbo\Stored Procedures\User_Delete.sql" />
+    <None Include="scripts\initial_test_data.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="local.scmp" />

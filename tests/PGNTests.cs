@@ -2,11 +2,13 @@
 using chess.v4.models;
 using chess.v4.models.enumeration;
 using Common.Extensions;
+using Common.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Tests.Models;
 
 namespace Tests {
@@ -18,6 +20,18 @@ namespace Tests {
 		public PGNTests() {
 			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
 			this.PGNService = this.ServiceProvider.GetService<IPGNService>();
+		}
+
+		[TestMethod]
+		public void ParsePGN_Data() {
+			var pgnData = FileUtility.ReadTextFile<PGNTests>("ParsePGN_Data.pgn", "Output");
+			var twoParts = pgnData.Split("\r\n\r\n");
+			Assert.AreEqual(2, twoParts.Length);
+			var justPGN = twoParts[1];
+			var moves = new Regex(@"\d*\.\s?").Split(justPGN).ToList().Where(a => !string.IsNullOrEmpty(a));
+			Assert.AreEqual(22, moves.Count());
+			var lastMove = moves.Last();
+			Assert.AreEqual("Qxe5 1/2-1/2", lastMove);
 		}
 
 		[TestMethod]

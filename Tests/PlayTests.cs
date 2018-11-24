@@ -91,10 +91,10 @@ namespace Tests {
 		}
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
-			if (moveCount >= 68) {
+			if (moveCount >= 22) {
 				var test = "";
 			}
-			var xs = move.Split('.')[1].Split(' ');
+			var xs = move.Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {
 				return (gameState);

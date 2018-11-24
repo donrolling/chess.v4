@@ -51,7 +51,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Output\" />
 		<Folder Include="Setup\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Output\ParsePGN_Data.pgn">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 </Project>
