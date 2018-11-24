@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
+
 	public class CheckmateService : ICheckmateService {
 		public IOrthogonalService OrthogonalService { get; }
+
 		//kings don't count here
 		private static List<PieceType> diagonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Pawn, PieceType.Bishop };
 
@@ -191,7 +193,7 @@ namespace chess.v4.engine.service {
 				var isOrthogonal = GeneralUtility.IsOrthogonal(clearMove.AttackingSquare.Index, clearMove.Index);
 				var _mayKingMoveHere = false;
 				if (isOrthogonal) {
-					_mayKingMoveHere = this.mayKingMoveOrthogonallyHere(clearMove, clearMoveIndex, attacksOnKing);
+					_mayKingMoveHere = this.mayKingMoveOrthogonallyHere(clearMove, attacksOnKing, gameState.Attacks);
 					if (_mayKingMoveHere) {
 						return true;
 					} else {
@@ -199,7 +201,7 @@ namespace chess.v4.engine.service {
 					}
 				} else {
 					//has to be diagonal
-					_mayKingMoveHere = this.mayKingMoveDiagonallyHere(clearMove, attacksOnKing);
+					_mayKingMoveHere = this.mayKingMoveDiagonallyHere(clearMove, attacksOnKing, gameState.Attacks);
 					if (_mayKingMoveHere) {
 						return true;
 					} else {
@@ -210,7 +212,13 @@ namespace chess.v4.engine.service {
 			return clearMoveCount > 0;
 		}
 
-		private bool mayKingMoveDiagonallyHere(AttackedSquare clearMove, IEnumerable<AttackedSquare> attacksOnKing) {
+		private bool mayKingMoveDiagonallyHere(AttackedSquare clearMove, IEnumerable<AttackedSquare> attacksOnKing, List<AttackedSquare> attacks) {
+			var kingSquare = (Square)attacksOnKing.First();
+			//need to detect if we're moving into check
+			var anybodyAttackingThisSquare = attacks.Any(a => a.Index == clearMove.Index && a.AttackingSquare.Piece.Color != kingSquare.Piece.Color);
+			if (anybodyAttackingThisSquare) {
+				return false;
+			}
 			var diagonalAttacksOnKing = attacksOnKing.Where(a =>
 				diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
 				&& DiagonalUtility.IsDiagonal(a.Index, a.AttackingSquare.Index)
@@ -223,19 +231,25 @@ namespace chess.v4.engine.service {
 					return false;
 				}
 			}
-
 			return true;
 		}
 
-		private bool mayKingMoveOrthogonallyHere(AttackedSquare clearMove, int clearMoveIndex, IEnumerable<AttackedSquare> attacksOnKing) {
+		private bool mayKingMoveOrthogonallyHere(AttackedSquare clearMove, IEnumerable<AttackedSquare> attacksOnKing, List<AttackedSquare> attacks) {
+			var kingSquare = (Square)attacksOnKing.First();
+			//need to detect if we're moving into check
+			var anybodyAttackingThisSquare = attacks.Any(a => a.Index == clearMove.Index && a.AttackingSquare.Piece.Color != kingSquare.Piece.Color);
+			if (anybodyAttackingThisSquare) {
+				return false;
+			}
+			//now make sure we're not ignoring the issue where an attack isn't displayed because the king was blocking the square
+			//that he would move into, that is still being attacked by the original attacker.
 			var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackingSquare.Index, clearMove.Index);
 			//find all attackers who attack orthogonally and determine if they are on the same line
 			var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
-			if (!orthogonalAttacksOnKing.Any()) { return true; }
-			foreach (var x in orthogonalAttacksOnKing) {			
+			foreach (var x in orthogonalAttacksOnKing) {
 				var oxs = getEntireOrthogonalLine(isRankMove ? false : true, x);
 				//if oxs contains the clearMove.Index, then the king has not moved out of check
-				if (oxs.Contains(clearMoveIndex)) {
+				if (oxs.Contains(clearMove.Index)) {
 					return false;
 				}
 			}
