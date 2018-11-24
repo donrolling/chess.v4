@@ -77,6 +77,9 @@ namespace Tests {
 			//but the engine doesn't currently recognize a draw because it 
 			//is an agreement between players, not a game state.
 			if (isDraw) {
+				//right now this is failing sometimes because for example, on game #16, there is a pawn move that
+				//will capture the queen that is checking the king, but the IsCheckmate calculation doesn't 
+				//understand
 				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game has ended in a draw. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
 			}
 			if (hasCheckmate) {
