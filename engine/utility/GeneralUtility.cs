@@ -4,6 +4,7 @@ using chess.v4.models.enumeration;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.Utility {
+
 	public static class GeneralUtility {
 
 		public static bool BreakAfterAction(bool ignoreKing, Piece piece, Color activeColor) {
@@ -107,26 +108,6 @@ namespace chess.v4.engine.Utility {
 		public static bool GivenOrthogonalMove_IsItARankMove(int p1, int p2) {
 			var positions = new List<int> { 8, -8 };
 			return positions.Contains(p1 - p2);
-		}
-
-		public static bool IsDiagonal(int p1, int p2) {
-			var file = NotationUtility.PositionToFileInt(p1);
-			var dxs = GetEntireDiagonalByFile(file);
-			return dxs.Contains(p2);
-		}
-
-		public static List<int> GetEntireDiagonalByFile(int file, DiagonalDirectionFromFileNumber direction) {
-			var list = new List<int>();
-			var increment = direction == DiagonalDirectionFromFileNumber.Left ? 7 : 9;
-			var numberOfSquares = direction == DiagonalDirectionFromFileNumber.Left
-				? file + 1
-				: 8 - file;
-			var index = file;
-			for (int i = 0; i < numberOfSquares; i++) {
-				list.Add(index);
-				index = index + increment;
-			}
-			return list;
 		}
 
 		public static bool IsOrthogonal(int p1, int p2) {

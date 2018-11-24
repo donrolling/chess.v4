@@ -1,5 +1,6 @@
 ﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
+using chess.v4.engine.utility;
 using chess.v4.engine.Utility;
 using chess.v4.models;
 using chess.v4.models.enumeration;
@@ -9,7 +10,6 @@ using System.Linq;
 
 namespace chess.v4.engine.service {
 	public class CheckmateService : ICheckmateService {
-		public IDiagonalService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
 		//kings don't count here
 		private static List<PieceType> diagonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Pawn, PieceType.Bishop };
@@ -17,9 +17,8 @@ namespace chess.v4.engine.service {
 		//kings don't count here
 		private static List<PieceType> orthogonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Rook };
 
-		public CheckmateService(IOrthogonalService orthogonalService, IDiagonalService diagonalService) {
+		public CheckmateService(IOrthogonalService orthogonalService) {
 			OrthogonalService = orthogonalService;
-			DiagonalService = diagonalService;
 		}
 
 		public bool IsCheckMate(GameState gameState, Color kingColor, IEnumerable<AttackedSquare> attacksOnKing) {
@@ -203,7 +202,7 @@ namespace chess.v4.engine.service {
 			var kingSquare = (Square)attacksOnKing.First();
 			var diagonalAttacksOnKing = attacksOnKing.Where(a =>
 				diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
-				&& GeneralUtility.IsDiagonal(kingSquare.Index, a.Index)
+				&& DiagonalUtility.IsDiagonal(kingSquare.Index, a.Index)
 			);
 			if (!diagonalAttacksOnKing.Any()) { return true; }
 			foreach (var x in diagonalAttacksOnKing) {

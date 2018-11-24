@@ -58,7 +58,6 @@ namespace Tests.Models {
 
 			//chess services
 			services.AddTransient<IAttackService, AttackService>();
-			services.AddTransient<IDiagonalService, DiagonalService>();
 			services.AddTransient<IGameStateService, GameStateService>();
 			services.AddTransient<IMoveService, MoveService>();
 			services.AddTransient<ICheckmateService, CheckmateService>();

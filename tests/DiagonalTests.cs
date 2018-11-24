@@ -1,5 +1,6 @@
 ﻿using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
+using chess.v4.engine.utility;
 using chess.v4.models;
 using chess.v4.models.enumeration;
 using Common.Extensions;
@@ -12,13 +13,11 @@ using Tests.Utility;
 namespace Tests {
 	[TestClass]
 	public class DiagonalTests  : TestBase {
-		public IDiagonalService DiagonalService { get; }
 		public GameState GameState { get; }
 		public IGameStateService GameStateService { get; }
 
 		public DiagonalTests() {
 			this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
-			this.DiagonalService = this.ServiceProvider.GetService<IDiagonalService>();
 			this.GameState = TestUtility.GetGameState(this.GameStateService, GeneralReference.Starting_FEN_Position);
 		}
 
@@ -119,7 +118,7 @@ namespace Tests {
 		}
 
 		private void testDiagonalLine(int file, DiagonalDirectionFromFileNumber direction, List<int> squares) {
-			var diagonalLine = this.DiagonalService.GetEntireDiagonalByFile(GameState, file, direction);
+			var diagonalLine = DiagonalUtility.GetEntireDiagonalByFile(GameState, file, direction);
 			TestUtility.ListContainsSquares(diagonalLine, squares);
 		}
 	}

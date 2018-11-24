@@ -10,12 +10,10 @@ using System.Linq;
 
 namespace chess.v4.engine.service {
 	public class MoveService : IMoveService {
-		public IDiagonalService DiagonalService { get; }
 		public ICheckmateService CheckmateService { get; }
 
-		public MoveService(ICheckmateService checkmateService, IDiagonalService diagonalService) {
+		public MoveService(ICheckmateService checkmateService) {
 			CheckmateService = checkmateService;
-			DiagonalService = diagonalService;
 		}
 
 		public Envelope<StateInfo> GetStateInfo(GameState gameState, int piecePosition, int newPiecePosition) {

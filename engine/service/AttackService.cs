@@ -1,22 +1,22 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.engine.extensions;
+﻿using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
-using chess.v4.models;
+using chess.v4.engine.utility;
 using chess.v4.engine.Utility;
+using chess.v4.models;
+using chess.v4.models.enumeration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
+
 	public class AttackService : IAttackService {
-		public IDiagonalService DiagonalService { get; }
 		public INotationService NotationService { get; }
 		public IOrthogonalService OrthogonalService { get; }
 
-		public AttackService(INotationService notationService, IOrthogonalService orthogonalService, IDiagonalService diagonalService) {
+		public AttackService(INotationService notationService, IOrthogonalService orthogonalService) {
 			NotationService = notationService;
 			OrthogonalService = orthogonalService;
-			DiagonalService = diagonalService;
 		}
 
 		public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false) {
@@ -210,12 +210,13 @@ namespace chess.v4.engine.service {
 				case PieceType.Pawn:
 					getPawnAttacks(gameState, square, accumulator);
 					break;
+
 				case PieceType.Knight:
 					getKnightAttacks(gameState, square, accumulator);
 					break;
 
 				case PieceType.Bishop:
-					this.DiagonalService.GetDiagonals(gameState, square, accumulator, ignoreKing);
+					DiagonalUtility.GetDiagonals(gameState, square, accumulator, ignoreKing);
 					break;
 
 				case PieceType.Rook:
@@ -224,7 +225,7 @@ namespace chess.v4.engine.service {
 
 				case PieceType.Queen:
 					this.OrthogonalService.GetOrthogonals(gameState, square, accumulator, ignoreKing);
-					this.DiagonalService.GetDiagonals(gameState, square, accumulator, ignoreKing);
+					DiagonalUtility.GetDiagonals(gameState, square, accumulator, ignoreKing);
 					break;
 
 				case PieceType.King:
