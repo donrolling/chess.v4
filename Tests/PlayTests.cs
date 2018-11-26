@@ -98,13 +98,17 @@ namespace Tests {
 		}
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
+			var test = "";
+			var lineBreak = 101;
 			var xs = move.Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {
 				return (gameState);
 			}
-			if (moveCount >= 69) {
-				var test = "";
+			if (moveCount >= lineBreak) {
+				test = "";
+				//fool the compiler into not giving me warnings about "test"
+				if (string.IsNullOrEmpty(test)) {}
 			}
 			var gameStateResult = this.GameStateService.MakeMove(gameState, a);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { a } | { game.FEN }");
@@ -119,6 +123,9 @@ namespace Tests {
 			}
 			if (endgamePattern.Matches(b).Any()) {
 				return (gameStateResult.Result);
+			}
+			if (moveCount >= lineBreak) {
+				test = "";
 			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN } \r\n{ gameStateResult.Message }");
