@@ -7,12 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.utility {
-
 	public static class DiagonalUtility {
 		private static List<int> HFile = GeneralUtility.GetEntireFile(7);
 
-		public static List<Square> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing) {
-			var attacks = new List<Square>();
+		public static List<AttackedSquare> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing) {
+			var attacks = new List<AttackedSquare>();
 			var diagonalLine = getIteratorByDirectionEnum(direction);
 			var position = square.Index;
 			var attackPosition = square.Index;
@@ -22,12 +21,20 @@ namespace chess.v4.engine.utility {
 				}
 				attackPosition = attackPosition + diagonalLine;
 				var moveViability = GeneralUtility.DetermineMoveViability(gameState, attackingPiece, attackPosition, ignoreKing);
-				if (!moveViability.IsValidCoordinate) {
+				//I don't think either of these conditions should occur.
+				if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null) {
 					continue;
 				}
-				if (moveViability.CanAttackPiece && moveViability.SquareToAdd != null) {
-					var attackSquare = gameState.Squares.GetSquare(attackPosition);
-					attacks.Add(attackSquare);
+				if (
+					!moveViability.SquareToAdd.Occupied
+					|| (
+						moveViability.SquareToAdd.Occupied 
+						&& moveViability.SquareToAdd.Piece.Color != square.Piece.Color
+					)
+				) {
+					attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd));
+				} else {
+					attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd, isProtecting: true));
 				}
 				if (moveViability.BreakAfterAction) {
 					break;
@@ -37,12 +44,9 @@ namespace chess.v4.engine.utility {
 		}
 
 		public static void GetDiagonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false) {
-			var attacks = new List<Square>();
 			foreach (var direction in GeneralReference.DiagonalLines) {
-				attacks.AddRange(GetDiagonalLine(gameState, square, square.Piece, direction, ignoreKing));
-			}
-			if (attacks.Any()) {
-				accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+				var attacks = GetDiagonalLine(gameState, square, square.Piece, direction, ignoreKing);
+				accumulator.AddRange(attacks);
 			}
 		}
 
@@ -61,6 +65,7 @@ namespace chess.v4.engine.utility {
 		public static List<Square> GetEntireDiagonalByFile(GameState gameState, int file, DiagonalDirectionFromFileNumber direction) {
 			var indexes = GetEntireDiagonalByFile(file, direction);
 			var list = new List<Square>();
+			//optimize, a linq join here would perform better 
 			indexes.ForEach(a => list.Add(gameState.Squares.GetSquare(a)));
 			return list;
 		}

@@ -1,16 +1,25 @@
 ﻿namespace chess.v4.models {
 	public class AttackedSquare : Square {
 		public Square AttackingSquare { get; set; }
-		public bool MayOnlyMoveHereIfOccupiedByEnemy { get; }
+		/// <summary>
+		/// indicates a move that cannot capture such as a pawn forward attack 
+		/// </summary>
 		public bool IsPassiveAttack { get; set; }
+		/// <summary>
+		/// indicates that the attack is there for retaliation if the existing piece is taken
+		/// the existing piece has to be the same color as the attacker.
+		/// </summary>
+		public bool IsProtecting { get; set; }
+		public bool MayOnlyMoveHereIfOccupiedByEnemy { get; }
 
 		public AttackedSquare() {
 		}
 
-		public AttackedSquare(Square attackingSquare, Square square, bool isPassiveAttack = false, bool canOnlyMoveHereIfOccupied = false) : base(square.Index, square.Name, square.Piece) {
+		public AttackedSquare(Square attackingSquare, Square square, bool isPassiveAttack = false, bool canOnlyMoveHereIfOccupied = false, bool isProtecting = false) : base(square.Index, square.Name, square.Piece) {
 			this.AttackingSquare = attackingSquare;
 			this.IsPassiveAttack = isPassiveAttack;
 			this.MayOnlyMoveHereIfOccupiedByEnemy = canOnlyMoveHereIfOccupied;
+			this.IsProtecting = isProtecting;
 		}
 	}
 }

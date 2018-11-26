@@ -20,20 +20,29 @@ namespace chess.v4.engine.service {
 			return GeneralUtility.GetEntireRank(rank);
 		}
 
-		public List<Square> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false) {
+		public List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false) {
 			var currentPosition = movingSquare.Index;
 			var endCondition = getEndCondition(direction, currentPosition);
-			var attacks = new List<Square>();
+			var attacks = new List<AttackedSquare>();
 			var iterator = getIteratorByDirectionEnum(direction);
 			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
 				var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
 				var moveViability = GeneralUtility.DetermineMoveViability(gameState, movingSquare.Piece, position, ignoreKing);
-				if (!moveViability.IsValidCoordinate) {
+				//these conditions shouldn't occur
+				if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null) {
 					continue;
 				}
-				if (moveViability.CanAttackPiece && moveViability.SquareToAdd != null) {
-					attacks.Add(moveViability.SquareToAdd);
+				if (
+					!moveViability.SquareToAdd.Occupied
+					|| (
+						moveViability.SquareToAdd.Occupied
+						&& moveViability.SquareToAdd.Piece.Color != movingSquare.Piece.Color
+					)
+				) {
+					attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd));
+				} else {
+					attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd, isProtecting: true));
 				}
 				if (moveViability.BreakAfterAction) {
 					break;
@@ -43,15 +52,11 @@ namespace chess.v4.engine.service {
 		}
 
 		public void GetOrthogonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false) {
-			var attacks = new List<Square>();
 			foreach (var orthogonalLine in GeneralReference.OrthogonalLines) {
-				var line = GetOrthogonalLine(gameState, square, orthogonalLine, ignoreKing);
-				if (line != null && line.Any()) {
-					attacks.AddRange(line);
+				var attacks = GetOrthogonalLine(gameState, square, orthogonalLine, ignoreKing);
+				if (attacks != null && attacks.Any()) {
+					accumulator.AddRange(attacks);
 				}
-			}
-			if (attacks.Any()) {
-				accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
 			}
 		}
 

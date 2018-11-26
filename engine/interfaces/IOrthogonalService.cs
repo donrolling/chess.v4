@@ -10,7 +10,7 @@ namespace chess.v4.engine.interfaces {
 
 		List<int> GetEntireRank(int rank);
 
-		List<Square> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false);
+		List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square square, Direction direction, bool ignoreKing = false);
 
 		void GetOrthogonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false);
 	}

@@ -62,14 +62,22 @@ namespace chess.v4.engine.service {
 					continue;
 				}
 				var _isValidMove = isValidMove(squares, tempPos, pieceColor);
-				if (!_isValidMove) {
+				if (!_isValidMove.IsValid) {
 					continue;
 				}
 				var isCastle = Math.Abs(positionShim) == 2; //are we trying to move two squares? if so, this is a castle attempt
 				if (!isCastle) {
-					attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos)));
+					if (_isValidMove.CanAttackOccupyingPiece) {
+						attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos)));
+					} else {
+						attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos), isProtecting: true));
+					}
 					continue;
 				}
+
+				//*********************
+				//castling stuff
+				//*********************
 				var direction = positionShim > 0 ? 1 : -1;
 				int clearPathPos = tempPos;
 				int clearPathFile = 4;
@@ -77,7 +85,7 @@ namespace chess.v4.engine.service {
 				do { //make sure the path is clear
 					clearPathPos += direction;
 					clearPathFile = NotationUtility.PositionToFile(clearPathPos);
-				} while (isValidMove(squares, clearPathPos, pieceColor) && clearPathFile > 0 && clearPathFile < 8);
+				} while (isValidMove(squares, clearPathPos, pieceColor).IsValid && clearPathFile > 0 && clearPathFile < 8);
 
 				if (
 					(pieceColor == Color.White && (positionShim == -2 && clearPathPos == 0) || (positionShim == 2 && clearPathPos == 7))
@@ -91,6 +99,9 @@ namespace chess.v4.engine.service {
 						attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos)));
 					}
 				}
+				//*********************
+				//end castling stuff
+				//*********************
 			}
 
 			if (attacks.Any()) {
@@ -102,12 +113,10 @@ namespace chess.v4.engine.service {
 										 select a;
 				if (conflictingAttacks.Any()) {
 					var nonCheckingAttacks = attacks.Select(a => a.Index).Except(conflictingAttacks.Select(a => a.Index));
-					var trimmedAttacks = attacks
-							.Where(a => nonCheckingAttacks.Contains(a.Index))
-							.Select(a => new AttackedSquare(square, a));
+					var trimmedAttacks = attacks.Where(a => nonCheckingAttacks.Contains(a.Index));
 					accumulator.AddRange(trimmedAttacks);
 				} else {
-					accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+					accumulator.AddRange(attacks);
 				}
 			}
 		}
@@ -123,7 +132,7 @@ namespace chess.v4.engine.service {
 			var squares = gameState.Squares;
 			var currentPosition = square.Index;
 			var pieceColor = square.Piece.Color;
-			var attacks = new List<Square>();
+			var attacks = new List<AttackedSquare>();
 			var coord = NotationUtility.PositionToCoordinate(currentPosition);
 			var file = NotationUtility.FileToInt(coord[0]);
 			var rank = (int)coord[1];
@@ -134,20 +143,19 @@ namespace chess.v4.engine.service {
 				var _isValidMove = isValidMove(squares, position, pieceColor);
 				var _isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 
-				if (!_isValidKnightMove || !_isValidMove || !_isValidCoordinate) { continue; }
+				if (!_isValidKnightMove || !_isValidMove.IsValid || !_isValidCoordinate) { continue; }
 
 				var attackedSquare = squares.GetSquare(position);
 				if (!attackedSquare.Occupied) {
-					attacks.Add(attackedSquare);
-					//shouldn't really have to do this logic
-					//} else if (attackedSquare.Piece.Color != pieceColor) {
-					//because that should already be taken care of
+					attacks.Add(new AttackedSquare(square, attackedSquare));
 				} else if (attackedSquare.Piece.Color != pieceColor) {
-					attacks.Add(attackedSquare);
+					attacks.Add(new AttackedSquare(square, attackedSquare));
+				} else if (attackedSquare.Piece.Color != pieceColor) {
+					attacks.Add(new AttackedSquare(square, attackedSquare, isProtecting: true));
 				}
 			}
 			if (attacks.Any()) {
-				accumulator.AddRange(attacks.Select(a => new AttackedSquare(square, a)));
+				accumulator.AddRange(attacks);
 			}
 		}
 
@@ -198,10 +206,10 @@ namespace chess.v4.engine.service {
 		private void getPawnDiagonalAttack(List<Square> squares, Square square, Color pieceColor, int fileIndicator, int nextRank, List<AttackedSquare> attacks) {
 			var pos = NotationUtility.CoordinatePairToPosition(fileIndicator, nextRank);
 			var attackedSquare = squares.GetSquare(pos);
-			var _isValidPawnAttack = GeneralUtility.CanAttackPiece(pieceColor, attackedSquare.Piece);
-			if (_isValidPawnAttack) {
-				var s1 = squares.GetSquare(pos);
-				attacks.Add(new AttackedSquare(square, s1, false, true));
+			if (attackedSquare.Piece.Color != pieceColor) {
+				attacks.Add(new AttackedSquare(square, attackedSquare, false, true));
+			} else {
+				attacks.Add(new AttackedSquare(square, attackedSquare, false, true, true));
 			}
 		}
 
@@ -258,23 +266,23 @@ namespace chess.v4.engine.service {
 			return true;
 		}
 
-		private bool isValidMove(List<Square> squares, int position, Color pieceColor) {
+		private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(List<Square> squares, int position, Color pieceColor) {
 			var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 			if (!isValidCoordinate) {
-				return false;
+				return (false, false);
 			}
 			if (!squares.Intersects(position)) {
-				return false;
+				return (false, false);
 			}
 			var square = squares.GetSquare(position);
 			if (!square.Occupied) {
-				return true;
+				return (true, true);
 			}
 			var blockingPiece = square.Piece;
 			if (GeneralUtility.CanAttackPiece(pieceColor, blockingPiece)) {
-				return true;
+				return (true, true);
 			} else {
-				return false;
+				return (true, false);
 			}
 		}
 

@@ -103,6 +103,9 @@ namespace Tests {
 			if (endgamePattern.Matches(a).Any()) {
 				return (gameState);
 			}
+			if (moveCount >= 69) {
+				var test = "";
+			}
 			var gameStateResult = this.GameStateService.MakeMove(gameState, a);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { a } | { game.FEN }");
 			//record and save the FEN at every step so I can figure out where things went wrong.
@@ -116,9 +119,6 @@ namespace Tests {
 			}
 			if (endgamePattern.Matches(b).Any()) {
 				return (gameStateResult.Result);
-			}
-			if (moveCount >= 33) {
-				var test = "";
 			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN } \r\n{ gameStateResult.Message }");
