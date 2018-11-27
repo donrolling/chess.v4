@@ -178,7 +178,12 @@ namespace chess.v4.engine.service {
 
 		private bool kingMovesExist(GameState gameState, Color kingColor, IEnumerable<AttackedSquare> attacksOnKing) {
 			var opponentAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Piece.Color == kingColor.Reverse()).ToList();
-			var kingMoves = gameState.Attacks.Where(a => a.AttackingSquare.Piece.PieceType == PieceType.King && a.AttackingSquare.Piece.Color == kingColor).ToList();
+			var kingMoves = gameState.Attacks
+								.Where(a => 
+									a.AttackingSquare.Piece.PieceType == PieceType.King 
+									&& a.AttackingSquare.Piece.Color == kingColor
+									&& !a.IsProtecting
+								).ToList();
 			var clearMoves = kingMoves.Select(a => a.Index).Except(opponentAttacks.Select(b => b.Index));
 			if (!clearMoves.Any()) { return false; }
 			//todo: there is a bug here: when the king is checked like so (5rk1/5pbp/5Qp1/8/8/8/5PPP/3q2K1 w - - 0 1)
@@ -247,7 +252,7 @@ namespace chess.v4.engine.service {
 			//find all attackers who attack orthogonally and determine if they are on the same line
 			var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
 			foreach (var x in orthogonalAttacksOnKing) {
-				var oxs = getEntireOrthogonalLine(isRankMove ? false : true, x);
+				var oxs = getEntireOrthogonalLine(isRankMove, x);
 				//if oxs contains the clearMove.Index, then the king has not moved out of check
 				if (oxs.Contains(clearMove.Index)) {
 					return false;
