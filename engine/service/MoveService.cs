@@ -248,7 +248,13 @@ namespace chess.v4.engine.service {
 		}
 
 		private IEnumerable<AttackedSquare> getAttacksOnKing(GameState gameState, Color color) {
-			return gameState.Attacks.Where(a => a.Occupied && a.Piece.Color == color && a.Piece.PieceType == PieceType.King);
+			return gameState.Attacks
+							.Where(a => 
+								a.Occupied 
+								&& a.Piece.Color == color 
+								&& a.Piece.PieceType == PieceType.King
+								&& !a.IsProtecting
+							);
 		}
 
 		private bool isPawnPromotion(Square square, int newPiecePosition) {
