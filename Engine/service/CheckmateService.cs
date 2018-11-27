@@ -252,7 +252,7 @@ namespace chess.v4.engine.service {
 			//find all attackers who attack orthogonally and determine if they are on the same line
 			var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
 			foreach (var x in orthogonalAttacksOnKing) {
-				var oxs = getEntireOrthogonalLine(isRankMove, x);
+				var oxs = getEntireOrthogonalLine(isRankMove ? false : true, x);
 				//if oxs contains the clearMove.Index, then the king has not moved out of check
 				if (oxs.Contains(clearMove.Index)) {
 					return false;

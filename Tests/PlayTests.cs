@@ -69,11 +69,11 @@ namespace Tests {
 				try {
 					gameState = playMove(gameState, game, move.Value, moveCount);
 				} catch (System.Exception ex) {
-					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Key }.{ move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
+					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ gameString }");
 				}
 				if (moveCount != count) {
 					//check to see if we're in checkmate as long as this isn't the last move.
-					Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"The engine thinks this is checkmate, though it is not. Move: { move.Key }.{ move.Value }.\r\n{ game.FEN }\r\n{ gameString }");
+					Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"The engine thinks this is checkmate, though it is not. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ gameString }");
 				}
 				moveCount++;
 			}
@@ -87,7 +87,7 @@ namespace Tests {
 				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game has ended in a draw. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
 			}
 			if (hasCheckmate) {
-				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
+				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { moveCount }. { finalMove }\r\n{ game.FEN }\r\n{ gameString }");
 				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }\r\n{ gameString }");
 			}
 			game.FEN = gameState.ToString();
