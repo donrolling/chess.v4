@@ -274,6 +274,11 @@ namespace chess.v4.engine.service {
 		}
 
 		private bool isValidKnightMove(int position, int tempPosition, int file, int rank) {
+			var isValidCoordinate = GeneralUtility.IsValidCoordinate(tempPosition);
+			if (!isValidCoordinate) {
+				return false;
+			}
+
 			var tempCoord = NotationUtility.PositionToCoordinate(tempPosition);
 			var tempFile = NotationUtility.FileToInt(tempCoord[0]);
 			var tempRank = (int)tempCoord[1];
