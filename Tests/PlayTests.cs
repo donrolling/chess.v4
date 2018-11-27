@@ -55,7 +55,7 @@ namespace Tests {
 			var gameState = gameStateResult.Result;
 			game.FEN = GeneralReference.Starting_FEN_Position;
 
-			var moveCount = 1;
+			var moveCount = 0;
 			var hasCheckmate = gameString.Split("\r\n\r\n")[1].Contains('#');
 			var isDraw = game.Result == "1/2-1/2";
 			var finalMove = string.Empty;
@@ -63,6 +63,7 @@ namespace Tests {
 			var gameData = this.PGNFileService.ParsePGNData(gameString);
 			var count = gameData.Moves.Count();
 			foreach (var move in gameData.Moves) {
+				moveCount++;
 				if (moveCount == count) {
 					finalMove = move.Value;
 				}
@@ -75,7 +76,6 @@ namespace Tests {
 					//check to see if we're in checkmate as long as this isn't the last move.
 					Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"The engine thinks this is checkmate, though it is not. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ gameString }");
 				}
-				moveCount++;
 			}
 			//I wanted to make more assertions around whether or not the game was a draw,
 			//but the engine doesn't currently recognize a draw because it
@@ -99,13 +99,13 @@ namespace Tests {
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
 			var test = "";
-			var lineBreak = 101;
+			var moveBreak = 69;
 			var xs = move.Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {
 				return (gameState);
 			}
-			if (moveCount >= lineBreak) {
+			if (moveCount >= moveBreak) {
 				test = "";
 				//fool the compiler into not giving me warnings about "test"
 				if (string.IsNullOrEmpty(test)) {}
@@ -124,7 +124,7 @@ namespace Tests {
 			if (endgamePattern.Matches(b).Any()) {
 				return (gameStateResult.Result);
 			}
-			if (moveCount >= lineBreak) {
+			if (moveCount >= moveBreak) {
 				test = "";
 			}
 			gameStateResult = this.GameStateService.MakeMove(gameStateResult.Result, b);
