@@ -27,28 +27,28 @@ namespace chess.v4.engine.Utility {
 			return false;
 		}
 
-		public static bool CanAttackPiece(Color pieceColor, Piece attackedPiece) {
+		public static bool IsTeamPiece(Color pieceColor, Piece attackedPiece) {
 			if (attackedPiece == null) {
 				return true;
 			}
 			return attackedPiece.Color != pieceColor;
 		}
 
-		public static (bool IsValidCoordinate, bool BreakAfterAction, bool CanAttackPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
+		public static (bool IsValidCoordinate, bool BreakAfterAction, bool IsTeamPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
 			if (!GeneralUtility.IsValidCoordinate(newPosition)) {
 				return (false, false, false, null);
 			}
 			var newSquare = gameState.Squares.GetSquare(newPosition);
 			if (!newSquare.Occupied) {
-				return (true, false, true, newSquare);
+				return (true, false, false, newSquare);
 			}
 			var blockingPiece = newSquare.Piece;
-			var canAttackPiece = GeneralUtility.CanAttackPiece(attackingPiece.Color, blockingPiece);
+			var canAttackPiece = GeneralUtility.IsTeamPiece(attackingPiece.Color, blockingPiece);
 			if (!canAttackPiece) {
-				return (true, true, false, null);
+				return (true, true, true, newSquare);
 			}
 			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
-			return (true, breakAfterAction, true, newSquare);
+			return (true, breakAfterAction, false, newSquare);
 		}
 
 		public static char GetCharFromPieceType(PieceType pieceType, Color color) {

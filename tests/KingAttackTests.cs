@@ -136,7 +136,7 @@ namespace Tests {
 			var fen = "3q1rk1/5pbp/5Qp1/8/8/2B5/5PPP/6K1 w - - 0 1";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
-			Assert.AreEqual(2, whiteKingAttacks.Count());
+			Assert.AreEqual(2, whiteKingAttacks.Where(a => !a.IsProtecting).Count());
 		}
 
 		[TestMethod]
@@ -161,7 +161,7 @@ namespace Tests {
 			foreach (var x in allSquareIndexs) {
 				Assert.IsNotNull(whiteKingAttacks.GetSquare(x), $"King should be able to attack square: { x }");
 			}
-			Assert.AreEqual(2, whiteKingAttacks.Count());
+			Assert.AreEqual(2, whiteKingAttacks.Where(a => !a.IsProtecting).Count());
 		}
 	}
 }

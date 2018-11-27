@@ -309,7 +309,7 @@ namespace chess.v4.engine.service {
 				return (true, true);
 			}
 			var blockingPiece = square.Piece;
-			if (GeneralUtility.CanAttackPiece(pieceColor, blockingPiece)) {
+			if (GeneralUtility.IsTeamPiece(pieceColor, blockingPiece)) {
 				return (true, true);
 			} else {
 				return (true, false);

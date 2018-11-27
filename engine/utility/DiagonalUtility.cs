@@ -25,16 +25,10 @@ namespace chess.v4.engine.utility {
 				if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null) {
 					continue;
 				}
-				if (
-					!moveViability.SquareToAdd.Occupied
-					|| (
-						moveViability.SquareToAdd.Occupied 
-						&& moveViability.SquareToAdd.Piece.Color != square.Piece.Color
-					)
-				) {
-					attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd));
-				} else {
+				if (moveViability.IsTeamPiece) {
 					attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd, isProtecting: true));
+				} else {
+					attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd));
 				}
 				if (moveViability.BreakAfterAction) {
 					break;

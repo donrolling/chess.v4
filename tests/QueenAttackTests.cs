@@ -33,8 +33,11 @@ namespace Tests {
 		[TestMethod]
 		public void WhiteQueenAttacksStartingPosition() {
 			var gameState = TestUtility.GetGameState(this.GameStateService);
-			var whiteQueenAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d1");
-			Assert.IsTrue(whiteQueenAttacks.Count() == 0);
+			var whiteQueenAttacks = gameState.Attacks.Where(a => 
+				a.AttackingSquare.Name == "d1" 
+				&& !a.IsProtecting
+			);
+			Assert.AreEqual(0, whiteQueenAttacks.Count());
 		}
 	}
 }

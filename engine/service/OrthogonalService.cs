@@ -22,10 +22,10 @@ namespace chess.v4.engine.service {
 
 		public List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false) {
 			var currentPosition = movingSquare.Index;
-			var endCondition = getEndCondition(direction, currentPosition);
+			var orthogonalLine = getOrthogonalLineFromPos(direction, currentPosition);
 			var attacks = new List<AttackedSquare>();
 			var iterator = getIteratorByDirectionEnum(direction);
-			for (var position = currentPosition + iterator; position != endCondition + iterator; position = position + iterator) {
+			for (var position = currentPosition + iterator; position != orthogonalLine + iterator; position = position + iterator) {
 				var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 				if (!isValidCoordinate) { break; }
 				var moveViability = GeneralUtility.DetermineMoveViability(gameState, movingSquare.Piece, position, ignoreKing);
@@ -33,16 +33,10 @@ namespace chess.v4.engine.service {
 				if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null) {
 					continue;
 				}
-				if (
-					!moveViability.SquareToAdd.Occupied
-					|| (
-						moveViability.SquareToAdd.Occupied
-						&& moveViability.SquareToAdd.Piece.Color != movingSquare.Piece.Color
-					)
-				) {
-					attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd));
-				} else {
+				if (moveViability.IsTeamPiece) {
 					attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd, isProtecting: true));
+				} else {
+					attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd));
 				}
 				if (moveViability.BreakAfterAction) {
 					break;
@@ -60,7 +54,7 @@ namespace chess.v4.engine.service {
 			}
 		}
 
-		private int getEndCondition(Direction direction, int position) {
+		private int getOrthogonalLineFromPos(Direction direction, int position) {
 			var file = NotationUtility.PositionToFileInt(position);
 			var rank = NotationUtility.PositionToRankInt(position);
 
