@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace chess.v4.engine.service {
-
 	public class AttackService : IAttackService {
 		public INotationService NotationService { get; }
 		public IOrthogonalService OrthogonalService { get; }
@@ -34,29 +33,21 @@ namespace chess.v4.engine.service {
 			var pieceColor = square.Piece.Color;
 			var opponentPieceColor = pieceColor.Reverse();
 			var castleAvailability = gameState.CastlingAvailability;
-			var positionList = new List<int> { -9, -8, -7, -1, 1, 7, 8, 9 };
-
-			if ( //make sure castle is available
-				(pieceColor == Color.White && (castleAvailability.Contains("K") || castleAvailability.Contains("Q")))
-				|| (pieceColor == Color.Black && (castleAvailability.Contains("k") || castleAvailability.Contains("q")))
-			) {
-				positionList.Add(2);
-				positionList.Add(-2);
-			}
+			var offsets = new List<int> { -9, -8, -7, -1, 1, 7, 8, 9 };
 
 			if (position % 8 == 0) {
-				positionList.Remove(-1);
-				positionList.Remove(-9);
-				positionList.Remove(7);
+				offsets.Remove(-1);
+				offsets.Remove(-9);
+				offsets.Remove(7);
 			}
 			if (position % 8 == 7) {
-				positionList.Remove(1);
-				positionList.Remove(9);
-				positionList.Remove(-7);
+				offsets.Remove(1);
+				offsets.Remove(9);
+				offsets.Remove(-7);
 			}
 
-			foreach (var positionShim in positionList) {
-				var tempPos = position + positionShim;
+			foreach (var offset in offsets) {
+				var tempPos = position + offset;
 				var isValidCoordinate = GeneralUtility.IsValidCoordinate(tempPos);
 				if (!isValidCoordinate) {
 					continue;
@@ -65,58 +56,92 @@ namespace chess.v4.engine.service {
 				if (!_isValidMove.IsValid) {
 					continue;
 				}
-				var isCastle = Math.Abs(positionShim) == 2; //are we trying to move two squares? if so, this is a castle attempt
+				var isCastle = Math.Abs(offset) == 2; //are we trying to move two squares? if so, this is a castle attempt
 				if (!isCastle) {
-					if (_isValidMove.CanAttackOccupyingPiece) {
-						attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos)));
-					} else {
-						attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos), isProtecting: true));
-					}
+					attacks.Add(
+						new AttackedSquare(square, squares.GetSquare(tempPos), isProtecting: !_isValidMove.CanAttackOccupyingPiece)
+					);
 					continue;
 				}
-
-				//*********************
-				//castling stuff
-				//*********************
-				var direction = positionShim > 0 ? 1 : -1;
-				int clearPathPos = tempPos;
-				int clearPathFile = 4;
-
-				do { //make sure the path is clear
-					clearPathPos += direction;
-					clearPathFile = NotationUtility.PositionToFile(clearPathPos);
-				} while (isValidMove(squares, clearPathPos, pieceColor).IsValid && clearPathFile > 0 && clearPathFile < 8);
-
-				if (
-					(pieceColor == Color.White && (positionShim == -2 && clearPathPos == 0) || (positionShim == 2 && clearPathPos == 7))
-					|| (pieceColor == Color.Black && (positionShim == -2 && clearPathPos == 56) || (positionShim == 2 && clearPathPos == 63))
-				) {
-					if (!squares.Intersects(clearPathPos)) {
-						continue;
-					}
-					var edgePiece = squares.GetPiece(clearPathPos);
-					if (edgePiece != null && edgePiece.PieceType == PieceType.Rook) {
-						attacks.Add(new AttackedSquare(square, squares.GetSquare(tempPos)));
-					}
-				}
-				//*********************
-				//end castling stuff
-				//*********************
 			}
 
-			if (attacks.Any()) {
-				var conflictingAttacks = from a in accumulator
-										 join k in attacks on a.Index equals k.Index
-										 where
-											a.AttackingSquare.Piece.Color == opponentPieceColor
-											&& !a.IsPassiveAttack
-										 select a;
-				if (conflictingAttacks.Any()) {
-					var nonCheckingAttacks = attacks.Select(a => a.Index).Except(conflictingAttacks.Select(a => a.Index));
-					var trimmedAttacks = attacks.Where(a => nonCheckingAttacks.Contains(a.Index));
-					accumulator.AddRange(trimmedAttacks);
-				} else {
-					accumulator.AddRange(attacks);
+			//*********************
+			//castling stuff
+			//*********************
+			if (pieceColor == Color.White) {
+				if (castleAvailability.Contains("K")) {
+					addCastleAttackIfPossible(
+						square,
+						attacks,
+						squares,
+						7,
+						new List<int> { 5, 6 },
+						6
+					);
+				}
+				if (castleAvailability.Contains("Q")) {
+					addCastleAttackIfPossible(
+						square,
+						attacks,
+						squares,
+						0,
+						new List<int> { 1, 2, 3 },
+						2
+					);
+				}
+			} else if (pieceColor == Color.Black) {
+				if (castleAvailability.Contains("k")) {
+					addCastleAttackIfPossible(
+						square,
+						attacks,
+						squares,
+						63,
+						new List<int> { 61, 62 },
+						62
+					);
+				}
+				if (castleAvailability.Contains("q")) {
+					addCastleAttackIfPossible(
+						square,
+						attacks,
+						squares,
+						56,
+						new List<int> { 57, 58, 59 },
+						58
+					);
+				}
+			}
+			//*********************
+			//end castling stuff
+			//*********************
+
+			if (!attacks.Any()) {
+				return;
+			}
+			var conflictingAttacks = from a in accumulator
+									 join k in attacks on a.Index equals k.Index
+									 where
+										a.AttackingSquare.Piece.Color == opponentPieceColor
+										&& !a.IsPassiveAttack
+									 select a;
+			if (conflictingAttacks.Any()) {
+				var nonCheckingAttacks = attacks.Select(a => a.Index).Except(conflictingAttacks.Select(a => a.Index));
+				var trimmedAttacks = attacks.Where(a => nonCheckingAttacks.Contains(a.Index));
+				accumulator.AddRange(trimmedAttacks);
+			} else {
+				accumulator.AddRange(attacks);
+			}
+		}
+
+		private static void addCastleAttackIfPossible(Square square, List<AttackedSquare> attacks, List<Square> squares, int rookPos, List<int> castlingClearPositions, int attackToAdd) {
+			var areSquaresClear = squares.Count(
+									a => castlingClearPositions.Contains(a.Index)
+									&& !a.Occupied
+								) == castlingClearPositions.Count();
+			if (areSquaresClear) {
+				var rookSquare = squares.GetSquare(rookPos);
+				if (rookSquare.Occupied && rookSquare.Piece.PieceType == PieceType.Rook) {
+					attacks.Add(new AttackedSquare(square, squares.GetSquare(attackToAdd)));
 				}
 			}
 		}
@@ -206,7 +231,7 @@ namespace chess.v4.engine.service {
 		private void getPawnDiagonalAttack(List<Square> squares, Square square, Color pieceColor, int fileIndicator, int nextRank, List<AttackedSquare> attacks) {
 			var pos = NotationUtility.CoordinatePairToPosition(fileIndicator, nextRank);
 			var attackedSquare = squares.GetSquare(pos);
-			if (attackedSquare.Piece.Color != pieceColor) {
+			if (attackedSquare.Occupied && attackedSquare.Piece.Color != pieceColor) {
 				attacks.Add(new AttackedSquare(square, attackedSquare, false, true));
 			} else {
 				attacks.Add(new AttackedSquare(square, attackedSquare, false, true, true));
@@ -271,7 +296,7 @@ namespace chess.v4.engine.service {
 			if (!isValidCoordinate) {
 				return (false, false);
 			}
-			if (!squares.Intersects(position)) {
+			if (!squares.Any(a => a.Index == position)) {
 				return (false, false);
 			}
 			var square = squares.GetSquare(position);

@@ -39,9 +39,9 @@ namespace chess.v4.engine.extensions {
 			return positions.Intersect<int>(squares.Select(a => a.Index)).Any();
 		}
 
-		public static bool Intersects(this List<Square> squares, int position) {
-			return squares.Where(a => a.Index == position).Any();
-		}
+		//public static bool Intersects(this List<Square> squares, int position) {
+		//	return squares.Where(a => a.Index == position).Any();
+		//}
 
 		public static IEnumerable<Square> Occupied(this List<Square> squares) {
 			return squares.Where(a => a.Piece != null);

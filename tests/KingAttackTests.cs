@@ -43,7 +43,7 @@ namespace Tests {
 			Assert.IsFalse(isCastleThroughCheck);
 
 			var newGameStateResult = this.GameStateService.MakeMove(gameState, 60, 62);
-			Assert.IsTrue(newGameStateResult.Success);
+			Assert.IsTrue(newGameStateResult.Success, $"Castle should have succeeded. { newGameStateResult.Message }");
 
 			var newFEN = newGameStateResult.Result.ToString();
 			Assert.AreEqual("r1bq1rk1/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R1B1KB1R w KQ - 1 10", newFEN);

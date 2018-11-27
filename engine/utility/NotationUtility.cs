@@ -69,12 +69,18 @@ namespace chess.v4.engine.Utility {
 		}
 
 		public static string PositionToCoordinate(int position) {
+			if (position < 0 || position > 63) {
+				throw new Exception($"PositionToCoordinate: position out of bounds: { position } ");
+			}
 			var file = PositionToFileChar(position);
 			var rank = (PositionToRankInt(position) + 1).ToString();
 			return string.Concat(file, rank);
 		}
 
 		public static int PositionToFile(int position) {
+			if (position < 0 || position > 63) {
+				throw new Exception($"PositionToFile: position out of bounds: { position } ");
+			}
 			var file = (position % 8);
 			return file;
 		}
