@@ -173,10 +173,8 @@ namespace chess.v4.engine.service {
 				var attackedSquare = squares.GetSquare(position);
 				if (!attackedSquare.Occupied) {
 					attacks.Add(new AttackedSquare(square, attackedSquare));
-				} else if (attackedSquare.Piece.Color != pieceColor) {
-					attacks.Add(new AttackedSquare(square, attackedSquare));
-				} else if (attackedSquare.Piece.Color != pieceColor) {
-					attacks.Add(new AttackedSquare(square, attackedSquare, isProtecting: true));
+				} else {
+					attacks.Add(new AttackedSquare(square, attackedSquare, isProtecting: attackedSquare.Piece.Color == pieceColor));
 				}
 			}
 			if (attacks.Any()) {
