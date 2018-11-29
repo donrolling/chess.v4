@@ -23,36 +23,22 @@ namespace chess.v4.engine.service {
 			foreach (var square in gameState.Squares.Where(a => a.Occupied).OrderBy(a => a.Piece.OrderOfOperation)) {
 				this.getPieceAttacks(gameState, square, accumulator, ignoreKing);
 			}
+			trimKingMoves(accumulator);
 			return accumulator;
 		}
 
 		public void GetKingAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator) {
 			var attacks = new List<AttackedSquare>();
 			var squares = gameState.Squares;
-			var position = square.Index;
+			var offsets = getKingOffsets(square.Index);
 			var pieceColor = square.Piece.Color;
-			var opponentPieceColor = pieceColor.Reverse();
-			var castleAvailability = gameState.CastlingAvailability;
-			var offsets = new List<int> { -9, -8, -7, -1, 1, 7, 8, 9 };
-
-			if (position % 8 == 0) {
-				offsets.Remove(-1);
-				offsets.Remove(-9);
-				offsets.Remove(7);
-			}
-			if (position % 8 == 7) {
-				offsets.Remove(1);
-				offsets.Remove(9);
-				offsets.Remove(-7);
-			}
-
 			foreach (var offset in offsets) {
-				var tempPos = position + offset;
+				var tempPos = square.Index + offset;
 				var isValidCoordinate = GeneralUtility.IsValidCoordinate(tempPos);
 				if (!isValidCoordinate) {
 					continue;
 				}
-				var _isValidMove = isValidMove(gameState, accumulator, tempPos, pieceColor, true);
+				var _isValidMove = isValidMove(squares, tempPos, pieceColor);
 				if (!_isValidMove.IsValid) {
 					continue;
 				}
@@ -64,6 +50,7 @@ namespace chess.v4.engine.service {
 			//*********************
 			//castling stuff
 			//*********************
+			var castleAvailability = gameState.CastlingAvailability;
 			if (pieceColor == Color.White) {
 				if (castleAvailability.Contains("K")) {
 					addCastleAttackIfPossible(
@@ -114,19 +101,7 @@ namespace chess.v4.engine.service {
 			if (!attacks.Any()) {
 				return;
 			}
-			var conflictingAttacks = from a in accumulator
-									 join k in attacks on a.Index equals k.Index
-									 where
-										a.AttackingSquare.Piece.Color == opponentPieceColor
-										&& !a.IsPassiveAttack
-									 select a;
-			if (conflictingAttacks.Any()) {
-				var nonCheckingAttacks = attacks.Select(a => a.Index).Except(conflictingAttacks.Select(a => a.Index));
-				var trimmedAttacks = attacks.Where(a => nonCheckingAttacks.Contains(a.Index));
-				accumulator.AddRange(trimmedAttacks);
-			} else {
-				accumulator.AddRange(attacks);
-			}
+			accumulator.AddRange(attacks);
 		}
 
 		private static void addCastleAttackIfPossible(Square square, List<AttackedSquare> attacks, List<Square> squares, int rookPos, List<int> castlingClearPositions, int attackToAdd) {
@@ -139,6 +114,48 @@ namespace chess.v4.engine.service {
 				if (rookSquare.Occupied && rookSquare.Piece.PieceType == PieceType.Rook) {
 					attacks.Add(new AttackedSquare(square, squares.GetSquare(attackToAdd)));
 				}
+			}
+		}
+
+		private static List<int> getKingOffsets(int position) {
+			var offsets = new List<int> { -9, -8, -7, -1, 1, 7, 8, 9 };
+			if (position % 8 == 0) {
+				offsets.Remove(-1);
+				offsets.Remove(-9);
+				offsets.Remove(7);
+			}
+			if (position % 8 == 7) {
+				offsets.Remove(1);
+				offsets.Remove(9);
+				offsets.Remove(-7);
+			}
+
+			return offsets;
+		}
+
+		private static void trimKingMoves(List<AttackedSquare> accumulator) {
+			//trim king moves now that all moves have been calculated.
+			var removeableAttacks = new List<AttackedSquare>();
+			foreach (var color in new List<Color> { Color.Black, Color.White }) {
+				var kingAttacks = accumulator
+									.Where(a =>
+										a.AttackingSquare.Piece.PieceType == PieceType.King
+										&& a.AttackingSquare.Piece.Color == color
+									);
+				var conflictingAttacks = from a in accumulator
+										 join k in kingAttacks on a.Index equals k.Index
+										 where
+											a.AttackingSquare.Piece.Color == color.Reverse()
+											&& !a.IsPassiveAttack
+										 select a;
+				if (conflictingAttacks.Any()) {
+					var conflictingIndexes = conflictingAttacks.Select(a => a.Index);
+					var rs = kingAttacks.Where(a => conflictingIndexes.Contains(a.Index));
+					removeableAttacks.AddRange(rs);
+				}
+			}
+			foreach (var removeableAttack in removeableAttacks) {
+				accumulator.Remove(removeableAttack);
 			}
 		}
 
@@ -161,7 +178,7 @@ namespace chess.v4.engine.service {
 			foreach (var potentialPosition in potentialPositions) {
 				var position = currentPosition + potentialPosition;
 				var _isValidKnightMove = isValidKnightMove(currentPosition, position, file, rank);
-				var _isValidMove = isValidMove(gameState, accumulator, position, pieceColor);
+				var _isValidMove = isValidMove(squares, position, pieceColor);
 				var _isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 
 				if (!_isValidKnightMove || !_isValidMove.IsValid || !_isValidCoordinate) { continue; }
@@ -290,27 +307,17 @@ namespace chess.v4.engine.service {
 			return true;
 		}
 
-		private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(GameState gameState, List<AttackedSquare> accumulator, int position, Color pieceColor, bool isKing = false) {
+		private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(List<Square> squares, int position, Color pieceColor) {
 			var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 			if (!isValidCoordinate) {
 				return (false, false);
 			}
-			if (!gameState.Squares.Any(a => a.Index == position)) {
+			if (!squares.Any(a => a.Index == position)) {
 				return (false, false);
 			}
-			var square = gameState.Squares.GetSquare(position);
-			if (!square.Occupied && !isKing) {
-				return (true, false);
-			}
-			if (isKing) {
-				var squareIsAttacked = accumulator
-								.Any(a =>
-									a.AttackingSquare.Piece.Color == pieceColor.Reverse()
-									&& a.Index == position
-								);
-				if (squareIsAttacked) {
-					return (false, false);
-				}
+			var square = squares.GetSquare(position);
+			if (!square.Occupied) {
+				return (true, true);
 			}
 			var blockingPiece = square.Piece;
 			if (GeneralUtility.IsTeamPiece(pieceColor, blockingPiece)) {

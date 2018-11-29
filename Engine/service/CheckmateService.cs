@@ -199,17 +199,13 @@ namespace chess.v4.engine.service {
 				var _mayKingMoveHere = false;
 				if (isOrthogonal) {
 					_mayKingMoveHere = this.mayKingMoveOrthogonallyHere(clearMove, attacksOnKing, gameState.Attacks);
-					if (_mayKingMoveHere) {
-						return true;
-					} else {
+					if (!_mayKingMoveHere) {
 						clearMoveCount--;
 					}
 				} else {
 					//has to be diagonal
 					_mayKingMoveHere = this.mayKingMoveDiagonallyHere(clearMove, attacksOnKing, gameState.Attacks);
-					if (_mayKingMoveHere) {
-						return true;
-					} else {
+					if (!_mayKingMoveHere) {
 						clearMoveCount--;
 					}
 				}

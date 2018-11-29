@@ -2,9 +2,9 @@
 [Site "Alba Iulia (Romania)"]
 [Date "2017.11.21"]
 [Round "3"]
-[White "Sanduleac Vasile (MDA)"]
-[Black "Manolache Marius (ROM)"]
-[Result "1-0"]
+[White "Martinovici Ilie (MDA)"]
+[Black "Aczel Gergely (HUN)"]
+[Result "1/2-1/2"]
 [ECO ""]
 [WhiteElo ""]
 [BlackElo ""]
@@ -14,4 +14,4 @@
 [Source ""]
 [Remark ""]
 
-1.e4 c5 2.Nf3 e6 3.c3 Nf6 4.Bd3 Be7 5.O-O d5 6.exd5 O-O 7.Bc2 exd5 8.d4 cxd4 9.Nxd4 Bg4 10.Qd3 Bh5 11.Bg5 Bg6 12.Qb5 Bxc2 13.Nxc2 Nc6 14.Nd2 a6 15.Qe2 Re8 16.Nf3 h6 17.Bxf6 Bxf6 18.Qd3 Qb6 19.Ne3 Qxb2 20.Nxd5 Rad8 21.Rfb1 Rxd5 22.Qxd5 Qxc3 23.Rc1 Qxa1 24.Rxa1 Bxa1 25.g4 Rd8 26.Qe4 Bf6 27.h4 g6 28.Qf4 Kg7 29.g5 hxg5 30.hxg5 Rd1+ 31.Kg2 Ba1 32.Qc7 Rb1 33.Nd2 Rb4 34.a3 Be5 35.Qc8 Rb5 36.Ne4 Bf4 37.Qd7 a5 38.a4 Rb4 39.Nc5 Bxg5 40.Nxb7 Ne5 41.Qd5 Rg4+ 42.Kf1 Nc4 43.Nc5 Be7 44.Nd3 Bf6 45.Qb5 Re4 46.Kg2 Rd4 47.Nc5 Rg4+ 48.Kf1 Nd2+ 49.Ke2 Rb4 50.Qd7 Ne4 51.Ne6+ Kh6 52.Qxf7 Rb6 53.f3 Ng5 54.Nxg5 Bxg5 55.Qd5 Rb2+ 56.Kf1 Rb1+ 57.Kg2 Rb2+ 58.Kg3 Bf6 59.Qxa5 Re2 60.Qd5 Be5+ 61.f4 Re3+ 62.Kg4 Bf6 63.Qc6 Kg7 64.a5 Rc3 65.Qd7+ Kh6 66.a6 Ra3 67.Qd6 Be7 68.Qe5 Rxa6 69.Qh8# 1-0
+1.d4 Nf6 2.c4 e6 3.Nc3 Bb4 4.Qc2 O-O 5.e4 d6 6.a3 Bxc3+ 7.bxc3 e5 8.Bd3 Nc6 9.Ne2 Nd7 10.O-O b6 11.f4 Ba6 12.Be3 Na5 13.Qa2 Qe8 14.Ng3 Kh8 15.fxe5 dxe5 16.Qe2 f6 17.c5 Bxd3 18.Qxd3 Rb8 19.cxb6 axb6 20.Nf5 Rd8 21.d5 g6 22.Ng3 Nb3 23.Rab1 Nbc5 24.Qb5 Qe7 25.Qc6 Qd6 26.Qxd6 cxd6 27.Bxc5 dxc5 28.c4 Ra8 29.Rf3 Ra4 30.Rc3 Kg7 31.Kf2 f5 32.Ke2 f4 33.Nh1 g5 34.Nf2 h5 35.h3 Kf6 36.Kf3 Ke7 37.Nd3 Kd6 38.g4 fxg3+ 39.Kxg3 Raa8 40.Kg2 g4 41.hxg4 hxg4 42.Rf1 Rxf1 43.Kxf1 Rf8+ 44.Nf2 Rf4 45.Kg2 Nf6 46.Rb3 Kc7 47.Re3 b5 48.cxb5 c4 49.a4 Kb6 50.Re2 Ka5 51.Rc2 Nxe4 52.Nxe4 Rxe4 53.d6 Rd4 54.d7 Rxd7 55.Rxc4 Rd4 56.Rc5 e4 57.Re5 Kxa4 58.b6 Rb4 59.b7 Rxb7 1/2-1/2
