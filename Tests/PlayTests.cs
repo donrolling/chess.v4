@@ -14,6 +14,17 @@ using System.Threading.Tasks;
 using Tests.Models;
 
 namespace Tests {
+	public class PlayGameInfo {
+		public string FinalMove { get; set; }
+		public GameMetaData gameData { get; set; }
+		public GameMetaData GameData { get; internal set; }
+		public GameState GameState { get; set; }
+		public string GameString { get; set; }
+		public bool HasCheckmate { get; set; }
+		public bool IsDraw { get; set; }
+		public int MoveCount { get; set; }
+	}
+
 	[TestClass]
 	public class PlayTests : TestBase {
 		public IGameService GameService { get; }
@@ -46,55 +57,88 @@ namespace Tests {
 			}
 		}
 
+		//[TestMethod]
+		//public async Task PlayAllGamesFromTheDatabase_MarkTheBadOnes_ButPlayTheGoodOnes() {
+		//	var pageInfo = new PageInfo { PageSize = 10000 };
+		//	var gamesResult = await this.GameService.ReadAll(pageInfo);
+		//	foreach (var game in gamesResult.Data) {
+		//		await playGame_ArriveAtSameresult_NoAssertions(game);
+		//	}
+		//}
+
 		private async Task playGame_ArriveAtSameresult(Game game) {
-			Assert.IsNotNull(game);
-			var gameString = game.GameToString();
-			FileUtility.WriteFile<PlayTests>("playGame.pgn", "Output", gameString);
-			var result = gameString.Split(" ").Last();
-			var gameStateResult = this.GameStateService.Initialize();
-			var gameState = gameStateResult.Result;
-			game.FEN = GeneralReference.Starting_FEN_Position;
-
+			var playGameInfo = playGamePrep(game);
+			var count = playGameInfo.GameData.Moves.Count();
 			var moveCount = 0;
-			var hasCheckmate = gameString.Split("\r\n\r\n")[1].Contains('#');
-			var isDraw = game.Result == "1/2-1/2";
-			var finalMove = string.Empty;
-
-			var gameData = this.PGNFileService.ParsePGNData(gameString);
-			var count = gameData.Moves.Count();
-			foreach (var move in gameData.Moves) {
+			foreach (var move in playGameInfo.GameData.Moves) {
 				moveCount++;
 				if (moveCount == count) {
-					finalMove = move.Value;
+					playGameInfo.FinalMove = move.Value;
 				}
 				try {
-					gameState = playMove(gameState, game, move.Value, moveCount);
+					playGameInfo.GameState = playMove(playGameInfo.GameState, game, move.Value, moveCount);
 				} catch (System.Exception ex) {
-					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ gameString }");
+					Assert.IsTrue(false, $"{ ex.Message }\r\nGame engine failed to play a PGN move. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ playGameInfo.GameString }");
 				}
 				if (moveCount != count) {
 					//check to see if we're in checkmate as long as this isn't the last move.
-					Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"The engine thinks this is checkmate, though it is not. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ gameString }");
+					Assert.IsFalse(playGameInfo.GameState.StateInfo.IsCheckmate, $"The engine thinks this is checkmate, though it is not. Move: { move.Key }. { move.Value }\r\n{ game.FEN }\r\n{ playGameInfo.GameString }");
 				}
 			}
 			//I wanted to make more assertions around whether or not the game was a draw,
 			//but the engine doesn't currently recognize a draw because it
 			//is an agreement between players, not a game state.
-			if (isDraw) {
+			if (playGameInfo.IsDraw) {
 				//right now this is failing sometimes because for example, on game #16, there is a pawn move that
-				//will capture the queen that is checking the king, but the IsCheckmate calculation doesn't 
+				//will capture the queen that is checking the king, but the IsCheckmate calculation doesn't
 				//understand
-				Assert.IsFalse(gameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game has ended in a draw. Final move was { finalMove }.\r\n{ game.FEN }\r\n{ gameString }");
+				Assert.IsFalse(playGameInfo.GameState.StateInfo.IsCheckmate, $"Game should not be marked as checkmate. This game has ended in a draw. Final move was { playGameInfo.FinalMove }.\r\n{ game.FEN }\r\n{ playGameInfo.GameString }");
 			}
-			if (hasCheckmate) {
-				Assert.IsTrue(gameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { moveCount }. { finalMove }\r\n{ game.FEN }\r\n{ gameString }");
-				Assert.AreEqual(game.Result, gameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }\r\n{ gameString }");
+			if (playGameInfo.HasCheckmate) {
+				Assert.IsTrue(playGameInfo.GameState.StateInfo.IsCheckmate, $"Game should be marked as checkmate. Final move was { moveCount }. { playGameInfo.FinalMove }\r\n{ game.FEN }\r\n{ playGameInfo.GameString }");
+				Assert.AreEqual(game.Result, playGameInfo.GameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }\r\n{ playGameInfo.GameString }");
 			}
-			game.FEN = gameState.ToString();
+			game.FEN = playGameInfo.GameState.ToString();
 			//so we don't run this test again
 			game.IsActive = false;
 			var updateResult = await this.GameService.Update(game);
 			Assert.IsTrue(updateResult.Success, updateResult.Message);
+		}
+
+		private async Task playGame_ArriveAtSameresult_NoAssertions(Game game) {
+			var playGameInfo = playGamePrep(game);
+			var count = playGameInfo.GameData.Moves.Count();
+			var failed = false;
+			var moveCount = 0;
+			foreach (var move in playGameInfo.GameData.Moves) {
+				moveCount++;
+				try {
+					playGameInfo.GameState = playMove(playGameInfo.GameState, game, move.Value, moveCount);
+				} catch (System.Exception ex) {
+					failed = true;
+					break;
+				}
+			}
+			game.FEN = playGameInfo.GameState.ToString();
+			if (!failed) {
+				game.IsActive = false;
+			}
+			var updateResult = await this.GameService.Update(game);
+		}
+
+		private PlayGameInfo playGamePrep(Game game) {
+			var playGameInfo = new PlayGameInfo();
+			playGameInfo.GameString = game.GameToString();
+			FileUtility.WriteFile<PlayTests>("playGame.pgn", "Output", playGameInfo.GameString);
+			var result = playGameInfo.GameString.Split(" ").Last();
+			var gameStateResult = this.GameStateService.Initialize();
+			playGameInfo.GameState = gameStateResult.Result;
+			game.FEN = GeneralReference.Starting_FEN_Position;
+			playGameInfo.HasCheckmate = playGameInfo.GameString.Split("\r\n\r\n")[1].Contains('#');
+			playGameInfo.IsDraw = game.Result == "1/2-1/2";
+			playGameInfo.FinalMove = string.Empty;
+			playGameInfo.GameData = this.PGNFileService.ParsePGNData(playGameInfo.GameString);
+			return playGameInfo;
 		}
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
@@ -108,7 +152,7 @@ namespace Tests {
 			if (moveCount >= moveBreak) {
 				test = "";
 				//fool the compiler into not giving me warnings about "test"
-				if (string.IsNullOrEmpty(test)) {}
+				if (string.IsNullOrEmpty(test)) { }
 			}
 			var gameStateResult = this.GameStateService.MakeMove(gameState, a);
 			Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { a } | { game.FEN }");

@@ -1,10 +1,10 @@
 [Event "It (open)"]
-[Site "Alba Iulia (Romania)"]
+[Site "Baku (Azerbaijan)"]
 [Date "2017.11.21"]
-[Round "3"]
-[White "Martinovici Ilie (MDA)"]
-[Black "Aczel Gergely (HUN)"]
-[Result "1/2-1/2"]
+[Round "9"]
+[White "Isgandarov Shahriyar (AZE)"]
+[Black "Muradli Mahammad (AZE)"]
+[Result "0-1"]
 [ECO ""]
 [WhiteElo ""]
 [BlackElo ""]
@@ -14,4 +14,4 @@
 [Source ""]
 [Remark ""]
 
-1.d4 Nf6 2.c4 e6 3.Nc3 Bb4 4.Qc2 O-O 5.e4 d6 6.a3 Bxc3+ 7.bxc3 e5 8.Bd3 Nc6 9.Ne2 Nd7 10.O-O b6 11.f4 Ba6 12.Be3 Na5 13.Qa2 Qe8 14.Ng3 Kh8 15.fxe5 dxe5 16.Qe2 f6 17.c5 Bxd3 18.Qxd3 Rb8 19.cxb6 axb6 20.Nf5 Rd8 21.d5 g6 22.Ng3 Nb3 23.Rab1 Nbc5 24.Qb5 Qe7 25.Qc6 Qd6 26.Qxd6 cxd6 27.Bxc5 dxc5 28.c4 Ra8 29.Rf3 Ra4 30.Rc3 Kg7 31.Kf2 f5 32.Ke2 f4 33.Nh1 g5 34.Nf2 h5 35.h3 Kf6 36.Kf3 Ke7 37.Nd3 Kd6 38.g4 fxg3+ 39.Kxg3 Raa8 40.Kg2 g4 41.hxg4 hxg4 42.Rf1 Rxf1 43.Kxf1 Rf8+ 44.Nf2 Rf4 45.Kg2 Nf6 46.Rb3 Kc7 47.Re3 b5 48.cxb5 c4 49.a4 Kb6 50.Re2 Ka5 51.Rc2 Nxe4 52.Nxe4 Rxe4 53.d6 Rd4 54.d7 Rxd7 55.Rxc4 Rd4 56.Rc5 e4 57.Re5 Kxa4 58.b6 Rb4 59.b7 Rxb7 1/2-1/2
+1.e4 Nf6 2.Nc3 d5 3.exd5 Nxd5 4.Nxd5 Qxd5 5.Nf3 Bg4 6.Be2 Nc6 7.O-O O-O-O 8.c3 e5 9.Qa4 e4 10.Nd4 Bxe2 11.Nxe2 Bd6 12.Ng3 Bxg3 13.fxg3 Kb8 14.Kh1 Ne5 15.d4 exd3 16.Be3 Nc6 17.Rad1 Rhe8 18.Rf3 Re4 19.Qa3 Qe6 20.Bd2 Re2 21.Rff1 Qd5 22.Rg1 Ne5 23.Bf4 Ng4 0-1
