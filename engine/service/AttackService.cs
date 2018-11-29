@@ -52,17 +52,13 @@ namespace chess.v4.engine.service {
 				if (!isValidCoordinate) {
 					continue;
 				}
-				var _isValidMove = isValidMove(squares, tempPos, pieceColor);
+				var _isValidMove = isValidMove(gameState, accumulator, tempPos, pieceColor, true);
 				if (!_isValidMove.IsValid) {
 					continue;
 				}
-				var isCastle = Math.Abs(offset) == 2; //are we trying to move two squares? if so, this is a castle attempt
-				if (!isCastle) {
-					attacks.Add(
-						new AttackedSquare(square, squares.GetSquare(tempPos), isProtecting: !_isValidMove.CanAttackOccupyingPiece)
-					);
-					continue;
-				}
+				attacks.Add(
+					new AttackedSquare(square, squares.GetSquare(tempPos), isProtecting: !_isValidMove.CanAttackOccupyingPiece)
+				);
 			}
 
 			//*********************
@@ -165,7 +161,7 @@ namespace chess.v4.engine.service {
 			foreach (var potentialPosition in potentialPositions) {
 				var position = currentPosition + potentialPosition;
 				var _isValidKnightMove = isValidKnightMove(currentPosition, position, file, rank);
-				var _isValidMove = isValidMove(squares, position, pieceColor);
+				var _isValidMove = isValidMove(gameState, accumulator, position, pieceColor);
 				var _isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 
 				if (!_isValidKnightMove || !_isValidMove.IsValid || !_isValidCoordinate) { continue; }
@@ -294,17 +290,27 @@ namespace chess.v4.engine.service {
 			return true;
 		}
 
-		private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(List<Square> squares, int position, Color pieceColor) {
+		private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(GameState gameState, List<AttackedSquare> accumulator, int position, Color pieceColor, bool isKing = false) {
 			var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 			if (!isValidCoordinate) {
 				return (false, false);
 			}
-			if (!squares.Any(a => a.Index == position)) {
+			if (!gameState.Squares.Any(a => a.Index == position)) {
 				return (false, false);
 			}
-			var square = squares.GetSquare(position);
-			if (!square.Occupied) {
-				return (true, true);
+			var square = gameState.Squares.GetSquare(position);
+			if (!square.Occupied && !isKing) {
+				return (true, false);
+			}
+			if (isKing) {
+				var squareIsAttacked = accumulator
+								.Any(a =>
+									a.AttackingSquare.Piece.Color == pieceColor.Reverse()
+									&& a.Index == position
+								);
+				if (squareIsAttacked) {
+					return (false, false);
+				}
 			}
 			var blockingPiece = square.Piece;
 			if (GeneralUtility.IsTeamPiece(pieceColor, blockingPiece)) {
