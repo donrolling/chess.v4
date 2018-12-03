@@ -1,4 +1,4 @@
-﻿using chess.v4.engine.extensions;
+using chess.v4.engine.extensions;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.Utility;
 using chess.v4.models;
@@ -36,11 +36,19 @@ namespace chess.v4.engine.service {
 														&& a.AttackingSquare.Piece.Color == piece.Color
 													);
 			if (!potentialSquares.Any()) {
+				//this could be a pawn en passant
+				if (
+					piece.PieceType == PieceType.Pawn 
+					&& gameState.EnPassantTargetSquare != "-"
+					&& NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare) == newPiecePosition
+				) {
+					return newPiecePosition;
+				}
 				var msg = $"No squares found. PGN Move: { pgnMove }";
 				throw new Exception(msg);
 			}
 			if (potentialSquares.Count() == 1) {
-				return potentialSquares.First().AttackingSquare;
+				return newPiecePosition;
 			}
 			//differentiate
 			var potentialPositions = from s in gameState.Squares
