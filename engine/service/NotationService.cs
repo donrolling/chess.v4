@@ -62,6 +62,7 @@ namespace chess.v4.engine.service {
 			newGameState.ActiveColor = activeColor;
 			newGameState.CastlingAvailability = castlingAvailability;
 			newGameState.EnPassantTargetSquare = enPassantCoord;
+			newGameState.EnPassantTargetPosition = NotationUtility.CoordinateToPosition(enPassantCoord);
 			newGameState.HalfmoveClock = halfmoveClock;
 			//better to calculate this value after setting the ActiveColor
 			var fullmoveNumber = getFullmoveNumber(newGameState.FullmoveNumber, newGameState.ActiveColor);
