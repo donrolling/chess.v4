@@ -42,13 +42,18 @@ namespace chess.v4.engine.service {
 					&& gameState.EnPassantTargetSquare != "-"
 					&& NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare) == newPiecePosition
 				) {
-					return newPiecePosition;
+					var enPassant = gameState.Attacks.Where(a =>
+												a.Index == newPiecePosition
+												&& a.AttackingSquare.Piece.PieceType == piece.PieceType
+												&& a.AttackingSquare.Piece.Color == piece.Color
+											).First().AttackingSquare;
+					return enPassant;
 				}
 				var msg = $"No squares found. PGN Move: { pgnMove }";
 				throw new Exception(msg);
 			}
 			if (potentialSquares.Count() == 1) {
-				return newPiecePosition;
+				return potentialSquares.First().AttackingSquare;
 			}
 			//differentiate
 			var potentialPositions = from s in gameState.Squares

@@ -133,14 +133,20 @@ namespace chess.v4.engine.service {
 			if (!attacks.Any()) {
 				return Envelope<GameState>.Fail($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
 			}
-			var badPawnAttack = attacks.Any(a =>
+			var badPawnAttacks = attacks.Where(a =>
 											a.AttackingSquare.Index == piecePosition
 											&& a.Index == newPiecePosition
 											&& a.Piece == null
 											&& a.MayOnlyMoveHereIfOccupiedByEnemy
 										);
-			if (badPawnAttack) {
-				return Envelope<GameState>.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+			if (badPawnAttacks.Any()) {
+				if (
+					badPawnAttacks.Count() > 1 
+					|| gameState.EnPassantTargetSquare == "-"
+					|| newPiecePosition != NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare)
+				) {
+					return Envelope<GameState>.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+				}
 			}
 			//make the move
 			var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);

@@ -22,6 +22,17 @@ namespace Tests {
 		}
 
 		[TestMethod]
+		public void EnPassantWorks() {
+			var fen = "2r5/6k1/p1q1p2p/3pP1p1/2pP1p2/PPR2P2/4QKPP/8 w - d6 0 34";
+			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+			var gsr = this.GameStateService.MakeMove(gameState, "exd6ep");
+			Assert.IsTrue(gsr.Success, "En Passant should have worked here.");
+			var assertFen = "2r5/6k1/p1qPp2p/6p1/2pP1p2/PPR2P2/4QKPP/8 w - d6 0 34";
+			var newFen = gsr.Result.ToString();
+			Assert.AreEqual(assertFen, newFen, $"En Passant should have worked here. { newFen }");
+		}
+
+		[TestMethod]
 		public void GameStart_Verify_PawnAttack() {
 			var gameState = TestUtility.GetGameState(this.GameStateService);
 			//white queenside rook pawn, opening moves
