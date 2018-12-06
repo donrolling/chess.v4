@@ -29,7 +29,7 @@ namespace Tests {
 			Assert.IsTrue(gsr.Success, "En Passant should have worked here.");
 			var assertFen = "2r5/6k1/p1qPp2p/6p1/2pP1p2/PPR2P2/4QKPP/8 w - d6 0 34";
 			var newFen = gsr.Result.ToString();
-			Assert.AreEqual(assertFen, newFen, $"En Passant should have worked here. { newFen }");
+			Assert.AreEqual(assertFen, newFen, $"En Passant should have worked here.");
 		}
 
 		[TestMethod]

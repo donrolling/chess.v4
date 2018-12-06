@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace chess.v4.engine.service {
+
 	// Pawn promotions are notated by appending an "=" to the destination square, followed by the piece the pawn is promoted to.
 	// "e8=Q". If the move is a checking move, the plus sign "+" is also appended;
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
@@ -38,7 +39,7 @@ namespace chess.v4.engine.service {
 			if (!potentialSquares.Any()) {
 				//this could be a pawn en passant
 				if (
-					piece.PieceType == PieceType.Pawn 
+					piece.PieceType == PieceType.Pawn
 					&& gameState.EnPassantTargetSquare != "-"
 					&& NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare) == newPiecePosition
 				) {
@@ -164,41 +165,12 @@ namespace chess.v4.engine.service {
 			return PieceType.Pawn;
 		}
 
-		public (int position, char promotedPiece) GetPositionFromPGNMove(string pgnMove, Color playerColor) {
-			var promotedPiece = '-';
-			if (pgnMove == "O-O" || pgnMove == "O-O-O") {
-				if (playerColor == Color.White) {
-					if (pgnMove == "O-O") {
-						return (6, promotedPiece);
-					} else {
-						return (2, promotedPiece);
-					}
-				} else {
-					if (pgnMove == "O-O") {
-						return (62, promotedPiece);
-					} else {
-						return (58, promotedPiece);
-					}
-				}
-			}
-			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
-			var x = pgnMove.Contains("=") ? 4 : 2;
-
-			if (pgnMove.Length == 3) {
-				if (pawnPromotionPattern.IsMatch(pgnMove)) {
-					promotedPiece = pgnMove.Last();
-					return (NotationUtility.CoordinateToPosition(pgnMove.Substring(0, 2)), promotedPiece);
-				}
-			}
-			return (NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece);
-		}
-
 		public bool IsRank(char potentialRank) {
 			return char.IsNumber(potentialRank);
 		}
 
 		public (int piecePosition, int newPiecePosition, char promotedPiece) PGNMoveToSquarePair(GameState gameState, string pgnMove) {
-			var positionFromPGNMove = GetPositionFromPGNMove(pgnMove, gameState.ActiveColor);
+			var positionFromPGNMove = getPositionFromPGNMove(pgnMove, gameState.ActiveColor, gameState.EnPassantTargetSquare);
 			var newPiecePosition = positionFromPGNMove.position;
 			var promotedPiece = positionFromPGNMove.promotedPiece;
 			var pieceType = GetPieceTypeFromPGNMove(pgnMove);
@@ -278,6 +250,22 @@ namespace chess.v4.engine.service {
 				return pgnMove;
 			} else {
 				return $"{ pgnMove }{ PGNService.PawnPromotionIndicator }{ promoteToPiece }";
+			}
+		}
+
+		private static (int position, char promotedPiece) getCastlePositionFromPGNMove(string pgnMove, Color playerColor, char promotedPiece) {
+			if (playerColor == Color.White) {
+				if (pgnMove == "O-O") {
+					return (6, promotedPiece);
+				} else {
+					return (2, promotedPiece);
+				}
+			} else {
+				if (pgnMove == "O-O") {
+					return (62, promotedPiece);
+				} else {
+					return (58, promotedPiece);
+				}
 			}
 		}
 
@@ -376,6 +364,46 @@ namespace chess.v4.engine.service {
 					break;
 			}
 			return pgnMove;
+		}
+
+		private (int position, char promotedPiece) getPositionFromPGNMove(string pgnMove, Color playerColor, string enPassantTargetSquare) {
+			var promotedPiece = '-';
+			var isCastle = pgnMove == "O-O" || pgnMove == "O-O-O";
+			if (isCastle) {
+				return getCastlePositionFromPGNMove(pgnMove, playerColor, promotedPiece);
+			}
+			var isEnPassant = false;
+			if (enPassantTargetSquare != "-") {
+				var isCapture = pgnMove[1] == 'x';
+				if (isCapture) {
+					var len = pgnMove.Length;
+					if (len >= 6) {
+						var rightSide = pgnMove.Substring(4, len - 4);
+						isEnPassant = rightSide.Contains("ep") || rightSide.Contains("e.p.");
+						if (isEnPassant) {
+							return (NotationUtility.CoordinateToPosition(enPassantTargetSquare), promotedPiece);
+						}
+					}
+				}
+			}
+
+			//probably just a regular move
+			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
+			if (pgnMove.Length == 3) {
+				//could be a pawn promotion
+				if (pawnPromotionPattern.IsMatch(pgnMove)) {
+					//yeah, it is a pawn promotion
+					promotedPiece = pgnMove.Last();
+					return (NotationUtility.CoordinateToPosition(pgnMove.Substring(0, 2)), promotedPiece);
+				}
+			}
+			//not sure why I needed this
+			var x = 2;
+			if (pgnMove.Contains("=")) {
+				x = 4;
+				throw new Exception("I didn't think this could happen, so I tested it with an exception.");
+			}
+			return (NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece);
 		}
 
 		private bool isCapture(string move) {
