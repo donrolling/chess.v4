@@ -22,7 +22,7 @@ namespace Tests {
 		}
 
 		[TestMethod]
-		public void EnPassantWorks() {
+		public void Pawn_EnPassantWorks() {
 			var fen = "2r5/6k1/p1q1p2p/3pP1p1/2pP1p2/PPR2P2/4QKPP/8 w - d6 0 34";
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var gsr = this.GameStateService.MakeMove(gameState, "exd6ep");
