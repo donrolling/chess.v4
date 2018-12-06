@@ -2,7 +2,6 @@
 using System;
 
 namespace chess.v4.models {
-
 	/// <summary>
 	/// Definition
 	///A FEN "record" defines a particular game position, all in one text line and using only the ASCII character set. A text file with only FEN data records should have the file extension ".fen".
@@ -57,33 +56,7 @@ namespace chess.v4.models {
 		//White pieces are designated using upper-case letters ("PNBRQK") while black pieces use
 		//lowercase ("pnbrqk"). Empty squares are noted using digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 		public string PiecePlacement { get; set; }
-
-		public FEN_Record() {
-		}
-
-		public FEN_Record(string fen) {
-			var gameData = fen.Split(' ');
-			this.PiecePlacement = gameData[0];
-
-			this.ActiveColor = gameData[1][0] == 'w' ? Color.White : Color.Black;
-
-			this.CastlingAvailability = gameData[2];
-
-			this.EnPassantTargetSquare = gameData[3];
-
-			var enPassantTargetPosition = -1;
-			Int32.TryParse(gameData[3], out enPassantTargetPosition);
-			this.EnPassantTargetPosition = enPassantTargetPosition;
-
-			int halfmoveClock = 0;
-			Int32.TryParse(gameData[4], out halfmoveClock);
-			this.HalfmoveClock = halfmoveClock;
-
-			int fullmoveNumber = 0;
-			Int32.TryParse(gameData[5], out fullmoveNumber);
-			this.FullmoveNumber = fullmoveNumber;
-		}
-
+			
 		public static string ConvertToString(FEN_Record fenRecord) {
 			var activeColor = fenRecord.ActiveColor == Color.White ? "w" : "b";
 			return $"{ fenRecord.PiecePlacement } { activeColor } { fenRecord.CastlingAvailability } { fenRecord.EnPassantTargetSquare } { fenRecord.HalfmoveClock } { fenRecord.FullmoveNumber }";
