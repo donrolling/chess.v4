@@ -27,7 +27,7 @@ namespace Tests {
 			var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 			var gsr = this.GameStateService.MakeMove(gameState, "exd6ep");
 			Assert.IsTrue(gsr.Success, "En Passant should have worked here.");
-			var assertFen = "2r5/6k1/p1qPp2p/6p1/2pP1p2/PPR2P2/4QKPP/8 w - d6 0 34";
+			var assertFen = "2r5/6k1/p1qPp2p/3p2p1/2pP1p2/PPR2P2/4QKPP/8 b - - 0 34";
 			var newFen = gsr.Result.ToString();
 			Assert.AreEqual(assertFen, newFen, $"En Passant should have worked here.");
 		}
