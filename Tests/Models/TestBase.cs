@@ -18,6 +18,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Models.Application;
 using NLog;
 using NLog.Config;
+using NLog.Extensions.Logging;
 using System;
 using Tests.Utilities;
 
@@ -41,11 +42,11 @@ namespace Tests.Models {
 			var pathToAppSettingsConfig = FileUtility.GetFullPath_FromRelativePath<TestBase>("appsettings.json");
 			var provider = new PhysicalFileProvider(pathToNLogConfig.path);
 			LogManager.Configuration = new XmlLoggingConfiguration(pathToNLogConfig.filePath);
-
-			var services = new ServiceCollection();
-			services.AddLogging();
 			var config = new ConfigurationBuilder().AddJsonFile(pathToAppSettingsConfig.filePath).Build();
+			var services = new ServiceCollection();
 			services.Configure<AppSettings>(config.GetSection("AppSettings"));
+			var loggerFactory = new LoggerFactory().AddNLog();
+			services.AddSingleton<ILoggerFactory>(loggerFactory);
 			services.AddSingleton<IFileProvider>(provider);
 
 			//generated
