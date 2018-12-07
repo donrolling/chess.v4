@@ -7,11 +7,9 @@ namespace chess.v4.models {
 		public string PGN { get; set; }
 		public List<Square> Squares { get; set; } = new List<Square>();
 		public StateInfo StateInfo { get; set; }
-
+		
 		public GameState() {
-		}
 
-		public GameState(string fen) : base(fen) {
 		}
 
 		public GameState(FEN_Record fenRecord) {

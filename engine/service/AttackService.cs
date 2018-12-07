@@ -226,11 +226,12 @@ namespace chess.v4.engine.service {
 			managePawnAttacks(squares, square, pieceColor, file, rank, directionIndicator, homeRankIndicator, nextRank, attacks, aheadOneRankSquare.Occupied);
 
 			//add en passant position: -1 indicates null here
-			if (gameState.EnPassantTargetPosition > -1) {
+			if (gameState.EnPassantTargetSquare != "-") {
+				var enPassantTargetPosition = NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare);
 				var leftPos = NotationUtility.CoordinatePairToPosition(file - 1, nextRank);
 				var rightPos = NotationUtility.CoordinatePairToPosition(file + 1, nextRank);
-				if (gameState.EnPassantTargetPosition == leftPos || gameState.EnPassantTargetPosition == rightPos) {
-					var enPassantSquare = squares.GetSquare(gameState.EnPassantTargetPosition);
+				if (enPassantTargetPosition == leftPos || enPassantTargetPosition == rightPos) {
+					var enPassantSquare = squares.GetSquare(enPassantTargetPosition);
 					attacks.Add(new AttackedSquare(square, enPassantSquare));
 				}
 			}

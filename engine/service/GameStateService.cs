@@ -1,4 +1,5 @@
 ﻿using chess.v4.engine.extensions;
+using chess.v4.engine.factory;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.reference;
 using chess.v4.engine.Utility;
@@ -31,7 +32,7 @@ namespace chess.v4.engine.service {
 			if (string.IsNullOrEmpty(fen)) {
 				fen = GeneralReference.Starting_FEN_Position;
 			}
-			return hydrateGameState(new FEN_Record(fen));
+			return hydrateGameState(FenFactory.Create(fen));
 		}
 
 		/// <summary>
@@ -125,7 +126,7 @@ namespace chess.v4.engine.service {
 			//store important stuff from old gamestate
 			var previousStateFEN = gameState.ToString();
 			var fenRecords = gameState.FEN_Records.DeepCopy();
-			fenRecords.Add(new FEN_Record(previousStateFEN));
+			fenRecords.Add(FenFactory.Create(previousStateFEN));
 
 			//verify that the move can be made
 			var oldSquare = gameState.Squares.GetSquare(piecePosition);
@@ -158,7 +159,7 @@ namespace chess.v4.engine.service {
 			var currentStateFEN = movingGameState.ToString();
 
 			//Setup new gamestate
-			var newGameStateResult = hydrateGameState(new FEN_Record(currentStateFEN));
+			var newGameStateResult = hydrateGameState(FenFactory.Create(currentStateFEN));
 			if (newGameStateResult.Failure) {
 				throw new System.Exception(newGameStateResult.Message);
 			}
