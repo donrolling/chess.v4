@@ -16,8 +16,9 @@ namespace chess.v4.engine.service {
 	public class PGNService : IPGNService {
 		public IMoveService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
-		private Regex pawnCapturePromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbnkqRBNKQ]\+?");
-		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbnkqRBNKQ]\+?");
+		private Regex pawnCapturePromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbnkqRBNKQ][\+\#]?");
+		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbnkqRBNKQ][\+\#]?");
+		private Regex castlePattern { get; } = new Regex(@"O\-O(\-O)?[\+\#]?");
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
@@ -26,7 +27,10 @@ namespace chess.v4.engine.service {
 			OrthogonalService = orthogonalService;
 		}
 
-		public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove) {
+		public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove, bool isCastle) {
+			if (isCastle) {
+				return getOriginationPositionForCastling(gameState, piece.Color);
+			}
 			//adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.
 			var potentialSquares = gameState.Attacks.Where(a =>
 														a.Index == newPiecePosition
@@ -68,13 +72,7 @@ namespace chess.v4.engine.service {
 			//x means capture and shouldn't be used in the equation below
 			var capture = isCapture(pgnMove);
 			var check = isCheck(pgnMove);
-			var castleKingside = isCastleKingside(pgnMove);
-			var castleQueenside = isCastleQueenside(pgnMove);
-			var isCastle = castleKingside || castleQueenside;
-			if (isCastle) {
-				return getOriginationPositionForCastling(gameState, piece.Color);
-			}
-
+			
 			//todo: refactor to eliminate redundancy
 			//look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
 			//this should only happen if there are two pieces of the same type that can attack here.
@@ -204,7 +202,7 @@ namespace chess.v4.engine.service {
 				}
 			}
 			var piece = new Piece(pieceType, gameState.ActiveColor);
-			var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove);
+			var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove, positionFromPGNMove.isCastle);
 			return (piecePosition.Index, newPiecePosition, promotedPiece);
 		}
 
@@ -254,14 +252,15 @@ namespace chess.v4.engine.service {
 		}
 
 		private static (int position, char promotedPiece) getCastlePositionFromPGNMove(string pgnMove, Color playerColor, char promotedPiece) {
+			var move = pgnMove.Trim('+').Trim('#');
 			if (playerColor == Color.White) {
-				if (pgnMove == "O-O") {
+				if (move == "O-O") {
 					return (6, promotedPiece);
 				} else {
 					return (2, promotedPiece);
 				}
 			} else {
-				if (pgnMove == "O-O") {
+				if (move == "O-O") {
 					return (62, promotedPiece);
 				} else {
 					return (58, promotedPiece);
@@ -366,11 +365,12 @@ namespace chess.v4.engine.service {
 			return pgnMove;
 		}
 
-		private (int position, char promotedPiece) getPositionFromPGNMove(string pgnMove, Color playerColor, string enPassantTargetSquare) {
+		private (int position, char promotedPiece, bool isCastle) getPositionFromPGNMove(string pgnMove, Color playerColor, string enPassantTargetSquare) {
 			var promotedPiece = '-';
-			var isCastle = pgnMove == "O-O" || pgnMove == "O-O-O";
+			var isCastle = castlePattern.IsMatch(pgnMove);
 			if (isCastle) {
-				return getCastlePositionFromPGNMove(pgnMove, playerColor, promotedPiece);
+				var castleResult = getCastlePositionFromPGNMove(pgnMove, playerColor, promotedPiece);
+				return (castleResult.position, castleResult.promotedPiece, true);
 			}
 			var isEnPassant = false;
 			if (enPassantTargetSquare != "-") {
@@ -381,7 +381,7 @@ namespace chess.v4.engine.service {
 						var rightSide = pgnMove.Substring(4, len - 4);
 						isEnPassant = rightSide.Contains("ep") || rightSide.Contains("e.p.");
 						if (isEnPassant) {
-							return (NotationUtility.CoordinateToPosition(enPassantTargetSquare), promotedPiece);
+							return (NotationUtility.CoordinateToPosition(enPassantTargetSquare), promotedPiece, false);
 						}
 					}
 				}
@@ -397,7 +397,7 @@ namespace chess.v4.engine.service {
 					promotedPiece = pgnMove.Substring(pgnMove.Length - 2, 1)[0];
 				}
 				var dest = pawnCapturePromotion ? pgnMove.Substring(2, 2) : pgnMove.Substring(0, 2);
-				return (NotationUtility.CoordinateToPosition(dest), promotedPiece);
+				return (NotationUtility.CoordinateToPosition(dest), promotedPiece, false);
 			}
 			//probably just a regular move
 			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
@@ -407,7 +407,7 @@ namespace chess.v4.engine.service {
 				x = 4;
 				throw new Exception("I didn't think this could happen, so I tested it with an exception.");
 			}
-			return (NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece);
+			return (NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece, false);
 		}
 
 		private bool isCapture(string move) {

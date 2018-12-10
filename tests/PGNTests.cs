@@ -89,7 +89,7 @@ namespace Tests {
 			}
 			this.Logger.LogInformation(attackMessage.ToString());
 			Assert.AreEqual(22, rookAttacks.Where(a => !a.IsProtecting).Count());
-			var pos = PGNService.GetCurrentPositionFromPGNMove(gameState, piece, 43, "R1d6");
+			var pos = PGNService.GetCurrentPositionFromPGNMove(gameState, piece, 43, "R1d6", false);
 			Assert.AreEqual(3, pos.Index);
 			//should make a test that asserts that this is check
 		}

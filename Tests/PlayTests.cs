@@ -143,7 +143,7 @@ namespace Tests {
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
 			var test = "";
-			var moveBreak = 74;
+			var moveBreak = 15;
 			var xs = move.Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace chess.v4.engine.interfaces {
 	public interface IPGNService {
 
-		Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove);
+		Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove, bool isCastle);
 
 		char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor);
 
