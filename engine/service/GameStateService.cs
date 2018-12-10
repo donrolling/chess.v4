@@ -155,6 +155,12 @@ namespace chess.v4.engine.service {
 				var rookPositions = CastleUtility.GetRookPositionsForCastle(gameState.ActiveColor, piecePosition, newPiecePosition);
 				movingGameState = manageSquares(movingGameState, stateInfo, rookPositions.RookPos, rookPositions.NewRookPos);
 			}
+			if (stateInfo.IsEnPassant) {
+				//remove the attacked pawn 
+				var enPassantAttackedPawnPosition = gameState.ActiveColor == Color.White ? newPiecePosition - 8 : newPiecePosition + 8;
+				var enPassantAttackedPawnSquare = movingGameState.Squares.GetSquare(enPassantAttackedPawnPosition);
+				enPassantAttackedPawnSquare.Piece = null;
+			}
 			this.NotationService.SetGameState_FEN(gameState, movingGameState, piecePosition, newPiecePosition);
 			var currentStateFEN = movingGameState.ToString();
 

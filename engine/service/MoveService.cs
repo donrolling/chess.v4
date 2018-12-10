@@ -29,6 +29,12 @@ namespace chess.v4.engine.service {
 			}
 
 			stateInfo.IsPawnPromotion = this.isPawnPromotion(oldSquare, newPiecePosition);
+			if (gameState.EnPassantTargetSquare != "-" && oldSquare.Piece.PieceType == PieceType.Pawn) {
+				var pawnEnPassantPosition = NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare);
+				if (newPiecePosition == pawnEnPassantPosition) {
+					stateInfo.IsEnPassant = true;
+				}
+			}
 
 			var isResign = false;
 			var isDraw = false;
@@ -249,9 +255,9 @@ namespace chess.v4.engine.service {
 
 		private IEnumerable<AttackedSquare> getAttacksOnKing(GameState gameState, Color color) {
 			return gameState.Attacks
-							.Where(a => 
-								a.Occupied 
-								&& a.Piece.Color == color 
+							.Where(a =>
+								a.Occupied
+								&& a.Piece.Color == color
 								&& a.Piece.PieceType == PieceType.King
 								&& !a.IsProtecting
 							);
