@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace chess.v4.engine.service {
-
 	// Pawn promotions are notated by appending an "=" to the destination square, followed by the piece the pawn is promoted to.
 	// "e8=Q". If the move is a checking move, the plus sign "+" is also appended;
 	// if the move is a checkmating move, the number sign "#" is appended instead. For example: "e8=Q#".
@@ -17,7 +16,7 @@ namespace chess.v4.engine.service {
 	public class PGNService : IPGNService {
 		public IMoveService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
-		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbkqRBKQ]");
+		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbkqRBKQ]");
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
@@ -387,16 +386,15 @@ namespace chess.v4.engine.service {
 				}
 			}
 
+			//could be a pawn promotion
+			if (pawnPromotionPattern.IsMatch(pgnMove)) {
+				//yeah, it is a pawn promotion
+				promotedPiece = pgnMove.Last();
+				var dest = pgnMove.Substring(2, 2);
+				return (NotationUtility.CoordinateToPosition(dest), promotedPiece);
+			}
 			//probably just a regular move
 			pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
-			if (pgnMove.Length == 3) {
-				//could be a pawn promotion
-				if (pawnPromotionPattern.IsMatch(pgnMove)) {
-					//yeah, it is a pawn promotion
-					promotedPiece = pgnMove.Last();
-					return (NotationUtility.CoordinateToPosition(pgnMove.Substring(0, 2)), promotedPiece);
-				}
-			}
 			//not sure why I needed this
 			var x = 2;
 			if (pgnMove.Contains("=")) {
