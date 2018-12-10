@@ -16,7 +16,8 @@ namespace chess.v4.engine.service {
 	public class PGNService : IPGNService {
 		public IMoveService DiagonalService { get; }
 		public IOrthogonalService OrthogonalService { get; }
-		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbkqRBKQ]");
+		private Regex pawnCapturePromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbkqRBKQ]\+?");
+		private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbkqRBKQ]\+?");
 		public const char NullPiece = '-';
 		public const char PawnPromotionIndicator = '=';
 
@@ -387,10 +388,15 @@ namespace chess.v4.engine.service {
 			}
 
 			//could be a pawn promotion
-			if (pawnPromotionPattern.IsMatch(pgnMove)) {
+			var pawnCapturePromotion = pawnCapturePromotionPattern.IsMatch(pgnMove);
+			var pawnPromotion = pawnPromotionPattern.IsMatch(pgnMove);
+			if (pawnCapturePromotion || pawnPromotion) {
 				//yeah, it is a pawn promotion
 				promotedPiece = pgnMove.Last();
-				var dest = pgnMove.Substring(2, 2);
+				if (promotedPiece == '+') {
+					promotedPiece = pgnMove.Substring(pgnMove.Length - 2, 1)[0];
+				}
+				var dest = pawnCapturePromotion ? pgnMove.Substring(2, 2) : pgnMove.Substring(0, 2);
 				return (NotationUtility.CoordinateToPosition(dest), promotedPiece);
 			}
 			//probably just a regular move
