@@ -49,13 +49,13 @@ namespace chess.v4.engine.service {
 
 		private List<int> getEntireDiagonalLine(int pos1, int pos2) {
 			//diagonal moves: rise LtoR /  or RtoL \
-			var dxs = new List<int> { pos1, pos2 };
 			var diff = Math.Abs(pos1 - pos2);
 			var ltr = diff % 9 == 0;
 			var rtl = diff % 7 == 0;
 			if (!ltr && !rtl) {
 				throw new Exception("What? This is supposed to be diagonal.");
 			}
+			var dxs = new List<int> { pos1, pos2 };
 			//smallest # will be closest to the left or right in the line
 			//the left terminating position is evenly divisible by 8
 			//the right terminating position is evently divisible by 7
@@ -156,6 +156,7 @@ namespace chess.v4.engine.service {
 		private bool interpositionsExist(IEnumerable<AttackedSquare> attacksOnKing, IEnumerable<AttackedSquare> teamAttacks) {
 			foreach (var attackOnKing in attacksOnKing) {
 				var attackIsOrthogonal = GeneralUtility.IsOrthogonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+				var attackIsDiagonal = GeneralUtility.IsDiagonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
 				var range = new List<Square>();
 				if (attackIsOrthogonal) {
 					var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
@@ -164,7 +165,7 @@ namespace chess.v4.engine.service {
 					if (ixs.Any()) {
 						return true;
 					}
-				} else {
+				} else if(attackIsDiagonal) {
 					var dxs = getEntireDiagonalLine(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
 					//if dxs contains the clearMove.Index, then the king has not moved out of check
 					var ixs = teamAttacks.Select(a => a.Index).Intersect(dxs);
@@ -172,6 +173,7 @@ namespace chess.v4.engine.service {
 						return true;
 					}
 				}
+				//else it could be a knight attack, but no interpositions would exist
 			}
 			return false;
 		}

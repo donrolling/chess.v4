@@ -1,10 +1,10 @@
 ﻿using chess.v4.engine.extensions;
 using chess.v4.models;
 using chess.v4.models.enumeration;
+using System;
 using System.Collections.Generic;
 
 namespace chess.v4.engine.Utility {
-
 	public static class GeneralUtility {
 
 		public static bool BreakAfterAction(bool ignoreKing, Piece piece, Color activeColor) {
@@ -25,13 +25,6 @@ namespace chess.v4.engine.Utility {
 				return true;
 			}
 			return false;
-		}
-
-		public static bool IsTeamPiece(Color pieceColor, Piece attackedPiece) {
-			if (attackedPiece == null) {
-				return true;
-			}
-			return attackedPiece.Color != pieceColor;
 		}
 
 		public static (bool IsValidCoordinate, bool BreakAfterAction, bool IsTeamPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing) {
@@ -110,10 +103,27 @@ namespace chess.v4.engine.Utility {
 			return positions.Contains(p1 - p2);
 		}
 
+		public static bool IsDiagonal(int p1, int p2) {
+			var diff = Math.Abs(p1 - p2);
+			var ltr = diff % 9 == 0;
+			var rtl = diff % 7 == 0;
+			if (!ltr && !rtl) {
+				return false;
+			}
+			return true;
+		}
+
 		public static bool IsOrthogonal(int p1, int p2) {
 			var rank = GetEntireRank(NotationUtility.PositionToRankInt(p1));
 			var file = GetEntireFile(p1);
 			return rank.Contains(p2) || file.Contains(p2);
+		}
+
+		public static bool IsTeamPiece(Color pieceColor, Piece attackedPiece) {
+			if (attackedPiece == null) {
+				return true;
+			}
+			return attackedPiece.Color != pieceColor;
 		}
 
 		public static bool IsValidCoordinate(int position) {

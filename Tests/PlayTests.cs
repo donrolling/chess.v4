@@ -57,14 +57,14 @@ namespace Tests {
 			}
 		}
 
-		//[TestMethod]
-		//public async Task PlayAllGamesFromTheDatabase_MarkTheBadOnes_ButPlayTheGoodOnes() {
-		//	var pageInfo = new PageInfo { PageSize = 10000 };
-		//	var gamesResult = await this.GameService.ReadAll(pageInfo);
-		//	foreach (var game in gamesResult.Data) {
-		//		await playGame_ArriveAtSameresult_NoAssertions(game);
-		//	}
-		//}
+		[TestMethod]
+		public async Task PlayAllGamesFromTheDatabase_MarkTheBadOnes_ButPlayTheGoodOnes() {
+			var pageInfo = new PageInfo { PageSize = 10000 };
+			var gamesResult = await this.GameService.ReadAll(pageInfo);
+			foreach (var game in gamesResult.Data) {
+				await playGame_ArriveAtSameresult_NoAssertions(game);
+			}
+		}
 
 		private async Task playGame_ArriveAtSameresult(Game game) {
 			var playGameInfo = playGamePrep(game);
@@ -143,7 +143,7 @@ namespace Tests {
 
 		private GameState playMove(GameState gameState, Game game, string move, int moveCount) {
 			var test = "";
-			var moveBreak = 37;
+			var moveBreak = 45;
 			var xs = move.Split(' ');
 			var a = xs[0];
 			if (endgamePattern.Matches(a).Any()) {
