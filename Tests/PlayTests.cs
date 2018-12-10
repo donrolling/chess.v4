@@ -57,14 +57,14 @@ namespace Tests {
 			}
 		}
 
-		//[TestMethod]
-		//public async Task PlayAllGamesFromTheDatabase_MarkTheBadOnes_ButPlayTheGoodOnes() {
-		//	var pageInfo = new PageInfo { PageSize = 10000 };
-		//	var gamesResult = await this.GameService.ReadAll(pageInfo);
-		//	foreach (var game in gamesResult.Data) {
-		//		await playGame_ArriveAtSameresult_NoAssertions(game);
-		//	}
-		//}
+		[TestMethod]
+		public async Task PlayAllGamesFromTheDatabase_MarkTheBadOnes_ButPlayTheGoodOnes() {
+			var pageInfo = new PageInfo { PageSize = 10000 };
+			var gamesResult = await this.GameService.ReadAll(pageInfo);
+			foreach (var game in gamesResult.Data) {
+				await playGame_ArriveAtSameresult_NoAssertions(game);
+			}
+		}
 
 		private async Task playGame_ArriveAtSameresult(Game game) {
 			var playGameInfo = playGamePrep(game);

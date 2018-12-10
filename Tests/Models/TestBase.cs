@@ -78,7 +78,6 @@ namespace Tests.Models {
 
 			//settings
 			this.AppSettings = this.ServiceProvider.GetService<IOptions<AppSettings>>();
-			var loggerFactory = this.ServiceProvider.GetService<ILoggerFactory>();
 			this.Logger = LogUtility.GetLogger(loggerFactory, this.GetType());
 		}
 	}
