@@ -1,10 +1,10 @@
-[Event "It (cat.6)"]
-[Site "Djenovici (Montenegro)"]
-[Date "2017.11.21"]
+[Event "Cup Gaprindashvili (open)"]
+[Site "Tbilisi (Georgia)"]
+[Date "2017.11.16"]
 [Round "4"]
-[White "Vardan Nagpal (IND)"]
-[Black "Kumar Nikhil"]
-[Result "0-1"]
+[White "Kekelidze Mikheil (GEO)"]
+[Black "Shanava Konstantine (GEO)"]
+[Result "1-0"]
 [ECO ""]
 [WhiteElo ""]
 [BlackElo ""]
@@ -14,4 +14,4 @@
 [Source ""]
 [Remark ""]
 
-1.d4 d5 2.c4 e6 3.Nf3 Nf6 4.Nc3 Be7 5.Bg5 h6 6.Bh4 O-O 7.cxd5 exd5 8.e3 c6 9.Bd3 Nbd7 10.Qc2 Re8 11.Bg3 Nf8 12.h3 Bd6 13.Bxd6 Qxd6 14.O-O Be6 15.Rab1 a5 16.Ne5 N6d7 17.f4 f6 18.Nxd7 Nxd7 19.f5 Bf7 20.Rf3 c5 21.Bb5 Rac8 22.Qf2 Re7 23.Bxd7 Rxd7 24.Rd1 c4 25.g4 Be8 26.Rg3 Rf7 27.a4 Bc6 28.h4 Qd7 29.Ra1 Kf8 30.Qc2 Ke8 31.Kf2 Qd6 32.Rag1 Kd8 33.Ke1 Kc7 34.R1g2 Kb8 35.Kd2 Bd7 36.Kc1 Rff8 37.Rf3 Rc6 38.Rg1 Rb6 39.Rh3 Ka8 40.Rf3 Rb3 41.g5 fxg5 42.hxg5 hxg5 43.Rxg5 Rh8 44.Rf1 Rh3 45.Rxg7 Rxe3 46.f6 Rexc3 47.bxc3 Qa3+ 48.Kd2 Rb2 49.f7 Rxc2+ 50.Kxc2 Bxa4+ 51.Kd2 Qb2+ 52.Ke1 Qxc3+ 53.Ke2 Qd3+ 54.Kf2 Qxd4+ 55.Ke2 Qxg7 56.f8Q+ Qxf8 57.Rxf8+ Ka7 58.Rd8 Bc6 59.Ke3 b5 60.Kd4 Kb6 61.Rb8+ Bb7 62.Kc3 b4+ 63.Kb2 a4 64.Rh8 Kc5 65.Rh6 Bc6 66.Rg6 Bb5 67.Kb1 c3 68.Rg3 Kc4 69.Ka1 b3 70.Rh3 a3 71.Rg3 Ba4 72.Rh3 b2+ 73.Ka2 Bb3+ 74.Kxa3 b1N# 0-1
+1.c4 e5 2.Nc3 d6 3.Nf3 g6 4.d4 Bg7 5.dxe5 dxe5 6.Qxd8+ Kxd8 7.h3 Be6 8.Ng5 Bxc4 9.b3 Be6 10.Ba3 Nf6 11.O-O-O+ Nbd7 12.e3 Bf8 13.Bb2 Bd6 14.g4 Ke7 15.Bg2 Nc5 16.Nxe6 fxe6 17.g5 Nh5 18.Ne4 Nxe4 19.Bxe4 Rhf8 20.Rd2 Rab8 21.Rc2 Rf7 22.Bc3 Ng7 23.h4 b6 24.Kd1 a5 25.Ke2 Rbf8 26.Rh2 Nh5 27.Rg2 Ng7 28.Rh2 c5 29.Rc1 Bb8 30.Rch1 Rg8 31.Rg2 Rff8 32.Rg4 Kd8 33.Bd3 Rf7 34.Rd1 Ke7 35.Bb5 Rd8 36.Rxd8 Kxd8 37.Re4 Rf5 38.Bd3 Kd7 39.Bb5+ Ke7 40.Bd3 Ne8 41.Rg4 Rf8 42.h5 gxh5 43.Rh4 h6 44.gxh6 Nf6 45.h7 Kf7 46.f4 Kg7 47.fxe5 Nxh7 48.Rxh5 Rh8 49.Be4 Nf8 50.Rxh8 Kxh8 51.Kd3 Nd7 52.Kc4 Bc7 53.Kb5 Nb8 54.Be1 Bd8 55.Bc6 Kg7 56.Bg3 Kg6 57.Be4+ Kf7 58.Bf4 Ke8 59.Bc6+ Nxc6 60.Kxc6 a4 61.e4 axb3 62.axb3 Kf7 63.Be3 Ke8 64.Kd6 Be7+ 65.Kxe6 b5 66.Bd2 c4 67.b4 Bh4 68.Kd6 Bf2 69.Bc3 1-0
