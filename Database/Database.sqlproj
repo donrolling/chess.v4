@@ -80,8 +80,12 @@
     <None Include="scripts\initial_test_data.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Build Include="dbo\Functions\DoesUserExist.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="local.scmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
 </Project>

@@ -1,2 +1,2 @@
-services.AddTransient<IGameRepository, GameDapperRepository>();
-services.AddTransient<IGameService, GameService>();
+services.AddTransient<IUserRepository, UserDapperRepository>();
+services.AddTransient<IUserService, UserService>();

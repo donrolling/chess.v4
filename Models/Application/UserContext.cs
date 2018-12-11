@@ -12,6 +12,6 @@ namespace Models.Application {
 		//used for claims identity name only
 		public IEnumerable<Claim> Claims { get; set; }
 		public bool IsAuthenticated { get; set; }
-		public string Name { get { return this.Login; } }
+		public string Name { get { return this.Email; } }
 	}
 }

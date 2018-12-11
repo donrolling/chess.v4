@@ -3,9 +3,9 @@
 	"ProcessTemplateStubs": true,
 	"OutputDirectory": "C:\\Projects\\chess.v4\\Tools\\CodeGeneratorOutput",
 	"DestinationDirectory": "C:\\Projects\\chess.v4\\",
-	"IncludeTheseTablesOnly": [],
+	"IncludeTheseTablesOnly": [ "User" ],
 	"IncludeTheseTemplatesOnly": [],
-	"ExcludeTheseTables": [ "User" ],
+	"ExcludeTheseTables": [ ],
 	"ExcludeTheseTemplates": [],
 	"PostProcessScripts": [ "UpdateSQLProject.ps1" ],
 	"Templates": [
