@@ -332,3 +332,10 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+Tools/CodeGeneratorOutput/Data/Repository/Dapper/BaseRepositories/
+
+Tools/CodeGeneratorOutput/Database/Functions/
+
+Tools/CodeGeneratorOutput/Database/Stored Procedures/
+
+Tools/CodeGeneratorOutput/Models/Entities/
