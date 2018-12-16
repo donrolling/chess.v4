@@ -35,8 +35,8 @@ namespace Tests.Utilities {
 			var userContext = new UserContext();
 			userContext.InjectFrom(user);
 			userContext.Claims = new List<System.Security.Claims.Claim> {
-				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Login),
-				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.WindowsAccountName, userContext.Login)
+				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Email),
+				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.WindowsAccountName, userContext.Email)
 			};
 			userContext.IsAuthenticated = true;
 			return userContext;
@@ -45,7 +45,7 @@ namespace Tests.Utilities {
 		private async Task<UserContext> setupUser(string windowsLogin) {
 			var user = await this.UserRepository.Select_ByLogin(windowsLogin);
 			if (user == null) {
-				var _user = new User { Login = windowsLogin, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow };
+				var _user = new User { Email = windowsLogin, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow };
 				var result = await this.UserRepository.Create(_user);
 				if (result.Failure) {
 					throw new Exception(result.Message);

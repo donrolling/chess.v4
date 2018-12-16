@@ -1,4 +1,6 @@
-﻿using Models.Application;
+﻿using Common.Models;
+using Models.Application;
+using Models.DTOs;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -14,5 +16,9 @@ namespace Business.Interfaces {
 		bool HasClaim(Claim claim);
 
 		Task<bool> UserHasAccess(string claimValue);
+		
+		Task<Envelope<Account>> Register(AccountRegistration accountRegistration);
+		
+		Task<Envelope<Account>> Login(string username, string password);
 	}
 }

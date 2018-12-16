@@ -58,7 +58,7 @@ namespace Business.Services.Membership {
 			if (user == null) {
 				var _user = new User {
 					Id = 1,
-					Login = this.AppSettings.Value.TestLogin,
+					Email = this.AppSettings.Value.TestLogin,
 					IsActive = true,
 					CreatedById = 1,
 					CreatedDate = DateTime.Parse("2018-10-26 20:57:55.290"),
@@ -78,8 +78,8 @@ namespace Business.Services.Membership {
 			var userContext = new UserContext();
 			userContext.InjectFrom(user);
 			userContext.Claims = new List<System.Security.Claims.Claim> {
-				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Login),
-				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.WindowsAccountName, userContext.Login)
+				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Email),
+				new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.WindowsAccountName, userContext.Email)
 			};
 			userContext.IsAuthenticated = true;
 			return userContext;

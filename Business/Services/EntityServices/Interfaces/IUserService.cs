@@ -16,8 +16,6 @@ namespace Business.Service.EntityServices.Interfaces {
 
 		Task<IDataResult<User>> ReadAll(PageInfo pageInfo);
 
-		Task<Envelope<Account>> Register(AccountRegistration accountRegistration);
-
 		Task<User> SelectById(long id);
 
 		Task<TransactionResponse> Update(User user);
