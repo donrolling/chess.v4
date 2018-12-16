@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[User] (
     [Id]          BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Guid]        uniqueidentifier NOT NULL,
     [Email]       NVARCHAR (150) NOT NULL,
     [Password]    NVARCHAR (150) NOT NULL,
     [Salt]        NVARCHAR (150) NOT NULL,

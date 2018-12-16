@@ -1,6 +1,6 @@
-﻿CREATE Function [dbo].[User_SelectById] (@id bigint) RETURNS TABLE AS
+CREATE Function [dbo].[User_SelectById] (@id bigint) RETURNS TABLE AS
 	return 
 		select top 1 
-			[Id], [Login], [IsActive], [CreatedById], [CreatedDate], [UpdatedById], [UpdatedDate]	
+			[Id], [Guid], [Email], [Password], [Salt], [IsActive], [CreatedById], [CreatedDate], [UpdatedById], [UpdatedDate]	
 		from [User] 
 		where Id = @id

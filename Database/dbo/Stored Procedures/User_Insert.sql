@@ -1,5 +1,8 @@
-﻿CREATE PROCEDURE [dbo].[User_Insert] (
-	@login nvarchar(150),
+CREATE PROCEDURE [dbo].[User_Insert] (
+	@guid uniqueidentifier,
+	@email nvarchar(150),
+	@password nvarchar(150),
+	@salt nvarchar(150),
 	@isActive bit,
 	@createdById bigint,
 	@createdDate datetime,
@@ -8,9 +11,9 @@
 	@id bigint OUTPUT
 ) AS
 	INSERT INTO [dbo].[User]	(
-		[Login], [IsActive], [CreatedById], [CreatedDate], [UpdatedById], [UpdatedDate]
+		[Guid], [Email], [Password], [Salt], [IsActive], [CreatedById], [CreatedDate], [UpdatedById], [UpdatedDate]
 	)
 	VALUES (
-		@login, @isActive, @createdById, @createdDate, @updatedById, @updatedDate
+		@guid, @email, @password, @salt, @isActive, @createdById, @createdDate, @updatedById, @updatedDate
 	)
 	set @id = Scope_Identity()
