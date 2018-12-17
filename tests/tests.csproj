@@ -45,12 +45,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="PGNTests.cs">
+		<Compile Update="Tests\EngineTests\PGNTests.cs">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Tests\SystemTests\" />
 		<Folder Include="Setup\" />
 	</ItemGroup>
 
