@@ -100,11 +100,14 @@ namespace Business.Services.Membership {
 				Email = accountRegistration.Email,
 				Password = passwordResult.EncryptedPassword,
 				Salt = passwordResult.Salt,
+				CreatedDate = DateTime.UtcNow,
+				UpdatedDate = DateTime.UtcNow
 				//IsActive = false //set isactive false until they register their email
 			};
-			var result = await this.UserRepository.Create(user);
-			if (result.Failure) {
-				return Envelope<Account>.Fail(result.Message);
+			var createResult = await this.UserRepository.Create(user);
+			if (createResult.Failure) {
+				this.Logger.LogError(createResult.Message);
+				return Envelope<Account>.Fail("Failed to created user in database.");
 			}
 			var account = new Account { Email = user.Email };
 			//make them verify their email and stuff

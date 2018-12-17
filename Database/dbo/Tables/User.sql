@@ -4,7 +4,7 @@
     [Email]       NVARCHAR (150) NOT NULL,
     [Password]    NVARCHAR (150) NOT NULL,
     [Salt]        NVARCHAR (150) NOT NULL,
-    [IsActive]    BIT            CONSTRAINT [DF_User_IsActive] DEFAULT ((1)) NULL,
+    [IsActive]    BIT            CONSTRAINT [DF_User_IsActive] DEFAULT ((1)) NOT NULL,
     [CreatedById] BIGINT         NULL,
     [CreatedDate] DATETIME       NULL,
     [UpdatedById] BIGINT         NULL,
