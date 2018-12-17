@@ -1,13 +1,9 @@
 ﻿using Business.Services.Membership;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
-using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
+using System.Security.Claims;
 
-namespace Common.Web.Security.WebAPI {
+namespace Business.Security.WebAPI {
 	public class ClaimRequirementAttribute : Attribute, IFilterMetadata {
 		public Claim Claim { get; }
 

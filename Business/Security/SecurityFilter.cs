@@ -1,6 +1,6 @@
 ﻿using Business.Interfaces;
+using Business.Security.WebAPI;
 using Common.Logging;
-using Common.Web.Security.WebAPI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
