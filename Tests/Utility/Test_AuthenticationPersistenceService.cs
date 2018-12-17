@@ -20,8 +20,12 @@ namespace Tests.Utilities {
 			this.User = this.setupUser(appSettings.Value.TestLogin).Result;
 		}
 
-		public Task<UserContext> RetrieveUser() {
-			return Task.Run(() => { return this.User; });
+		public Task PersistUser(UserContext user, DateTime issueDate, DateTime expireDate, bool isPersistent = false) {
+			throw new NotImplementedException();
+		}
+
+		public UserContext RetrieveUser() {
+			return this.User;
 		}
 
 		public async Task<bool> SignOut() {

@@ -22,7 +22,7 @@ namespace Business.Services.EntityServices.BaseServices {
 		}
 
 		public virtual async Task<InsertResponse<long>> Create(Game game){
-			var prepareForSaveResult = await base.PrepareForSave_Async<Game, long>(game, await this.MembershipService.CurrentUserId());
+			var prepareForSaveResult = await base.PrepareForSave_Async<Game, long>(game, this.MembershipService.CurrentUserId());
 			if (!prepareForSaveResult.IsValid) {
 				return InsertResponse<long>.GetInsertResponse(TransactionResponse.GetTransactionResponse(ActionType.Create, Status.Failure, StatusDetail.Invalid, prepareForSaveResult.ValidationMessage));
 			}
@@ -32,7 +32,7 @@ namespace Business.Services.EntityServices.BaseServices {
 		}
 
 		public virtual async Task<TransactionResponse> Update(Game game){
-			var prepareForSaveResult = await base.PrepareForSave_Async<Game, long>(game, await this.MembershipService.CurrentUserId());
+			var prepareForSaveResult = await base.PrepareForSave_Async<Game, long>(game, MembershipService.CurrentUserId());
 			if (!prepareForSaveResult.IsValid) {
 				return TransactionResponse.GetTransactionResponse(ActionType.Update, Status.Failure, StatusDetail.Invalid, prepareForSaveResult.ValidationMessage);
 			}

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Business.Interfaces {
 	public interface IMembershipService {
 
-		Task<UserContext> Current();
+		UserContext Current();
 
-		Task<long> CurrentUserId();
+		long CurrentUserId();
 
 		UserContext GuestUser();
 

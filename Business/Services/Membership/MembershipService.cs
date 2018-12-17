@@ -48,12 +48,12 @@ namespace Business.Services.Membership {
 			this.AppSettings = appSettings;
 		}
 
-		public async Task<UserContext> Current() {
-			return await this.AuthenticationPersistenceService.RetrieveUser();
+		public UserContext Current() {
+			return this.AuthenticationPersistenceService.RetrieveUser();
 		}
 
-		public async Task<long> CurrentUserId() {
-			var user = await this.Current();
+		public long CurrentUserId() {
+			var user = this.Current();
 			return user.Id;
 		}
 

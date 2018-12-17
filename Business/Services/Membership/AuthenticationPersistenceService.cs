@@ -1,7 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Services.Cookies;
 using Common.BaseClasses;
-using Common.Web.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,7 @@ namespace Business.Services.Membership {
 
 		public IHttpContextAccessor HttpContextAccessor { get; }
 
-		public ISessionCacheService SessionCacheService { get; }
+		//public ISessionCacheService SessionCacheService { get; }
 
 		public const string AUTH_SESSION_KEY = "AuthenticationPersistenceService";
 
@@ -26,13 +25,13 @@ namespace Business.Services.Membership {
 		public const string COOKIE_NAME2 = ".AspNetCore.AuthCookie";
 
 		public AuthenticationPersistenceService(
-			ISessionCacheService sessionCacheService,
+			//ISessionCacheService sessionCacheService,
 			IHttpContextAccessor httpContextAccessor,
 			ICookieManager cookieManager,
 			ILoggerFactory loggerFactory
 		) : base(loggerFactory) {
 			this.HttpContextAccessor = httpContextAccessor;
-			this.SessionCacheService = sessionCacheService;
+			//this.SessionCacheService = sessionCacheService;
 			this.CookieManager = cookieManager;
 		}
 
@@ -50,17 +49,17 @@ namespace Business.Services.Membership {
 				this.Logger.LogError(ex, "Sign In Error");
 				throw;
 			}
-			var userInfo = this.CookieManager.Set(COOKIE_NAME,
-new UserCookieInfo {
-						UserSessionId = Guid.NewGuid(),
-						OriginalLogin = this.getUsernameFromHttpContext()
-					}
-,
-					new CookieOptions {
-						Expires = DateTimeOffset.Now.AddMinutes(20),
-					}
-			);
-			this.SessionCacheService.Set(this.getKey(userInfo.UserSessionId), user, true);
+//			var userInfo = this.CookieManager.Set(COOKIE_NAME,
+//				new UserCookieInfo {
+//						UserSessionId = Guid.NewGuid(),
+//						OriginalLogin = this.getUsernameFromHttpContext()
+//					}
+//,
+//					new CookieOptions {
+//						Expires = DateTimeOffset.Now.AddMinutes(20),
+//					}
+//			);
+//			this.SessionCacheService.Set(this.getKey(userInfo.UserSessionId), user, true);
 		}
 
 		public UserContext RetrieveUser() {
@@ -68,7 +67,8 @@ new UserCookieInfo {
 			if (userInfo.UserSessionId == Guid.Empty) {
 				return null;
 			}
-			return this.SessionCacheService.Get<UserContext>(this.getKey(userInfo.UserSessionId), true);
+			return null;
+			//return this.SessionCacheService.Get<UserContext>(this.getKey(userInfo.UserSessionId), true);
 		}
 
 		private string getKey(Guid userSessionId) {
