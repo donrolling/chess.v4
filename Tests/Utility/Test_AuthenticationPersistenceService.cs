@@ -17,7 +17,7 @@ namespace Tests.Utilities {
 
 		public Test_AuthenticationPersistenceService(IUserRepository userRepository, IOptions<AppSettings> appSettings, ILoggerFactory loggerFactory) : base(loggerFactory) {
 			UserRepository = userRepository;
-			this.User = this.setupUser(appSettings.Value.TestLogin).Result;
+			//this.User = this.setupUser(appSettings.Value.TestLogin).Result;
 		}
 
 		public Task PersistUser(UserContext user, DateTime issueDate, DateTime expireDate, bool isPersistent = false) {

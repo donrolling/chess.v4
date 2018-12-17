@@ -59,7 +59,8 @@ namespace Tests.Models {
 			services.AddTransient<IHttpContextAccessor, FakeHttpContextAccessor>();
 			services.AddTransient<IAuthenticationPersistenceService, Test_AuthenticationPersistenceService>();
 			services.AddTransient<IMembershipService, MembershipService>();
-			services.AddTransient<IAuthenticationPersistenceService, AuthenticationPersistenceService>();
+			//services.AddTransient<IAuthenticationPersistenceService, AuthenticationPersistenceService>();
+			services.AddTransient<IAuthenticationPersistenceService, Test_AuthenticationPersistenceService>();
 			
 			//chess services
 			services.AddTransient<IAttackService, AttackService>();
