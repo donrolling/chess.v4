@@ -50,7 +50,7 @@ namespace Tests.Models {
 			services.AddSingleton<IFileProvider>(provider);
 
 			//generated
-			//services.AddTransient<IAppCacheService, AppCacheService>();
+			services.AddTransient<IAppCacheService, AppCacheService>();
 			services.AddTransient<ISessionCacheService, SessionCacheService>();
 			services.AddTransient<IHttpContextAccessor, FakeHttpContextAccessor>();
 			services.AddTransient<IAuthenticationPersistenceService, Test_AuthenticationPersistenceService>();
