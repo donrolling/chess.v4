@@ -1,9 +1,12 @@
 ﻿using Models.Application;
+using System;
 using System.Threading.Tasks;
 
 namespace Business.Interfaces {
 	public interface IAuthenticationPersistenceService {
 
-		Task<UserContext> RetrieveUser();
+		UserContext RetrieveUser();
+
+		Task PersistUser(UserContext user, DateTime issueDate, DateTime expireDate, bool isPersistent = false);
 	}
 }

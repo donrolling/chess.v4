@@ -51,12 +51,12 @@ namespace Tests.Models {
 
 			//generated
 			//services.AddTransient<IAppCacheService, AppCacheService>();
-			//services.AddTransient<ISessionCacheService, SessionCacheService>();
+			services.AddTransient<ISessionCacheService, SessionCacheService>();
 			services.AddTransient<IHttpContextAccessor, FakeHttpContextAccessor>();
-			services.AddTransient<IMembershipService, MembershipService>();
 			services.AddTransient<IAuthenticationPersistenceService, Test_AuthenticationPersistenceService>();
 			services.AddTransient<IMembershipService, MembershipService>();
-
+			services.AddTransient<IAuthenticationPersistenceService, AuthenticationPersistenceService>();
+			
 			//chess services
 			services.AddTransient<IAttackService, AttackService>();
 			services.AddTransient<IGameStateService, GameStateService>();
@@ -78,6 +78,8 @@ namespace Tests.Models {
 
 			//settings
 			this.AppSettings = this.ServiceProvider.GetService<IOptions<AppSettings>>();
+			this.MembershipService = this.ServiceProvider.GetService<IMembershipService>();
+			this.LoggerFactory = loggerFactory;
 			this.Logger = LogUtility.GetLogger(loggerFactory, this.GetType());
 		}
 	}

@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGNImport", "PGNImport\PGNI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGNtoFEN", "PGNtoFEN\PGNtoFEN.csproj", "{30B6CAE4-607A-4005-97E4-FD8A81B03C35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{DBBE2A6E-FA22-4BDE-A0E1-95B85BCC3174}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Website", "Website\Website.csproj", "{DBBE2A6E-FA22-4BDE-A0E1-95B85BCC3174}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Web", "Common.Web\Common.Web.csproj", "{176C5682-BDB3-4F2B-9B6D-65DC0410D83E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{DBBE2A6E-FA22-4BDE-A0E1-95B85BCC3174}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBBE2A6E-FA22-4BDE-A0E1-95B85BCC3174}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBBE2A6E-FA22-4BDE-A0E1-95B85BCC3174}.Release|Any CPU.Build.0 = Release|Any CPU
+		{176C5682-BDB3-4F2B-9B6D-65DC0410D83E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{176C5682-BDB3-4F2B-9B6D-65DC0410D83E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{176C5682-BDB3-4F2B-9B6D-65DC0410D83E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{176C5682-BDB3-4F2B-9B6D-65DC0410D83E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

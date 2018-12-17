@@ -39,6 +39,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Business\Business.csproj" />
+		<ProjectReference Include="..\Common.Web\Common.Web.csproj" />
 		<ProjectReference Include="..\Common\Common.csproj" />
 		<ProjectReference Include="..\data\Data.csproj" />
 		<ProjectReference Include="..\engine\Engine.csproj" />
