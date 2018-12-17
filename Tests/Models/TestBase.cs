@@ -4,8 +4,12 @@ using Business.Services.EntityServices;
 using Business.Services.Membership;
 using chess.v4.engine.interfaces;
 using chess.v4.engine.service;
+using Common.Interfaces;
 using Common.IO;
 using Common.Logging;
+using Common.Services;
+using Common.Web.Interfaces;
+using Common.Web.Services;
 using Data.Repository.Dapper;
 using Data.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -50,8 +54,8 @@ namespace Tests.Models {
 			services.AddSingleton<IFileProvider>(provider);
 
 			//generated
-			//services.AddTransient<IAppCacheService, AppCacheService>();
-			//services.AddTransient<ISessionCacheService, SessionCacheService>();
+			services.AddTransient<IAppCacheService, AppCacheService>();
+			services.AddTransient<ISessionCacheService, SessionCacheService>();
 			services.AddTransient<IHttpContextAccessor, FakeHttpContextAccessor>();
 			services.AddTransient<IAuthenticationPersistenceService, Test_AuthenticationPersistenceService>();
 			services.AddTransient<IMembershipService, MembershipService>();
