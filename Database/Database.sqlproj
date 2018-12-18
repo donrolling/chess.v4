@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="local.scmp" />
+    <None Include="home.scmp" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
