@@ -1,6 +1,6 @@
 {
 	"ConnectionString": "Server=971JT039H2\\DROLLING;Initial Catalog=Chess;Integrated Security=SSPI;",
-	"ProcessTemplateStubs": true,
+	"ProcessTemplateStubs": false,
 	"OutputDirectory": "C:\\Projects\\chess.v4\\Tools\\CodeGeneratorOutput",
 	"DestinationDirectory": "C:\\Projects\\chess.v4\\",
 	"IncludeTheseTablesOnly": [ "User" ],

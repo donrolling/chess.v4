@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Business.Interfaces {
+
 	public interface IMembershipService {
 
 		UserContext Current();
@@ -15,10 +16,12 @@ namespace Business.Interfaces {
 
 		bool HasClaim(Claim claim);
 
-		Task<bool> UserHasAccess(string claimValue);
-		
-		Task<Envelope<Account>> Register(AccountRegistration accountRegistration);
-		
 		Task<Envelope<Account>> Login(string username, string password);
+
+		Task<Envelope<Account>> Register(AccountRegistration accountRegistration, string url);
+
+		Task<bool> UserHasAccess(string claimValue);
+
+		Task<MethodResult> Verify(string verification);
 	}
 }

@@ -47,6 +47,7 @@
 	  <ProjectReference Include="..\data\Data.csproj" />
 	  <ProjectReference Include="..\engine\Engine.csproj" />
 	  <ProjectReference Include="..\models\Models.csproj" />
+	  <ProjectReference Include="..\Website\Website.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

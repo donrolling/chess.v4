@@ -3,7 +3,7 @@ RETURNS TABLE
 AS
 return 
 	select 
-		[Id], [Guid], [Email], [Password], [Salt], [IsActive], [CreatedById], [CreatedDate], [UpdatedById], [UpdatedDate] 
+		[Id], [Guid], [Email], [Password], [Salt], [Verification], [IsActive], [CreatedById], [CreatedDate], [UpdatedById], [UpdatedDate] 
 	from [User]
 	where 
 		([IsActive] = 1 and @readActive = 1)

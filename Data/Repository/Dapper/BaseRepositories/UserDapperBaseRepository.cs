@@ -20,12 +20,13 @@ namespace Data.Repository.Dapper {
 		}
 
 		public virtual async Task<InsertResponse<long>> Create(User user) {
-			var sql = "Execute [dbo].[User_Insert] @Guid, @Email, @Password, @Salt, @IsActive, @CreatedById, @CreatedDate, @UpdatedById, @UpdatedDate, @Id OUTPUT";
+			var sql = "Execute [dbo].[User_Insert] @Guid, @Email, @Password, @Salt, @Verification, @IsActive, @CreatedById, @CreatedDate, @UpdatedById, @UpdatedDate, @Id OUTPUT";
 			var _params = new DynamicParameters();
 			_params.Add("Guid", user.Guid);
 			_params.Add("Email", user.Email);
 			_params.Add("Password", user.Password);
 			_params.Add("Salt", user.Salt);
+			_params.Add("Verification", user.Verification);
 			_params.Add("IsActive", user.IsActive);
 			_params.Add("CreatedById", user.CreatedById);
 			_params.Add("CreatedDate", user.CreatedDate);
@@ -53,7 +54,7 @@ namespace Data.Repository.Dapper {
 		}
 
 		public virtual async Task<TransactionResponse> Update(User user) {
-			var sql = "Execute [dbo].[User_Update] @Id, @Guid, @Email, @Password, @Salt, @IsActive, @UpdatedById, @UpdatedDate";
+			var sql = "Execute [dbo].[User_Update] @Id, @Guid, @Email, @Password, @Salt, @Verification, @IsActive, @UpdatedById, @UpdatedDate";
 			var result = await base.ExecuteAsync(sql, user);
 			return result;
 		}
