@@ -3,7 +3,7 @@ using Models.DTOs;
 using System.Threading.Tasks;
 using Tests.Models;
 
-namespace Tests {
+namespace Tests.SystemTests {
 	[TestClass]
 	public class AccountTests : TestBase {
 
