@@ -28,7 +28,9 @@ namespace Tests.SystemTests {
 
 			//delete user if already there
 			var pageInfo = new PageInfo(1);
+			pageInfo.ReadInactive = true;
 			pageInfo.AddFilter(new SearchFilter(User_Properties.Email, newUser.Email));
+
 			var userQueryResult = await this.UserService.ReadAll(pageInfo);
 			if (userQueryResult.Total > 0) {
 				var user = userQueryResult.Data.First();

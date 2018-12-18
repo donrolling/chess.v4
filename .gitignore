@@ -339,3 +339,5 @@ Tools/CodeGeneratorOutput/Database/Functions/
 Tools/CodeGeneratorOutput/Database/Stored Procedures/
 
 Tools/CodeGeneratorOutput/Models/Entities/
+
+TestEmails/

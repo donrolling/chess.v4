@@ -128,6 +128,7 @@ namespace Business.Services.Membership {
 
 		public async Task<MethodResult> Verify(string verification) {
 			var pageInfo = new PageInfo(1);
+			pageInfo.ReadInactive = true;
 			pageInfo.AddFilter(new SearchFilter(User_Properties.Verification, verification));
 			var userQueryResult = await this.UserRepository.ReadAll(pageInfo);
 			if (userQueryResult.Total == 0 || !userQueryResult.Data.Any()) {
@@ -147,6 +148,9 @@ namespace Business.Services.Membership {
 		private void sendEmail(Account account, string url) {
 			var client = new SmtpClient("localhost");
 			client.UseDefaultCredentials = false;
+			//todo:remove this for real email
+			client.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+			client.PickupDirectoryLocation = "G:\\Projects\\chess.v4\\TestEmails\\";
 			//client.Credentials = new NetworkCredential("username", "password");
 			var body = new StringBuilder();
 			body.Append("<h1>Welcome to Talarius Chess</h1>");
@@ -155,6 +159,7 @@ namespace Business.Services.Membership {
 			body.Append("<p>Thanks a lot.</p>");
 
 			var mailMessage = new MailMessage();
+			mailMessage.IsBodyHtml = true;
 			mailMessage.From = new MailAddress("registrar@talariuschess.com");
 			mailMessage.To.Add(account.Email);
 			mailMessage.Body = body.ToString();
