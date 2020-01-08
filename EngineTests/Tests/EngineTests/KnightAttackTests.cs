@@ -39,7 +39,7 @@ namespace Tests
         {
             var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
             var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-            var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "b1").ToList();
+            var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "b1" && !a.IsProtecting).ToList();
             var squares = new List<int> { 18, 16 };
             TestUtility.ListContainsSquares(attacks, squares, PieceType.Knight);
             Assert.AreEqual(squares.Count(), attacks.Count(), "Wrong number of attacks.");
@@ -50,7 +50,7 @@ namespace Tests
         {
             var fen = "rnbqkbnr/pppppppp/8/8/1N6/8/PPPPPPPP/R1BQKBNR b KQkq - 0 1";
             var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-            var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "b4").ToList();
+            var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "b4" && !a.IsProtecting).ToList();
             var squares = new List<int> { 19, 35, 40, 42 };
             TestUtility.ListContainsSquares(attacks, squares, PieceType.Knight);
             Assert.AreEqual(squares.Count(), attacks.Count(), "Wrong number of attacks.");

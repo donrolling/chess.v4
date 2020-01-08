@@ -52,7 +52,7 @@ namespace Tests
         {
             var fen = "rnbqkbnr/pppppppp/8/8/3B4/8/PPPPPPPP/RN1QKBNR b KQkq - 0 1";
             var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-            var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d4").ToList();
+            var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d4" && !a.IsProtecting).ToList();
             var squares = new List<int> { 20, 34, 41, 48, 18, 36, 45, 54 };
             TestUtility.ListContainsSquares(attacks, squares, PieceType.Bishop);
             Assert.AreEqual(8, attacks.Count());
