@@ -26,11 +26,12 @@ namespace Chess.v4.Engine.Service
 
         public List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false)
         {
-            var currentPosition = movingSquare.Index;
-            var orthogonalLine = getOrthogonalLineFromPos(direction, currentPosition);
             var attacks = new List<AttackedSquare>();
+            var currentPosition = movingSquare.Index;
+            var lineTerminator = getOrthogonalLineTerminator(direction, currentPosition);
             var iterator = getIteratorByDirectionEnum(direction);
-            for (var position = currentPosition + iterator; position != orthogonalLine + iterator; position = position + iterator)
+            var nextPositionInTheLine = currentPosition + iterator;
+            for (var position = nextPositionInTheLine; position != lineTerminator; position = position + iterator)
             {
                 var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
                 if (!isValidCoordinate) { break; }
@@ -68,24 +69,25 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        private int getOrthogonalLineFromPos(Direction direction, int position)
+        private int getOrthogonalLineTerminator(Direction direction, int position)
         {
             var file = NotationUtility.PositionToFileInt(position);
             var rank = NotationUtility.PositionToRankInt(position);
+            var iterator = getIteratorByDirectionEnum(direction);
 
             switch (direction)
             {
                 case Direction.RowUp:
-                    return this.GetEntireFile(file).Max();
+                    return this.GetEntireFile(file).Max() + iterator;
 
                 case Direction.RowDown:
-                    return this.GetEntireFile(file).Min();
+                    return this.GetEntireFile(file).Min() + iterator;
 
                 case Direction.FileUp:
-                    return this.GetEntireRank(rank).Max();
+                    return this.GetEntireRank(rank).Max() + iterator;
 
                 case Direction.FileDown:
-                    return this.GetEntireRank(rank).Min();
+                    return this.GetEntireRank(rank).Min() + iterator;
             }
 
             return 0;
