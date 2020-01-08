@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="logs\**" />
+		<Compile Remove="Setup\**" />
+		<EmbeddedResource Remove="logs\**" />
+		<EmbeddedResource Remove="Setup\**" />
+		<None Remove="logs\**" />
+		<None Remove="Setup\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="nlog.config" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="nlog.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoFixture" Version="4.6.0" />
+		<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+		<PackageReference Include="Microsoft.VisualStudio.TestPlatform" Version="14.0.0.1" />
+		<PackageReference Include="Moq" Version="4.10.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+		<PackageReference Include="NLog" Version="4.5.11" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\engine\Chess.v4.Engine.csproj" />
+	  <ProjectReference Include="..\models\Chess.v4.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Common">
+	    <HintPath>..\Dependencies\Common.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Output\ParsePGN_Data.pgn">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+</Project>

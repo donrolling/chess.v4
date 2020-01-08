@@ -1,14 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyName>chess.v4.engine</AssemblyName>
-    <RootNamespace>chess.v4.engine</RootNamespace>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Chess.v4.Engine</AssemblyName>
+    <RootNamespace>Chess.v4.Engine</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\models\Models.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Common">
+      <HintPath>..\Dependencies\Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

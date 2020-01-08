@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Chess.v4.Engine</AssemblyName>
+    <RootNamespace>Chess.v4.Engine</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Common">
+      <HintPath>..\Dependencies\Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
