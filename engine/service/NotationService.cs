@@ -15,10 +15,6 @@ namespace Chess.v4.Engine.Service
         private static List<PieceType> _castlingPieces { get; set; } = new List<PieceType> { PieceType.Rook, PieceType.King };
         private const string defaultCastlingAvailability = "KQkq";
 
-        public NotationService()
-        {
-        }
-
         public List<Square> GetSquaresFromFEN_Record(FEN_Record fen)
         {
             var squares = new List<Square>();

@@ -10,10 +10,6 @@ namespace Chess.v4.Engine.Service
 {
     public class OrthogonalService : IOrthogonalService
     {
-        public OrthogonalService()
-        {
-        }
-
         public List<int> GetEntireFile(int file)
         {
             return GeneralUtility.GetEntireFile(file);
