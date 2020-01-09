@@ -20,7 +20,7 @@ namespace Chess.v4.Engine.Service
             OrthogonalService = orthogonalService;
         }
 
-        public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false)
+        public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing)
         {
             var accumulator = new List<AttackedSquare>();
             foreach (var square in gameState.Squares.Where(a => a.Occupied).OrderBy(a => a.Piece.OrderOfOperation))
@@ -228,7 +228,7 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing = false)
+        private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing)
         {
             if (ignoreKing)
             {
@@ -296,7 +296,7 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        private void getPieceAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false)
+        private void getPieceAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing)
         {
             switch (square.Piece.PieceType)
             {
