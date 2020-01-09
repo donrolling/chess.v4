@@ -1,4 +1,5 @@
 ﻿using Chess.v4.Engine.Extensions;
+using Chess.v4.Engine.Models;
 using Chess.v4.Models;
 using Chess.v4.Models.Enums;
 using System;
@@ -33,25 +34,25 @@ namespace Chess.v4.Engine.Utility
             return false;
         }
 
-        public static (bool IsValidCoordinate, bool BreakAfterAction, bool IsTeamPiece, Square SquareToAdd) DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing)
+        public static MoveViability DetermineMoveViability(GameState gameState, Piece attackingPiece, int newPosition, bool ignoreKing)
         {
             if (!GeneralUtility.IsValidCoordinate(newPosition))
             {
-                return (false, false, false, null);
+                return new MoveViability(false, false, false, null);
             }
             var newSquare = gameState.Squares.GetSquare(newPosition);
             if (!newSquare.Occupied)
             {
-                return (true, false, false, newSquare);
+                return new MoveViability(true, false, false, newSquare);
             }
             var blockingPiece = newSquare.Piece;
             var canAttackPiece = GeneralUtility.IsTeamPiece(attackingPiece.Color, blockingPiece);
             if (!canAttackPiece)
             {
-                return (true, true, true, newSquare);
+                return new MoveViability(true, true, true, newSquare);
             }
             var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, newSquare.Piece.Color);
-            return (true, breakAfterAction, false, newSquare);
+            return new MoveViability(true, breakAfterAction, false, newSquare);
         }
 
         public static char GetCharFromPieceType(PieceType pieceType, Color color)
