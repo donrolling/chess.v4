@@ -155,9 +155,9 @@ namespace Tests
         {
             var fen = "5rk1/5pbp/5Qp1/8/8/8/5PPP/3q2K1 w - - 0 1";
             var gameState = TestUtility.GetGameState(this.GameStateService, fen);
-            var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
+            var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1" && !a.IsProtecting).ToList();
             //king checkmate make sure that the king has no attacks
-            //Assert.AreEqual(0, whiteKingAttacks.Count());
+            Assert.AreEqual(0, whiteKingAttacks.Count());
             Assert.IsTrue(gameState.StateInfo.IsCheck);
             Assert.IsTrue(gameState.StateInfo.IsWhiteCheck);
             Assert.IsFalse(gameState.StateInfo.IsBlackCheck);

@@ -6,7 +6,5 @@ namespace Chess.v4.Engine.Interfaces
     public interface IAttackService
     {
         IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing = false);
-
-        void GetKingAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator);
     }
 }

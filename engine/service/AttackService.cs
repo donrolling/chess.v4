@@ -31,7 +31,7 @@ namespace Chess.v4.Engine.Service
             return accumulator;
         }
 
-        public void GetKingAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator)
+        private void getKingAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator)
         {
             var attacks = new List<AttackedSquare>();
             var squares = gameState.Squares;
@@ -326,7 +326,7 @@ namespace Chess.v4.Engine.Service
                     {
                         return;
                     }
-                    GetKingAttacks(gameState, square, accumulator);
+                    getKingAttacks(gameState, square, accumulator);
                     break;
 
                 default:
