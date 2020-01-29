@@ -146,7 +146,7 @@ namespace Tests
         private List<Game> import()
         {
             var games = new List<Game>();
-            var data = FileUtility.ReadTextFile<PlayTests>("December1.pgn", "Data\\Games");
+            var data = FileUtility.ReadTextFile<PlayTests>("December1.pgn", "Data");
             var groups = data.Split("\r\n\r\n");
             for (int i = 0; i < groups.Length; i = i + 2)
             {
