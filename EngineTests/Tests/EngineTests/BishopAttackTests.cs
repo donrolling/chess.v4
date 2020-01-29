@@ -50,12 +50,16 @@ namespace Tests
         [TestMethod]
         public void WhiteBishopAttacksStartingPositionFromD4()
         {
+            // this test is failing because it is count black king-side rook as an attack. 
+            // It should have stopped at the pawn.
+            // this could be a side effect of code that makes sure that the queen attack is registered in the WhiteKingIsInCheckmateAndHasNoValidMoves test
+            // I might need a cleaner way to program that
             var fen = "rnbqkbnr/pppppppp/8/8/3B4/8/PPPPPPPP/RN1QKBNR b KQkq - 0 1";
             var gameState = TestUtility.GetGameState(this.GameStateService, fen);
             var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d4" && !a.IsProtecting).ToList();
             var squares = new List<int> { 20, 34, 41, 48, 18, 36, 45, 54 };
             TestUtility.ListContainsSquares(attacks, squares, PieceType.Bishop);
-            Assert.AreEqual(8, attacks.Count());
+            Assert.AreEqual(squares.Count(), attacks.Count());
         }
     }
 }

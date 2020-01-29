@@ -131,6 +131,9 @@ namespace Tests
             var fen = "r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9";
             var gameState = TestUtility.GetGameState(this.GameStateService, fen);
 
+            // This test is broken
+            // I'm guessing that the code I wrote to fix the issue in WhiteKingIsInCheckmateAndHasNoValidMoves
+            // is making pieces seem like they are attacking the king when they are not
             var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
             Assert.IsFalse(isCastleThroughCheck);
 
