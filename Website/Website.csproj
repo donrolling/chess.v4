@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Typescript\Index.ts" />
+    <None Remove="Typescript\types\chess.types.ts" />
   </ItemGroup>
 
   <ItemGroup>

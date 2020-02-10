@@ -2,10 +2,21 @@
     ViewData["Title"] = "Home Page";
 }
 <style>
-    #FEN {
-        width: 200px;
+    .chessBoard {
+        width: 400px;
+    }
+
+    .fen {
+        margin-top: 20px;
+        width: 400px;
+    }
+
+    #fenSubmit {
+
     }
 </style >
-<div class="text-center" >
-<input id="FEN" value="r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9"/ >
-</div >
+<div class="text-center">
+    <div id="chessBoard" class="chessBoard"></div>
+    <input id="FEN" class="fen" value="r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9" />
+    <button id="fenSubmit">Submit</button>
+</div>
