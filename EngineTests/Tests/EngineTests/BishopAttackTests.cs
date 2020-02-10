@@ -13,7 +13,6 @@ namespace Tests
     public class BishopAttackTests : TestBase
     {
         public IAttackService AttackService { get; }
-
         public IGameStateService GameStateService { get; }
         public IMoveService MoveService { get; }
 

@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Chess.v4.Engine.Interfaces;
+using Chess.v4.Engine.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace Website
 {
@@ -24,6 +28,17 @@ namespace Website
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //chess services
+            services.AddTransient<IAttackService, AttackService>();
+            services.AddTransient<IGameStateService, GameStateService>();
+            services.AddTransient<IMoveService, MoveService>();
+            services.AddTransient<ICheckmateService, CheckmateService>();
+            services.AddTransient<INotationService, NotationService>();
+            services.AddTransient<IOrthogonalService, OrthogonalService>();
+            services.AddTransient<IPGNFileService, PGNFileService>();
+            services.AddTransient<IPGNService, PGNService>();
+            services.AddTransient<ILoggerFactory, LoggerFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
