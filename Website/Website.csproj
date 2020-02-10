@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Typescript\Index.ts" />
-    <None Remove="Typescript\types\chess.types.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.7.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\" />
-    <Folder Include="wwwroot\ts\" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
