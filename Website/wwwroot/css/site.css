@@ -1,1 +1,33 @@
-﻿
+﻿.container {
+    margin: auto;
+    width: 50%;
+}
+
+.chessBoard {
+    margin: auto;
+    width: 400px;
+}
+
+.fen {
+    margin: auto;
+    width: 400px;
+    display: block;
+}
+
+.spacer20 {
+    height: 20px
+}
+
+#fenSubmit {
+    margin: auto;
+    display: block;
+    width: 80px;
+}
+
+.attacking {
+    background-color: red !important;
+}
+
+.protecting {
+    background-color: green !important;
+}
