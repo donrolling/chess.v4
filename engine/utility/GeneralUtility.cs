@@ -9,7 +9,7 @@ namespace Chess.v4.Engine.Utility
 {
 	public static class GeneralUtility
 	{
-		public static bool BreakAfterAction(bool ignoreKing, Piece piece, Color activeColor)
+		public static bool BreakAfterAction(Piece piece, Color activeColor)
 		{
 			//if (!ignoreKing) { return true; }
 			//if ignoreKing is true, then we won't break after we hit the king
@@ -35,7 +35,7 @@ namespace Chess.v4.Engine.Utility
 			return false;
 		}
 
-		public static MoveViability DetermineMoveViability(GameState gameState, Piece attacker, int position, bool ignoreKing)
+		public static MoveViability DetermineMoveViability(GameState gameState, Piece attacker, int position)
 		{
 			if (!GeneralUtility.IsValidCoordinate(position))
 			{
@@ -52,7 +52,7 @@ namespace Chess.v4.Engine.Utility
 			{
 				return new MoveViability(true, true, true, square);
 			}
-			var breakAfterAction = GeneralUtility.BreakAfterAction(ignoreKing, blockingPiece, attacker.Color);
+			var breakAfterAction = GeneralUtility.BreakAfterAction(blockingPiece, attacker.Color);
 			return new MoveViability(true, breakAfterAction, false, square);
 		}
 

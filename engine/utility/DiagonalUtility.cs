@@ -23,7 +23,7 @@ namespace Chess.v4.Engine.Utility
                     break;
                 }
                 attackPosition = attackPosition + diagonalLine;
-                var moveViability = GeneralUtility.DetermineMoveViability(gameState, attackingPiece, attackPosition, ignoreKing);
+                var moveViability = GeneralUtility.DetermineMoveViability(gameState, attackingPiece, attackPosition);
                 //I don't think either of these conditions should occur.
                 if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null)
                 {

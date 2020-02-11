@@ -31,7 +31,7 @@ namespace Chess.v4.Engine.Service
             {
                 var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
                 if (!isValidCoordinate) { break; }
-                var moveViability = GeneralUtility.DetermineMoveViability(gameState, movingSquare.Piece, position, ignoreKing);
+                var moveViability = GeneralUtility.DetermineMoveViability(gameState, movingSquare.Piece, position);
                 //these conditions shouldn't occur
                 if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null)
                 {
