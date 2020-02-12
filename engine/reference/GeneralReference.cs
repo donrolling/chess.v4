@@ -7,7 +7,7 @@ namespace Chess.v4.Engine.Reference
     {
         public static List<DiagonalDirection> DiagonalLines { get; } = new List<DiagonalDirection> { DiagonalDirection.UpLeft, DiagonalDirection.UpRight, DiagonalDirection.DownLeft, DiagonalDirection.DownRight };
 
-        public static List<Direction> OrthogonalLines { get; } = new List<Direction> { Direction.RowUp, Direction.RowDown, Direction.FileUp, Direction.FileDown };
+        public static List<Direction> OrthogonalLines { get; } = new List<Direction> { Direction.Forward, Direction.Backward, Direction.Right, Direction.Left };
 
         public const string Files = "abcdefgh";
 

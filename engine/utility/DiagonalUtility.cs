@@ -8,9 +8,9 @@ namespace Chess.v4.Engine.Utility
 {
     public static class DiagonalUtility
     {
-        private static List<int> HFile = GeneralUtility.GetEntireFile(7);
+        private static List<int> File = GeneralUtility.GetEntireFile(7);
 
-        public static List<AttackedSquare> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction, bool ignoreKing)
+        public static List<AttackedSquare> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction)
         {
             var attacks = new List<AttackedSquare>();
             var diagonalLine = getIteratorByDirectionEnum(direction);
@@ -39,11 +39,11 @@ namespace Chess.v4.Engine.Utility
             return attacks;
         }
 
-        public static void GetDiagonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false)
+        public static void GetDiagonals(GameState gameState, Square square, List<AttackedSquare> accumulator)
         {
             foreach (var direction in GeneralReference.DiagonalLines)
             {
-                var attacks = GetDiagonalLine(gameState, square, square.Piece, direction, ignoreKing);
+                var attacks = GetDiagonalLine(gameState, square, square.Piece, direction);
                 accumulator.AddRange(attacks);
             }
         }
@@ -125,7 +125,7 @@ namespace Chess.v4.Engine.Utility
                     break;
 
                 case DiagonalDirection.UpRight:
-                    if (HFile.Contains(position)) { return list; }
+                    if (File.Contains(position)) { return list; }
                     if (position > 56) { return list; }
                     increment = 9;
                     while (currentPosition <= 63)
@@ -135,7 +135,7 @@ namespace Chess.v4.Engine.Utility
                         {
                             list.Add(currentPosition);
                         }
-                        if (HFile.Contains(currentPosition)) { break; }
+                        if (File.Contains(currentPosition)) { break; }
                     }
                     break;
 
@@ -155,7 +155,7 @@ namespace Chess.v4.Engine.Utility
                     break;
 
                 case DiagonalDirection.DownRight:
-                    if (HFile.Contains(position)) { return list; }
+                    if (File.Contains(position)) { return list; }
                     if (position < 7) { return list; }
                     increment = -7;
                     while (currentPosition >= 0)
@@ -165,7 +165,7 @@ namespace Chess.v4.Engine.Utility
                         {
                             list.Add(currentPosition);
                         }
-                        if (HFile.Contains(currentPosition)) { break; }
+                        if (File.Contains(currentPosition)) { break; }
                     }
                     break;
 
@@ -193,19 +193,6 @@ namespace Chess.v4.Engine.Utility
                     return -7;
             }
             return 0;
-        }
-
-        private static object howFarToGo(int rank, int file, DiagonalDirectionFromFileNumber direction)
-        {
-            var f1 = howFarToGo(file, direction);
-
-            var result = 0;
-            return result;
-        }
-
-        private static int howFarToGo(int rank, DiagonalDirectionFromRankNumber direction)
-        {
-            return direction == DiagonalDirectionFromRankNumber.Up ? 8 - rank : rank - 1;
         }
 
         private static int howFarToGo(int file, DiagonalDirectionFromFileNumber direction)

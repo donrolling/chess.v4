@@ -14,6 +14,10 @@ namespace Chess.v4.Engine.Service
         public INotationService NotationService { get; }
         public IOrthogonalService OrthogonalService { get; }
 
+        private static readonly List<PieceType> _dangerPieceTypes = new List<PieceType> { PieceType.Queen, PieceType.Rook, PieceType.Bishop };
+        private static readonly List<PieceType> _diagonalDangerPieceTypes = new List<PieceType> { PieceType.Queen, PieceType.Bishop };
+        private static readonly List<PieceType> _orthogonalFangerPieceTypes = new List<PieceType> { PieceType.Queen, PieceType.Rook };
+
         public AttackService(INotationService notationService, IOrthogonalService orthogonalService)
         {
             NotationService = notationService;
@@ -39,19 +43,19 @@ namespace Chess.v4.Engine.Service
             var pieceColor = square.Piece.Color;
             foreach (var offset in offsets)
             {
-                var tempPos = square.Index + offset;
-                var isValidCoordinate = GeneralUtility.IsValidCoordinate(tempPos);
+                var destinationPosition = square.Index + offset;
+                var isValidCoordinate = GeneralUtility.IsValidCoordinate(destinationPosition);
                 if (!isValidCoordinate)
                 {
                     continue;
                 }
-                var _isValidMove = isValidMove(squares, tempPos, pieceColor);
+                var _isValidMove = isValidMove(accumulator, gameState, square, destinationPosition, pieceColor);
                 if (!_isValidMove.IsValid)
                 {
                     continue;
                 }
                 attacks.Add(
-                    new AttackedSquare(square, squares.GetSquare(tempPos), isProtecting: !_isValidMove.CanAttackOccupyingPiece)
+                    new AttackedSquare(square, squares.GetSquare(destinationPosition), isProtecting: !_isValidMove.CanAttackOccupyingPiece)
                 );
             }
 
@@ -185,14 +189,6 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        private bool determineCheck(List<Square> squares, List<int> proposedAttacks, Color pieceColor)
-        {
-            //can't be more than one king
-            //has to be at least two kings
-            var king = squares.FindPiece(PieceType.King, pieceColor);
-            return proposedAttacks.Contains(king.Index);
-        }
-
         private void getKnightAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator)
         {
             var squares = gameState.Squares;
@@ -207,7 +203,7 @@ namespace Chess.v4.Engine.Service
             {
                 var position = currentPosition + potentialPosition;
                 var _isValidKnightMove = isValidKnightMove(currentPosition, position, file, rank);
-                var _isValidMove = isValidMove(squares, position, pieceColor);
+                var _isValidMove = isValidMove(accumulator, gameState, square, position, pieceColor);
                 var _isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
 
                 if (!_isValidKnightMove || !_isValidMove.IsValid || !_isValidCoordinate) { continue; }
@@ -225,18 +221,6 @@ namespace Chess.v4.Engine.Service
             if (attacks.Any())
             {
                 accumulator.AddRange(attacks);
-            }
-        }
-
-        private IEnumerable<Square> getOccupiedSquaresOfOneColor(Color color, List<Square> squares, bool ignoreKing)
-        {
-            if (ignoreKing)
-            {
-                return squares.Where(a => a.Piece != null && a.Piece.Color == color && a.Piece.PieceType != PieceType.King);
-            }
-            else
-            {
-                return squares.Where(a => a.Piece != null && a.Piece.Color == color); ;
             }
         }
 
@@ -357,24 +341,98 @@ namespace Chess.v4.Engine.Service
             return true;
         }
 
-        private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(List<Square> squares, int position, Color pieceColor)
+        private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(List<AttackedSquare> attacks, GameState gameState, Square locationSquare, int destination, Color pieceColor)
         {
-            var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
-            if (!isValidCoordinate)
+            var isValidCoordinate = GeneralUtility.IsValidCoordinate(destination);
+            if (!isValidCoordinate || !gameState.Squares.Any(a => a.Index == destination))
             {
+                // throw new Exception($"Invalid position passed: { position }");
+                // probably doing this just as an easy way to not have to trim squares from every algorithm
                 return (false, false);
             }
-            if (!squares.Any(a => a.Index == position))
+            var destinationSquare = gameState.Squares.GetSquare(destination);
+
+            // if you're not a king you've got simpler rules
+            // but if you're the king, you still have to obey the basics
+            var basics = basicMoveValidity(pieceColor, destinationSquare);
+            if (locationSquare.Piece.PieceType != PieceType.King || !basics.CanAttackOccupyingPiece)
             {
-                return (false, false);
+                return basics;
             }
-            var square = squares.GetSquare(position);
-            if (!square.Occupied)
+
+            // check to make sure that this move would get us out of check
+            var newPositionAttacks = attacks.Where(a => a.Index == destination && a.AttackingSquare.Piece.Color != locationSquare.Piece.Color);
+            if (newPositionAttacks.Any())
             {
+                // king can't move into check
+                return (true, false);
+            }
+            // no-one is attacking the destination that we can tell, let's make sure
+            // piece currently being attacked?
+            var attacksOnThisPosition = attacks.Where(a => a.Index == locationSquare.Index && a.AttackingSquare.Piece.Color != locationSquare.Piece.Color);
+            if (!attacksOnThisPosition.Any())
+            {
+                // nobody is attacking this king now, or in the new position
                 return (true, true);
             }
-            var blockingPiece = square.Piece;
-            if (GeneralUtility.IsTeamPiece(pieceColor, blockingPiece))
+            var dangerSquares = attacksOnThisPosition.Where(a => _dangerPieceTypes.Contains(a.AttackingSquare.Piece.PieceType) && a.AttackingSquare.Piece.Color != locationSquare.Piece.Color);
+            if (!dangerSquares.Any())
+            {
+                // nobody dangerous is attacking this king now, or in the new position
+                return (true, true);
+            }
+            // which direction are we moving?
+            var directionInfo = GeneralUtility.GetDirectionInfo(locationSquare.Index, destination);
+            var directionalDangerPieceTypes = directionInfo.IsDiagonal ? _diagonalDangerPieceTypes : _orthogonalFangerPieceTypes;
+            var directionalDangerSquares = attacksOnThisPosition.Where(a => directionalDangerPieceTypes.Contains(a.AttackingSquare.Piece.PieceType) && a.AttackingSquare.Piece.Color != locationSquare.Piece.Color);
+            foreach (var dangerSquare in directionalDangerSquares)
+            {
+                // is that going to get us out of the attack path that this piece would normally have?
+                var dangerPieceDirectionInfo = GeneralUtility.GetDirectionInfo(dangerSquare.AttackingSquare.Index, locationSquare.Index);
+                if (dangerPieceDirectionInfo.IsDiagonal && directionInfo.IsOrthogonal)
+                {
+                    // won't intersect paths
+                    continue;
+                }
+                if (dangerPieceDirectionInfo.IsOrthogonal && directionInfo.IsDiagonal)
+                {
+                    // won't intersect paths
+                    continue;
+                }
+
+                if (dangerPieceDirectionInfo.IsDiagonal && directionInfo.IsDiagonal)
+                {
+                    // are we moving on the same diagonal plane?
+                    if (dangerPieceDirectionInfo.DiagonalDirection == directionInfo.DiagonalDirection)
+                    {
+                        // not safe
+                        return (true, false);
+                    }
+                }
+                if (dangerPieceDirectionInfo.IsOrthogonal && directionInfo.IsOrthogonal)
+                {
+                    // are we moving on the same orthogonal plane?
+                    if (dangerPieceDirectionInfo.Direction == directionInfo.Direction)
+                    {
+                        // not safe
+                        return (true, false);
+                    }
+                }
+            }
+            // safe
+            return (true, true);
+        }
+
+        private static (bool IsValid, bool CanAttackOccupyingPiece) basicMoveValidity(Color pieceColor, Square square)
+        {
+            if (!square.Occupied)
+            {
+                // go for it
+                return (true, true);
+            }
+
+            // if it is your teammate, you can't do that
+            if (GeneralUtility.IsTeamPiece(pieceColor, square.Piece))
             {
                 return (true, true);
             }

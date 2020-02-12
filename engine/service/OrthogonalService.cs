@@ -67,16 +67,16 @@ namespace Chess.v4.Engine.Service
 
             switch (direction)
             {
-                case Direction.RowUp:
+                case Direction.Forward:
                     return this.GetEntireFile(file).Max() + iterator;
 
-                case Direction.RowDown:
+                case Direction.Backward:
                     return this.GetEntireFile(file).Min() + iterator;
 
-                case Direction.FileUp:
+                case Direction.Right:
                     return this.GetEntireRank(rank).Max() + iterator;
 
-                case Direction.FileDown:
+                case Direction.Left:
                     return this.GetEntireRank(rank).Min() + iterator;
             }
 
@@ -87,16 +87,20 @@ namespace Chess.v4.Engine.Service
         {
             switch (direction)
             {
-                case Direction.RowUp:
+                // toward black side
+                case Direction.Forward:
                     return 8;
 
-                case Direction.RowDown:
+                // toward white side
+                case Direction.Backward:
                     return -8;
 
-                case Direction.FileUp:
+                // toward white right side
+                case Direction.Right:
                     return 1;
 
-                case Direction.FileDown:
+                // toward white left side
+                case Direction.Left:
                     return -1;
             }
             return 0;

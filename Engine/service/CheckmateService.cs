@@ -181,7 +181,7 @@ namespace Chess.v4.Engine.Service
             foreach (var attackOnKing in attacksOnKing)
             {
                 var attackIsOrthogonal = GeneralUtility.IsOrthogonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
-                var attackIsDiagonal = GeneralUtility.IsDiagonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+                var attackIsDiagonal = DiagonalUtility.IsDiagonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
                 var range = new List<Square>();
                 if (attackIsOrthogonal)
                 {

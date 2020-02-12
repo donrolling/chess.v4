@@ -168,6 +168,11 @@ namespace Tests
         }
 
         [TestMethod]
+        public void KingFaceoff() { 
+        
+        }
+
+        [TestMethod]
         public void WhiteKingMayCastle()
         {
             var fen = "r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PPQPPP/R3KBNR w KQkq - 3 5";

@@ -13,8 +13,6 @@ namespace Chess.v4.Engine.Interfaces
 
         bool HasThreefoldRepition(GameState gameState);
 
-        bool IsDiagonalMove(int startPosition, int endPosition);
-
         bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare);
 
         bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheckWhite, Color activeColor, int kingSquare);
