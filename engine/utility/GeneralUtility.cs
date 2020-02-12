@@ -177,6 +177,7 @@ namespace Chess.v4.Engine.Utility
             }
             else
             {
+                // need to make a test for this
                 var distance = destination - location;
                 result.DiagonalDirection = distance % 7 == 0 ? distance > 0 ? DiagonalDirection.UpLeft : DiagonalDirection.DownRight : distance > 0 ? DiagonalDirection.DownLeft : DiagonalDirection.UpRight; 
             }
