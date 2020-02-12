@@ -406,7 +406,7 @@ namespace Chess.v4.Engine.Service
                     if (dangerPieceDirectionInfo.DiagonalDirection == directionInfo.DiagonalDirection)
                     {
                         // not safe
-                        return (true, false);
+                        return (false, false);
                     }
                 }
                 if (dangerPieceDirectionInfo.IsOrthogonal && directionInfo.IsOrthogonal)
@@ -415,7 +415,7 @@ namespace Chess.v4.Engine.Service
                     if (dangerPieceDirectionInfo.Direction == directionInfo.Direction)
                     {
                         // not safe
-                        return (true, false);
+                        return (false, false);
                     }
                 }
             }
