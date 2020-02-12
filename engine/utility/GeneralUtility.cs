@@ -39,21 +39,20 @@ namespace Chess.v4.Engine.Utility
 		{
 			if (!GeneralUtility.IsValidCoordinate(position))
 			{
-				return new MoveViability(false, false, false, null);
+				return new MoveViability(false, false, null);
 			}
 			var square = gameState.Squares.GetSquare(position);
 			if (!square.Occupied)
 			{
-				return new MoveViability(true, false, false, square);
+				return new MoveViability(true, false, square);
 			}
 			var blockingPiece = square.Piece;
 			var isTeamPiece = GeneralUtility.IsTeamPiece(attacker.Color, blockingPiece);
 			if (!isTeamPiece)
 			{
-				return new MoveViability(true, true, true, square);
+				return new MoveViability(true, true, square);
 			}
-			var breakAfterAction = GeneralUtility.BreakAfterAction(blockingPiece, attacker.Color);
-			return new MoveViability(true, breakAfterAction, false, square);
+			return new MoveViability(true, false, square);
 		}
 
 		public static char GetCharFromPieceType(PieceType pieceType, Color color)

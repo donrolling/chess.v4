@@ -136,7 +136,7 @@ namespace Chess.v4.Engine.Service
             }
             var gameState = new GameState(fenRecord);
             gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
-            gameState.Attacks = this.AttackService.GetAttacks(gameState, false).ToList();
+            gameState.Attacks = this.AttackService.GetAttacks(gameState).ToList();
             gameState.StateInfo = this.MoveService.GetStateInfo(gameState);
             return OperationResult<GameState>.Ok(gameState);
         }

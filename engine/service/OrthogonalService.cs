@@ -20,10 +20,10 @@ namespace Chess.v4.Engine.Service
             return GeneralUtility.GetEntireRank(rank);
         }
 
-        public List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square movingSquare, Direction direction, bool ignoreKing = false)
+        public List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square square, Direction direction)
         {
             var attacks = new List<AttackedSquare>();
-            var currentPosition = movingSquare.Index;
+            var currentPosition = square.Index;
             var lineTerminator = getOrthogonalLineTerminator(direction, currentPosition);
             var iterator = getIteratorByDirectionEnum(direction);
             var nextPositionInTheLine = currentPosition + iterator;
@@ -31,21 +31,15 @@ namespace Chess.v4.Engine.Service
             {
                 var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
                 if (!isValidCoordinate) { break; }
-                var moveViability = GeneralUtility.DetermineMoveViability(gameState, movingSquare.Piece, position);
+                var moveViability = GeneralUtility.DetermineMoveViability(gameState, square.Piece, position);
                 //these conditions shouldn't occur
                 if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null)
                 {
                     continue;
                 }
-                if (moveViability.IsTeamPiece)
-                {
-                    attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd, isProtecting: true));
-                }
-                else
-                {
-                    attacks.Add(new AttackedSquare(movingSquare, moveViability.SquareToAdd));
-                }
-                if (moveViability.BreakAfterAction)
+                var attack = new AttackedSquare(square, moveViability.SquareToAdd, isProtecting: moveViability.IsTeamPiece);
+                attacks.Add(attack);
+                if (moveViability.SquareToAdd.Occupied)
                 {
                     break;
                 }
@@ -53,11 +47,11 @@ namespace Chess.v4.Engine.Service
             return attacks;
         }
 
-        public void GetOrthogonals(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing = false)
+        public void GetOrthogonals(GameState gameState, Square square, List<AttackedSquare> accumulator)
         {
             foreach (var orthogonalLine in GeneralReference.OrthogonalLines)
             {
-                var attacks = GetOrthogonalLine(gameState, square, orthogonalLine, ignoreKing);
+                var attacks = GetOrthogonalLine(gameState, square, orthogonalLine);
                 if (attacks != null && attacks.Any())
                 {
                     accumulator.AddRange(attacks);

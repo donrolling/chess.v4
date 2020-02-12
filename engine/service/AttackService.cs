@@ -20,12 +20,12 @@ namespace Chess.v4.Engine.Service
             OrthogonalService = orthogonalService;
         }
 
-        public IEnumerable<AttackedSquare> GetAttacks(GameState gameState, bool ignoreKing)
+        public IEnumerable<AttackedSquare> GetAttacks(GameState gameState)
         {
             var accumulator = new List<AttackedSquare>();
             foreach (var square in gameState.Squares.Where(a => a.Occupied).OrderBy(a => a.Piece.OrderOfOperation))
             {
-                this.getPieceAttacks(gameState, square, accumulator, ignoreKing);
+                this.getPieceAttacks(gameState, square, accumulator);
             }
             trimKingMoves(accumulator);
             return accumulator;
@@ -296,7 +296,7 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        private void getPieceAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator, bool ignoreKing)
+        private void getPieceAttacks(GameState gameState, Square square, List<AttackedSquare> accumulator)
         {
             switch (square.Piece.PieceType)
             {
@@ -309,23 +309,19 @@ namespace Chess.v4.Engine.Service
                     break;
 
                 case PieceType.Bishop:
-                    DiagonalUtility.GetDiagonals(gameState, square, accumulator, ignoreKing);
+                    DiagonalUtility.GetDiagonals(gameState, square, accumulator);
                     break;
 
                 case PieceType.Rook:
-                    this.OrthogonalService.GetOrthogonals(gameState, square, accumulator, ignoreKing);
+                    this.OrthogonalService.GetOrthogonals(gameState, square, accumulator);
                     break;
 
                 case PieceType.Queen:
-                    this.OrthogonalService.GetOrthogonals(gameState, square, accumulator, ignoreKing);
-                    DiagonalUtility.GetDiagonals(gameState, square, accumulator, ignoreKing);
+                    this.OrthogonalService.GetOrthogonals(gameState, square, accumulator);
+                    DiagonalUtility.GetDiagonals(gameState, square, accumulator);
                     break;
 
                 case PieceType.King:
-                    if (ignoreKing)
-                    {
-                        return;
-                    }
                     getKingAttacks(gameState, square, accumulator);
                     break;
 

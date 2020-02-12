@@ -29,15 +29,9 @@ namespace Chess.v4.Engine.Utility
                 {
                     continue;
                 }
-                if (moveViability.IsTeamPiece)
-                {
-                    attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd, isProtecting: true));
-                }
-                else
-                {
-                    attacks.Add(new AttackedSquare(square, moveViability.SquareToAdd));
-                }
-                if (moveViability.BreakAfterAction)
+                var attack = new AttackedSquare(square, moveViability.SquareToAdd, isProtecting: moveViability.IsTeamPiece);
+                attacks.Add(attack);
+                if (moveViability.SquareToAdd.Occupied)
                 {
                     break;
                 }
