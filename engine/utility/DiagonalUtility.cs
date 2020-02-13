@@ -2,6 +2,7 @@
 using Chess.v4.Engine.Reference;
 using Chess.v4.Models;
 using Chess.v4.Models.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Chess.v4.Engine.Utility
@@ -9,6 +10,27 @@ namespace Chess.v4.Engine.Utility
     public static class DiagonalUtility
     {
         private static List<int> File = GeneralUtility.GetEntireFile(7);
+
+        public static List<int> GetDiagonalLine(int location, int destination)
+        {
+            var _isDiagonal = IsDiagonal(location, destination);
+            if (!_isDiagonal)
+            {
+                throw new Exception("You're doing it wrong! GetDiagonalLine has to be used with a diagonal.");
+            }
+            var direction = getDirectionByMovePositions(location, destination);
+            var result = new List<int>();
+            var increment = getIteratorByDirectionEnum(direction);
+            // pick the higer of the two numbers and go up until just before you reach the destination
+            var positionCursorTerminator = location > destination ? location : destination;
+            var positionCursor = location + increment;
+            while (positionCursor < positionCursorTerminator)
+            {
+                result.Add(positionCursor);
+                positionCursor += increment;
+            }
+            return result;
+        }
 
         public static List<AttackedSquare> GetDiagonalLine(GameState gameState, Square square, Piece attackingPiece, DiagonalDirection direction)
         {
@@ -192,7 +214,23 @@ namespace Chess.v4.Engine.Utility
                 case DiagonalDirection.DownRight:
                     return -7;
             }
-            return 0;
+            throw new Exception($"getIteratorByDirectionEnum(): Invalid Direction { direction }");
+        }
+
+        private static DiagonalDirection getDirectionByMovePositions(int location, int destination)
+        {
+            var distance = destination - location;
+            var nine = Math.Abs(distance) % 9;
+            var seven = Math.Abs(distance) % 7;
+            if (nine == 0)
+            {
+                return distance > 0 ? DiagonalDirection.UpLeft : DiagonalDirection.DownRight;
+            }
+            if (seven == 0)
+            {
+                return distance > 0 ? DiagonalDirection.UpRight : DiagonalDirection.DownLeft;
+            }
+            return DiagonalDirection.Invalid;
         }
 
         private static int howFarToGo(int file, DiagonalDirectionFromFileNumber direction)

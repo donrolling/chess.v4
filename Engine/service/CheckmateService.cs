@@ -51,60 +51,60 @@ namespace Chess.v4.Engine.Service
             return teamAttacks.Any(a => a.Index == attackOnKing.Index);
         }
 
-        private List<int> getEntireDiagonalLine(int pos1, int pos2)
-        {
-            //diagonal moves: rise LtoR /  or RtoL \
-            var diff = Math.Abs(pos1 - pos2);
-            var ltr = diff % 9 == 0;
-            var rtl = diff % 7 == 0;
-            if (!ltr && !rtl)
-            {
-                throw new Exception("What? This is supposed to be diagonal.");
-            }
-            var dxs = new List<int> { pos1, pos2 };
-            //smallest # will be closest to the left or right in the line
-            //the left terminating position is evenly divisible by 8
-            //the right terminating position is evently divisible by 7
-            //find terminators
-            //left
-            var increment = ltr ? 9 : 7;
-            var smallest = dxs.Min();
-            var largest = dxs.Max();
-            var nextSmallest = smallest;
-            while (nextSmallest % 8 > 0 && nextSmallest >= 0)
-            {
-                nextSmallest = nextSmallest - increment;
-                if (nextSmallest >= 0 && !dxs.Contains(nextSmallest))
-                {
-                    dxs.Add(nextSmallest);
-                }
-            };
-            //right
-            var nextLargest = largest;
-            while (nextLargest % 7 > 0 && nextLargest <= 63)
-            {
-                nextLargest = nextLargest + increment;
-                if (nextLargest <= 63 && !dxs.Contains(nextLargest))
-                {
-                    dxs.Add(nextLargest);
-                }
-            };
-            //fill in the middle
-            var mid = smallest;
-            var nextMid = mid;
-            if (diff > increment)
-            {
-                while (nextMid < largest)
-                {
-                    nextMid = nextMid + increment;
-                    if (!dxs.Contains(nextMid))
-                    {
-                        dxs.Add(nextMid);
-                    }
-                }
-            }
-            return dxs;
-        }
+        //private List<int> getEntireDiagonalLine(int pos1, int pos2)
+        //{
+        //    //diagonal moves: rise LtoR /  or RtoL \
+        //    var diff = Math.Abs(pos1 - pos2);
+        //    var ltr = diff % 9 == 0;
+        //    var rtl = diff % 7 == 0;
+        //    if (!ltr && !rtl)
+        //    {
+        //        throw new Exception("What? This is supposed to be diagonal.");
+        //    }
+        //    var dxs = new List<int> { pos1, pos2 };
+        //    //smallest # will be closest to the left or right in the line
+        //    //the left terminating position is evenly divisible by 8
+        //    //the right terminating position is evently divisible by 7
+        //    //find terminators
+        //    //left
+        //    var increment = ltr ? 9 : 7;
+        //    var smallest = dxs.Min();
+        //    var largest = dxs.Max();
+        //    var nextSmallest = smallest;
+        //    while (nextSmallest % 8 > 0 && nextSmallest >= 0)
+        //    {
+        //        nextSmallest = nextSmallest - increment;
+        //        if (nextSmallest >= 0 && !dxs.Contains(nextSmallest))
+        //        {
+        //            dxs.Add(nextSmallest);
+        //        }
+        //    };
+        //    //right
+        //    var nextLargest = largest;
+        //    while (nextLargest % 7 > 0 && nextLargest <= 63)
+        //    {
+        //        nextLargest = nextLargest + increment;
+        //        if (nextLargest <= 63 && !dxs.Contains(nextLargest))
+        //        {
+        //            dxs.Add(nextLargest);
+        //        }
+        //    };
+        //    //fill in the middle
+        //    var mid = smallest;
+        //    var nextMid = mid;
+        //    if (diff > increment)
+        //    {
+        //        while (nextMid < largest)
+        //        {
+        //            nextMid = nextMid + increment;
+        //            if (!dxs.Contains(nextMid))
+        //            {
+        //                dxs.Add(nextMid);
+        //            }
+        //        }
+        //    }
+        //    return dxs;
+        //}
 
         private List<int> getEntireOrthogonalLine(bool isRankMove, AttackedSquare x, bool trim = false)
         {
@@ -195,7 +195,7 @@ namespace Chess.v4.Engine.Service
                 }
                 else if (attackIsDiagonal)
                 {
-                    var dxs = getEntireDiagonalLine(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+                    var dxs = DiagonalUtility.GetDiagonalLine(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
                     //if dxs contains the clearMove.Index, then the king has not moved out of check
                     var ixs = teamAttacks.Select(a => a.Index).Intersect(dxs);
                     if (ixs.Any())
@@ -268,7 +268,7 @@ namespace Chess.v4.Engine.Service
             if (!diagonalAttacksOnKing.Any()) { return true; }
             foreach (var x in diagonalAttacksOnKing)
             {
-                var dxs = getEntireDiagonalLine(x.Index, x.AttackingSquare.Index);
+                var dxs = DiagonalUtility.GetDiagonalLine(x.Index, x.AttackingSquare.Index);
                 //if dxs contains the clearMove.Index, then the king has not moved out of check
                 if (dxs.Contains(clearMove.Index))
                 {
