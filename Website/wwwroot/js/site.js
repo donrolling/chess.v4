@@ -2,44 +2,79 @@
 var gamestate;
 var attacks;
 
+
+var onDragStart = function (source, piece, position, orientation) {
+    console.log('Drag started:')
+    console.log('Source: ' + source)
+    console.log('Piece: ' + piece)
+    console.log('Position: ' + Chessboard.objToFen(position))
+    console.log('Orientation: ' + orientation)
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+    removeOldClasses();
+    var squareAttacks = getSquareAttacks(source);
+    console.log(squareAttacks);
+    highlightSquares(squareAttacks);
+}
+
+function onDrop(source, target, piece, newPos, oldPos, orientation) {
+    console.log('Source: ' + source)
+    console.log('Target: ' + target)
+    console.log('Piece: ' + piece)
+    console.log('New position: ' + Chessboard.objToFen(newPos))
+    console.log('Old position: ' + Chessboard.objToFen(oldPos))
+    console.log('Orientation: ' + orientation)
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+}
+
+var config = {
+    draggable: true,
+    dropOffBoard: 'snapback', // this is the default
+    onDragStart: onDragStart,
+    onDrop: onDrop
+}
+
 $(document).ready(function () {
     setup();
 });
 
 var setup = function () {
-    board = Chessboard('chessBoard', 'start');
-    getFenAndUpdate();
     $('#fenSubmit').click(function () {
         getFenAndUpdate();
     });
+    var fen = $('.fen').val();
+    updateBoardStateViaFen(fen);
 };
 
-var getFenAndUpdate = function () {
-    fen = $('.fen').val();
-    updateFen(fen);
-};
-
-var updateFen = function (fen) {
+var updateBoardStateViaFen = function (fen) {
     if (!fen) {
         return;
     }
-    var data = fen;
+    var self = this;
     $.ajax({
         type: "POST",
         url: "api/game",
-        data: data,
+        data: fen,
         contentType: 'application/json',
         dataType: 'json'
 
     }).done(function (gamestateResult) {
         gamestate = gamestateResult.result;
         attacks = gamestate.attacks;
-        board = Chessboard('chessBoard', fen);
-        $('.square-55d63').click(function (e) {
-            handleSquareClick(e);
-        });
+        self.setBoardState(fen);
     });
 };
+
+var setBoardState = function (fen) {
+    config.position = fen;
+    console.log(config);
+    board = Chessboard('chessBoard', config);
+    if (!config.draggable) {
+        $('.square-55d63').click(function (e) {
+            handleSquareClick(e);
+        })
+    }
+}
 
 var getCurrentSquare = function (e) {
     var obj = $(e.target);
