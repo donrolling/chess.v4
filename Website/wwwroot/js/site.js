@@ -6,11 +6,22 @@
     snapback: 'snapback',
     square: 'square',
 
+    pieceTypes: {
+        pawn: 0,
+        knight: 1,
+        bishop: 2,
+        rook: 3,
+        queen: 4,
+        king: 5
+    },
+
     http: {
         post: 'POST',
+        get: 'GET',
 
         contentTypes: {
-            applicationjson: 'application/json'
+            applicationjson: 'application/json',
+            text: 'text'
         },
 
         dataTypes: {
@@ -33,20 +44,20 @@
     },
 
     urls: {
-        game: 'api/game'
+        stateInfo: 'api/game/state-info?fen=',
+        move: 'api/game/move'
     }
 };
 
 var gameObjects = {
     board: {},
-    gamestate: {},
-    attacks: [],
+    gamestate: {}
 };
 
 var utilities = {
     getFenAndUpdate: () => {
         var fen = $(constants.selectors.fenInput).val();
-        gameService.updateBoardStateViaFen(fen);
+        gameService.getGameStateInformation(fen);
     },
 
     setBoardState: (fen) => {
@@ -119,6 +130,10 @@ var events = {
         if (!squareAttacks.some(x => x.name === target)) {
             return constants.snapback;
         }
+        // todo: piece promotion selection
+        // constants.pieceTypes.Bishop....
+        var piecePromotionType = null;
+        gameService.move(source, target, piecePromotionType);
     }
 };
 
@@ -132,22 +147,47 @@ var handlers = {
 };
 
 var gameService = {
-    updateBoardStateViaFen: (fen) => {
+    getGameStateInformation: (fen) => {
         if (!fen) {
             return;
         }
-        logging.log(fen);
+        $.ajax({
+            type: constants.http.get,
+            url: constants.urls.stateInfo + fen,
+            dataType: constants.http.dataTypes.json
+        }).done(function (gamestateResult) {
+            logging.log(gamestateResult);
+            if (gamestateResult.success) {
+                gameObjects.gamestate = gamestateResult.result;
+                utilities.setBoardState(gamestateResult.result.fen);
+            } else {
+                console.log(gamestateResult.message);
+            }
+        });
+    },
+
+    move: (beginning, destination, piecePromotionType) => {
+        var data = JSON.stringify({
+            GameState: gameObjects.gamestate,
+            Beginning: beginning,
+            Destination: destination,
+            PiecePromotionType: piecePromotionType
+        });
         $.ajax({
             type: constants.http.post,
-            url: constants.urls.game,
-            data: fen,
+            url: constants.urls.move,
+            data: data,
             contentType: constants.http.contentTypes.applicationjson,
             dataType: constants.http.dataTypes.json
         }).done(function (gamestateResult) {
-            logging.logTest();
-            gameObjects.gamestate = gamestateResult.result;
-            gameObjects.attacks = gameObjects.gamestate.attacks;
-            utilities.setBoardState(fen);
+            logging.log(gamestateResult);
+            if (gamestateResult.success) {
+                gameObjects.gamestate = gamestateResult.result;
+                utilities.setBoardState(gamestateResult.result.fen);
+            } else {
+                console.log(gamestateResult.message);
+                utilities.setBoardState(gameObjects.gamestate.fen);
+            }
         });
     }
 };
@@ -181,6 +221,7 @@ var logging = {
 }
 
 var config = {
+    position: '',
     draggable: true,
     dropOffBoard: constants.snapback, // this is the default
     onDragStart: events.onDragStart,

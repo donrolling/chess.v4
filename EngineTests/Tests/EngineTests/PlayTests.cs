@@ -8,7 +8,6 @@ using Omu.ValueInjecter;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Tests.Models;
 
 namespace Tests
@@ -80,7 +79,6 @@ namespace Tests
                 Assert.AreEqual(game.Result, playGameInfo.GameState.StateInfo.Result, $"Game Result should be the same.\r\n{ game.FEN }\r\n{ playGameInfo.GameString }");
             }
             game.FEN = playGameInfo.GameState.ToString();
-            
         }
 
         private PlayGameInfo playGamePrep(Game game)

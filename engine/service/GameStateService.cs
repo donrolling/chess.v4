@@ -106,6 +106,10 @@ namespace Chess.v4.Engine.Service
             {
                 return OperationResult<StateInfo>.Fail("Square was empty.");
             }
+            if (square.Piece.Color != gameState.ActiveColor)
+            {
+                return OperationResult<StateInfo>.Fail("Wrong team.");
+            }
             var moveInfoResult = this.MoveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
             if (moveInfoResult.Failure)
             {
