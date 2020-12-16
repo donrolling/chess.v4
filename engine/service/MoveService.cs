@@ -47,7 +47,8 @@ namespace Chess.v4.Engine.Service
 
             var isResign = false;
             var isDraw = false;
-            //todo: i don't think we can get here
+            // todo: i don't think we can get here
+            // also, this is incomplete
             if (isDraw || isResign)
             {
                 if (isDraw)
