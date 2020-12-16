@@ -5,12 +5,27 @@
 
 .container {
     margin: auto;
-    width: 450px;
+    width: 650px;
 }
 
 .chessContainer {
     width: 450px;
     text-align: center;
+    float: left;
+}
+
+.hud {
+    width: 200px;
+    text-align: left;
+    float: left;
+}
+
+.history {
+    overflow-x: no-display;
+    overflow-y: scroll;
+    height: 500px;
+    background-color: #80808066;
+    padding: 0 10px;
 }
 
 .chessBoard {

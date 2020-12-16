@@ -40,7 +40,9 @@
         fenInput: '.fen',
         attacking: '.attacking',
         protecting: '.protecting',
-        square: '.square-'
+        square: '.square-',
+        history: '.history',
+        items: '.items'
     },
 
     urls: {
@@ -56,25 +58,45 @@ let gameObjects = {
 
 let utilities = {
     getFenAndUpdate: () => {
-        let fen = $(constants.selectors.fenInput).val();
+        let fen = document.querySelector(constants.selectors.fenInput).value;
         gameService.getGameStateInfo(fen);
     },
 
-    setBoardState: (fen) => {
-        config.position = fen;
+    setBoardState: (gameState) => {
+        logging.log(gameState);
+        config.position = gameState.fen;
+        gameObjects.gameState = gameState;
         gameObjects.board = Chessboard(constants.chessBoard, config);
         if (!config.draggable) {
-            $(constants.selectors.allSquares).click((e) => handlers.handleSquareClick(e));
+            document
+                .querySelectorAll(constants.selectors.allSquares)
+                .forEach(a =>
+                    a.addEventListener('click', e => handlers.handleSquareClick(e))
+                );
         }
+        if (!gameObjects.gameState.feN_Records || gameObjects.gameState.feN_Records.length === 0) {
+            return;
+        }
+        let itemContainer = document.querySelector(constants.selectors.items);
+        let contentList = gameObjects.gameState
+                    .feN_Records
+                    .map(a => a.piecePlacement)
+                    .join('</div><div class="item">');
+        let content = `<div class="item">${ contentList }</div>`;
+        itemContainer.innerHTML = content;
     },
 
-    getCurrentSquare: (e) => {
-        let obj = $(e.target);
-        let piece = obj.data(constants.piece);
+    getCurrentSquare: (squareElement) => {
+        logging.log(squareElement.target);
+        let square = document.querySelector(squareElement.target);
+        logging.log(square);
+        let piece = square.data(constants.piece);
+        logging.log(piece);
         if (piece) {
-            obj = $(e.target).parent();
+            square = document.querySelector(squareElement.target).parentElement;
         }
-        return obj.data(constants.square);
+        logging.log(square);
+        return square.data(constants.square);
     },
 
     getSquareAttacks: (square) => {
@@ -97,13 +119,15 @@ let utilities = {
             let attack = attacks[i];
             let squareClass = attack.isProtecting ? constants.protecting : constants.attacking;
             let squareSelector = utilities.getSquareSelector(attack.name);
-            $(squareSelector).addClass(squareClass);
+            var square = document.querySelector(squareSelector);
+            logging.log(square);
+            square.className += ` ${ squareClass }`;
         }
     },
 
     removeOldClasses: () => {
-        $(constants.selectors.attacking).removeClass(constants.attacking);
-        $(constants.selectors.protecting).removeClass(constants.protecting);
+        document.querySelectorAll(constants.selectors.attacking).forEach(a => a.className = a.className.replace(constants.attacking, ''));
+        document.querySelectorAll(constants.selectors.protecting).forEach(a => a.className = a.className.replace(constants.protecting, ''));
     }
 };
 
@@ -133,9 +157,9 @@ let events = {
 };
 
 let handlers = {
-    handleSquareClick: (e) => {
+    handleSquareClick: (squareElement) => {
         utilities.removeOldClasses();
-        let currentSquare = utilities.getCurrentSquare(e);
+        let currentSquare = utilities.getCurrentSquare(squareElement);
         let squareAttacks = utilities.getSquareAttacks(currentSquare);
         utilities.highlightSquares(squareAttacks);
     }
@@ -146,20 +170,18 @@ let gameService = {
         if (!fen) { return; }
         (async () => {
             let url = constants.urls.stateInfo + fen;
-            logging.log(url);
             let response = await fetch(url);
             if (!response.ok) {
                 throw Error(response.statusText);
             }
             let gameStateResult = await response.json();
-            logging.log(gameStateResult);
             if (gameStateResult.success) {
-                gameObjects.gameState = gameStateResult.result;
+                utilities.setBoardState(gameStateResult.result);
             } else {
+                // reset the board
                 console.log(gameStateResult.message);
+                utilities.setBoardState(gameObjects.gameState);
             }
-            // will either advance or reset the game
-            utilities.setBoardState(gameObjects.gameState.fen);
         })();
     },
 
@@ -187,14 +209,13 @@ let gameService = {
                 throw Error(response.statusText);
             }
             let gameStateResult = await response.json();
-            logging.log(gameStateResult);
             if (gameStateResult.success) {
-                gameObjects.gameState = gameStateResult.result;
+                utilities.setBoardState(gameStateResult.result);
             } else {
+                // reset the board
                 console.log(gameStateResult.message);
-            }
-            // will either advance or reset the game
-            utilities.setBoardState(gameObjects.gameState.fen);
+                utilities.setBoardState(gameObjects.gameState);
+            }           
         })();
     }
 };
@@ -236,4 +257,4 @@ let config = {
     onDrop: events.onDrop
 }
 
-$(document).ready(() => events.init());
+document.addEventListener('DOMContentLoaded', (event) => events.init());
