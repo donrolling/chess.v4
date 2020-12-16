@@ -9,6 +9,11 @@ namespace Chess.v4.Engine.Factory
     {
         public static FEN_Record Create(string fen)
         {
+            // 5 could be a bad number
+            if (fen.Length < 5 || !fen.Contains(' '))
+            {
+                return null;
+            }
             var fenRecord = new FEN_Record();
             var gameData = fen.Split(' ');
             fenRecord.PiecePlacement = gameData[0];

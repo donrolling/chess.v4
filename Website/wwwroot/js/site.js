@@ -58,11 +58,17 @@ let gameObjects = {
 
 let utilities = {
     getFenAndUpdate: () => {
-        let fen = document.querySelector(constants.selectors.fenInput).value;
+        let fen = utilities.getParameterByName('fen');
+        if (utilities.isNullOrEmpty(fen)) {
+            fen = document.querySelector(constants.selectors.fenInput).value;
+        }
         gameService.getGameStateInfo(fen);
     },
 
+    isNullOrEmpty: (x) => x === undefined || !x,
+
     setBoardState: (gameState) => {
+        document.querySelector(constants.selectors.fenInput).value = gameState.fen;
         logging.log(gameState);
         config.position = gameState.fen;
         gameObjects.gameState = gameState;
@@ -79,9 +85,9 @@ let utilities = {
         }
         let itemContainer = document.querySelector(constants.selectors.items);
         let contentList = gameObjects.gameState
-                    .feN_Records
-                    .map(a => a.piecePlacement)
-                    .join('</div><div class="item">');
+            .feN_Records
+            .map(a => a.pgn ? a.pgn : 'test')
+            .join('</div><div class="item">');
         let content = `<div class="item">${ contentList }</div>`;
         itemContainer.innerHTML = content;
     },
@@ -120,7 +126,6 @@ let utilities = {
             let squareClass = attack.isProtecting ? constants.protecting : constants.attacking;
             let squareSelector = utilities.getSquareSelector(attack.name);
             var square = document.querySelector(squareSelector);
-            logging.log(square);
             square.className += ` ${ squareClass }`;
         }
     },
@@ -128,6 +133,15 @@ let utilities = {
     removeOldClasses: () => {
         document.querySelectorAll(constants.selectors.attacking).forEach(a => a.className = a.className.replace(constants.attacking, ''));
         document.querySelectorAll(constants.selectors.protecting).forEach(a => a.className = a.className.replace(constants.protecting, ''));
+    },
+
+    getParameterByName: (name, url = window.location.href) => {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 };
 
@@ -167,9 +181,8 @@ let handlers = {
 
 let gameService = {
     getGameStateInfo: (fen) => {
-        if (!fen) { return; }
         (async () => {
-            let url = constants.urls.stateInfo + fen;
+            let url = !utilities.isNullOrEmpty(fen) ? constants.urls.stateInfo + fen : constants.urls.stateInfo;
             let response = await fetch(url);
             if (!response.ok) {
                 throw Error(response.statusText);
@@ -179,7 +192,6 @@ let gameService = {
                 utilities.setBoardState(gameStateResult.result);
             } else {
                 // reset the board
-                console.log(gameStateResult.message);
                 utilities.setBoardState(gameObjects.gameState);
             }
         })();

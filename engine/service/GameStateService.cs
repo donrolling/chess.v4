@@ -37,7 +37,12 @@ namespace Chess.v4.Engine.Service
             {
                 fen = GeneralReference.Starting_FEN_Position;
             }
-            return hydrateGameState(FenFactory.Create(fen));
+            var fenRecord = FenFactory.Create(fen);
+            if (fenRecord == null)
+            {
+                OperationResult<GameState>.Fail("Bad fen.");
+            }
+            return hydrateGameState(fenRecord);
         }
 
         /// <summary>
