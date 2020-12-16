@@ -86,7 +86,10 @@ let utilities = {
         let itemContainer = document.querySelector(constants.selectors.items);
         let contentList = gameObjects.gameState
             .feN_Records
-            .map(a => a.pgn ? a.pgn : 'test')
+            .map(a => {
+                let activeColor = a.activeColor === 0 ? 'w' : 'b'
+                return `${a.piecePlacement} ${activeColor} ${a.castlingAvailability} ${a.enPassantTargetSquare} ${a.halfmoveClock} ${a.fullmoveNumber}`;
+            })
             .join('</div><div class="item">');
         let content = `<div class="item">${ contentList }</div>`;
         itemContainer.innerHTML = content;
