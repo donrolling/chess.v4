@@ -1,4 +1,4 @@
-﻿var constants = {
+﻿let constants = {
     attacking: 'attacking',
     chessBoard: 'chessBoard',
     piece: 'piece',
@@ -49,30 +49,28 @@
     }
 };
 
-var gameObjects = {
+let gameObjects = {
     board: {},
-    gamestate: {}
+    gameState: {}
 };
 
-var utilities = {
+let utilities = {
     getFenAndUpdate: () => {
-        var fen = $(constants.selectors.fenInput).val();
-        gameService.getGameStateInformation(fen);
+        let fen = $(constants.selectors.fenInput).val();
+        gameService.getGameStateInfo(fen);
     },
 
     setBoardState: (fen) => {
         config.position = fen;
         gameObjects.board = Chessboard(constants.chessBoard, config);
         if (!config.draggable) {
-            $(constants.selectors.allSquares).click(function (e) {
-                handlers.handleSquareClick(e);
-            })
+            $(constants.selectors.allSquares).click((e) => handlers.handleSquareClick(e));
         }
     },
 
     getCurrentSquare: (e) => {
-        var obj = $(e.target);
-        var piece = obj.data(constants.piece);
+        let obj = $(e.target);
+        let piece = obj.data(constants.piece);
         if (piece) {
             obj = $(e.target).parent();
         }
@@ -80,9 +78,9 @@ var utilities = {
     },
 
     getSquareAttacks: (square) => {
-        var squareAttacks = [];
-        for (var i = 0; i < gameObjects.gamestate.attacks.length; i++) {
-            var attack = gameObjects.gamestate.attacks[i];
+        let squareAttacks = [];
+        for (let i = 0; i < gameObjects.gameState.attacks.length; i++) {
+            let attack = gameObjects.gameState.attacks[i];
             if (attack.attackingSquare.name === square) {
                 squareAttacks.push(attack);
             }
@@ -95,10 +93,10 @@ var utilities = {
     },
 
     highlightSquares: (attacks) => {
-        for (var i = 0; i < attacks.length; i++) {
-            var attack = attacks[i];
-            var squareClass = attack.isProtecting ? constants.protecting : constants.attacking;
-            var squareSelector = utilities.getSquareSelector(attack.name);
+        for (let i = 0; i < attacks.length; i++) {
+            let attack = attacks[i];
+            let squareClass = attack.isProtecting ? constants.protecting : constants.attacking;
+            let squareSelector = utilities.getSquareSelector(attack.name);
             $(squareSelector).addClass(squareClass);
         }
     },
@@ -109,90 +107,99 @@ var utilities = {
     }
 };
 
-var events = {
+let events = {
     init: () => {
-        $(constants.selectors.fenSubmit).click(function () {
-            utilities.getFenAndUpdate();
-        });
+        $(constants.selectors.fenSubmit).click(() => utilities.getFenAndUpdate());
         utilities.getFenAndUpdate();
     },
 
     onDragStart: (source, piece, position, orientation) => {
-        logging.logDragStart(source, piece, position, orientation);
         utilities.removeOldClasses();
-        var squareAttacks = utilities.getSquareAttacks(source);
+        let squareAttacks = utilities.getSquareAttacks(source);
         utilities.highlightSquares(squareAttacks);
     },
 
     onDrop: (source, target, piece, newPos, oldPos, orientation) => {
-        var squareAttacks = utilities.getSquareAttacks(source);
-        logging.logDrop(source, target, piece, newPos, oldPos, orientation, squareAttacks);
+        let squareAttacks = utilities.getSquareAttacks(source);
+        // logging.logDrop(source, target, piece, newPos, oldPos, orientation, squareAttacks);
         if (!squareAttacks.some(x => x.name === target)) {
             return constants.snapback;
         }
         // todo: piece promotion selection
         // constants.pieceTypes.Bishop....
-        var piecePromotionType = null;
+        let piecePromotionType = null;
         gameService.move(source, target, piecePromotionType);
     }
 };
 
-var handlers = {
+let handlers = {
     handleSquareClick: (e) => {
         utilities.removeOldClasses();
-        var currentSquare = utilities.getCurrentSquare(e);
-        var squareAttacks = utilities.getSquareAttacks(currentSquare);
+        let currentSquare = utilities.getCurrentSquare(e);
+        let squareAttacks = utilities.getSquareAttacks(currentSquare);
         utilities.highlightSquares(squareAttacks);
     }
 };
 
-var gameService = {
-    getGameStateInformation: (fen) => {
-        if (!fen) {
-            return;
-        }
-        $.ajax({
-            type: constants.http.get,
-            url: constants.urls.stateInfo + fen,
-            dataType: constants.http.dataTypes.json
-        }).done(function (gamestateResult) {
-            logging.log(gamestateResult);
-            if (gamestateResult.success) {
-                gameObjects.gamestate = gamestateResult.result;
-                utilities.setBoardState(gamestateResult.result.fen);
-            } else {
-                console.log(gamestateResult.message);
+let gameService = {
+    getGameStateInfo: (fen) => {
+        if (!fen) { return; }
+        (async () => {
+            let url = constants.urls.stateInfo + fen;
+            logging.log(url);
+            let response = await fetch(url);
+            if (!response.ok) {
+                throw Error(response.statusText);
             }
-        });
+            let gameStateResult = await response.json();
+            logging.log(gameStateResult);
+            if (gameStateResult.success) {
+                gameObjects.gameState = gameStateResult.result;
+            } else {
+                console.log(gameStateResult.message);
+            }
+            // will either advance or reset the game
+            utilities.setBoardState(gameObjects.gameState.fen);
+        })();
     },
 
     move: (beginning, destination, piecePromotionType) => {
-        var data = JSON.stringify({
-            GameState: gameObjects.gamestate,
+        let data = JSON.stringify({
+            GameState: gameObjects.gameState,
             Beginning: beginning,
             Destination: destination,
             PiecePromotionType: piecePromotionType
         });
-        $.ajax({
-            type: constants.http.post,
-            url: constants.urls.move,
-            data: data,
-            contentType: constants.http.contentTypes.applicationjson,
-            dataType: constants.http.dataTypes.json
-        }).done(function (gamestateResult) {
-            logging.log(gamestateResult);
-            if (gamestateResult.success) {
-                gameObjects.gamestate = gamestateResult.result;
-                utilities.setBoardState(gamestateResult.result.fen);
-            } else {
-                console.log(gamestateResult.message);
-                utilities.setBoardState(gameObjects.gamestate.fen);
+        (async () => {
+            let url = constants.urls.move;
+            let response = await fetch(
+                url,
+                {
+                    headers: {
+                        'Accept': constants.http.contentTypes.applicationjson,
+                        'Content-Type': constants.http.contentTypes.applicationjson
+                    },
+                    method: constants.http.post,
+                    body: data
+                }
+            );
+            if (!response.ok) {
+                throw Error(response.statusText);
             }
-        });
+            let gameStateResult = await response.json();
+            logging.log(gameStateResult);
+            if (gameStateResult.success) {
+                gameObjects.gameState = gameStateResult.result;
+            } else {
+                console.log(gameStateResult.message);
+            }
+            // will either advance or reset the game
+            utilities.setBoardState(gameObjects.gameState.fen);
+        })();
     }
 };
 
-var logging = {
+let logging = {
     logTest: () => console.log('test'),
 
     log: (x) => console.log(x),
@@ -205,6 +212,7 @@ var logging = {
             Position: Chessboard.objToFen(position),
             Orientation: orientation
         }),
+
     logDrop: (source, target, piece, newPos, oldPos, orientation, squareAttacks) =>
         console.log({
             Event: constants.events.onDrop,
@@ -220,7 +228,7 @@ var logging = {
         })
 }
 
-var config = {
+let config = {
     position: '',
     draggable: true,
     dropOffBoard: constants.snapback, // this is the default
@@ -228,6 +236,4 @@ var config = {
     onDrop: events.onDrop
 }
 
-$(document).ready(function () {
-    events.init();
-});
+$(document).ready(() => events.init());
