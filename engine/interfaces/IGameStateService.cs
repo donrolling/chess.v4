@@ -1,16 +1,17 @@
-﻿using chess.v4.models;
-using chess.v4.models.enumeration;
-using Common.Models;
+﻿using Chess.v4.Models;
+using Chess.v4.Models.Enums;
+using Common.Responses;
 
-namespace chess.v4.engine.interfaces {
-	public interface IGameStateService {
+namespace Chess.v4.Engine.Interfaces
+{
+    public interface IGameStateService
+    {
+        OperationResult<GameState> Initialize(string fen = "");
 
-		Envelope<GameState> Initialize(string fen = "");
+        OperationResult<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType = null);
 
-		Envelope<GameState> MakeMove(GameState gameState, int piecePosition, int newPiecePosition, PieceType? piecePromotionType = null);
+        OperationResult<GameState> MakeMove(GameState gameState, string beginning, string destination, PieceType? piecePromotionType = null);
 
-		Envelope<GameState> MakeMove(GameState gameState, string beginning, string destination, PieceType? piecePromotionType = null);
-
-		Envelope<GameState> MakeMove(GameState gameState, string pgnMove);
-	}
+        OperationResult<GameState> MakeMove(GameState gameState, string pgnMove);
+    }
 }

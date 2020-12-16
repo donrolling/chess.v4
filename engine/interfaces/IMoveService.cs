@@ -1,27 +1,24 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.models;
-using Common;
+﻿using Chess.v4.Models;
+using Chess.v4.Models.Enums;
+using Common.Responses;
 using System.Collections.Generic;
-using Common.Models;
 
-namespace chess.v4.engine.interfaces {
+namespace Chess.v4.Engine.Interfaces
+{
+    public interface IMoveService
+    {
+        OperationResult<StateInfo> GetStateInfo(GameState newGameState, int piecePosition, int newPiecePosition);
 
-	public interface IMoveService {
+        StateInfo GetStateInfo(GameState gameState);
 
-		Envelope<StateInfo> GetStateInfo(GameState newGameState, int piecePosition, int newPiecePosition);
+        bool HasThreefoldRepition(GameState gameState);
 
-		StateInfo GetStateInfo(GameState gameState);
+        bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare);
 
-		bool HasThreefoldRepition(GameState gameState);
+        bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheckWhite, Color activeColor, int kingSquare);
 
-		bool IsDiagonalMove(int startPosition, int endPosition);
+        OperationResult<bool> IsValidCastleAttempt(GameState gameState, Square square, int destination, IEnumerable<AttackedSquare> attackedSquares);
 
-		bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare);
-
-		bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheckWhite, Color activeColor, int kingSquare);
-
-		Envelope<bool> IsValidCastleAttempt(GameState gameState, Square square, int destination, IEnumerable<AttackedSquare> attackedSquares);
-
-		bool IsValidPawnMove(Square square, List<Square> oldSquares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant);
-	}
+        bool IsValidPawnMove(Square square, List<Square> oldSquares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant);
+    }
 }

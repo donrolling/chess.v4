@@ -1,24 +1,25 @@
-﻿using chess.v4.models;
-using chess.v4.models.enumeration;
+﻿using Chess.v4.Models;
+using Chess.v4.Models.Enums;
 using System.Collections.Generic;
 
-namespace chess.v4.engine.interfaces {
-	public interface IPGNService {
+namespace Chess.v4.Engine.Interfaces
+{
+    public interface IPGNService
+    {
+        Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove, bool isCastle);
 
-		Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove, bool isCastle);
+        char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor);
 
-		char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor);
+        PieceType GetPieceTypeFromPGNMove(string pgnMove);
 
-		PieceType GetPieceTypeFromPGNMove(string pgnMove);
+        bool IsRank(char potentialRank);
 
-		bool IsRank(char potentialRank);
+        (int piecePosition, int newPiecePosition, char promotedPiece) PGNMoveToSquarePair(GameState gameState, string pgnMove);
 
-		(int piecePosition, int newPiecePosition, char promotedPiece) PGNMoveToSquarePair(GameState gameState, string pgnMove);
+        List<string> PGNSplit(string pgn);
 
-		List<string> PGNSplit(string pgn);
+        List<string> PGNSplit(string pgn, bool mostConsise);
 
-		List<string> PGNSplit(string pgn, bool mostConsise);
-
-		string SquarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare, char promoteToPiece);
-	}
+        string SquarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare, char promoteToPiece);
+    }
 }

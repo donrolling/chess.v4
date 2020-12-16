@@ -1,25 +1,26 @@
-﻿using chess.v4.models;
+﻿using Chess.v4.Models;
 using System.Text;
 
-namespace chess.v4.engine.interfaces {
+namespace Chess.v4.Engine.Interfaces
+{
+    public interface IPGNFileService
+    {
+        string CurrentDirectory { get; }
 
-	public interface IPGNFileService {
-		string CurrentDirectory { get; }
+        string ConvertToPGN(GameMetaData metaData);
 
-		string ConvertToPGN(GameMetaData metaData);
+        void DisplayPGNFileHeader(GameMetaData metaData);
 
-		void DisplayPGNFileHeader(GameMetaData metaData);
+        string GetBaseEnvironmentPath(string directory);
 
-		string GetBaseEnvironmentPath(string directory);
+        StringBuilder GetGameHeader(GameMetaData gameMetaData);
 
-		StringBuilder GetGameHeader(GameMetaData gameMetaData);
+        string GetPGNFilePath(string filename);
 
-		string GetPGNFilePath(string filename);
+        GameMetaData ParsePGNData(string input);
 
-		GameMetaData ParsePGNData(string input);
+        GameMetaData ReadPGNFromFile(string fullpath);
 
-		GameMetaData ReadPGNFromFile(string fullpath);
-
-		void SaveFile(string filename, string data);
-	}
+        void SaveFile(string filename, string data);
+    }
 }

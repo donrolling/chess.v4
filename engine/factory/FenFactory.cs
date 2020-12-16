@@ -1,39 +1,46 @@
-﻿using chess.v4.engine.Utility;
-using chess.v4.models;
-using chess.v4.models.enumeration;
+﻿using Chess.v4.Engine.Utility;
+using Chess.v4.Models;
+using Chess.v4.Models.Enums;
 using System;
 
-namespace chess.v4.engine.factory {
+namespace Chess.v4.Engine.Factory
+{
+    public static class FenFactory
+    {
+        public static FEN_Record Create(string fen)
+        {
+            // 5 could be a bad number
+            if (fen.Length < 5 || !fen.Contains(' '))
+            {
+                return null;
+            }
+            var fenRecord = new FEN_Record();
+            var gameData = fen.Split(' ');
+            fenRecord.PiecePlacement = gameData[0];
 
-	public static class FenFactory {
+            fenRecord.ActiveColor = gameData[1][0] == 'w' ? Color.White : Color.Black;
 
-		public static FEN_Record Create(string fen) {
-			var fenRecord = new FEN_Record();
-			var gameData = fen.Split(' ');
-			fenRecord.PiecePlacement = gameData[0];
+            fenRecord.CastlingAvailability = gameData[2];
 
-			fenRecord.ActiveColor = gameData[1][0] == 'w' ? Color.White : Color.Black;
+            fenRecord.EnPassantTargetSquare = gameData[3];
+            if (fenRecord.EnPassantTargetSquare != "-")
+            {
+                fenRecord.EnPassantTargetPosition = NotationUtility.CoordinateToPosition(fenRecord.EnPassantTargetSquare);
+            }
 
-			fenRecord.CastlingAvailability = gameData[2];
+            var enPassantTargetPosition = -1;
+            Int32.TryParse(gameData[3], out enPassantTargetPosition);
+            fenRecord.EnPassantTargetPosition = enPassantTargetPosition;
 
-			fenRecord.EnPassantTargetSquare = gameData[3];
-			if (fenRecord.EnPassantTargetSquare != "-") {
-				fenRecord.EnPassantTargetPosition = NotationUtility.CoordinateToPosition(fenRecord.EnPassantTargetSquare);
-			}
+            int halfmoveClock = 0;
+            Int32.TryParse(gameData[4], out halfmoveClock);
+            fenRecord.HalfmoveClock = halfmoveClock;
 
-			var enPassantTargetPosition = -1;
-			Int32.TryParse(gameData[3], out enPassantTargetPosition);
-			fenRecord.EnPassantTargetPosition = enPassantTargetPosition;
+            int fullmoveNumber = 0;
+            Int32.TryParse(gameData[5], out fullmoveNumber);
+            fenRecord.FullmoveNumber = fullmoveNumber;
 
-			int halfmoveClock = 0;
-			Int32.TryParse(gameData[4], out halfmoveClock);
-			fenRecord.HalfmoveClock = halfmoveClock;
-
-			int fullmoveNumber = 0;
-			Int32.TryParse(gameData[5], out fullmoveNumber);
-			fenRecord.FullmoveNumber = fullmoveNumber;
-
-			return fenRecord;
-		}
-	}
+            return fenRecord;
+        }
+    }
 }

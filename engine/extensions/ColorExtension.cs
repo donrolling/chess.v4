@@ -1,11 +1,12 @@
-﻿using chess.v4.models.enumeration;
+﻿using Chess.v4.Models.Enums;
 
-namespace chess.v4.engine.extensions {
-
-	public static class ColorExtensions {
-
-		public static Color Reverse(this Color color) {
-			return color == Color.White ? Color.Black : Color.White;
-		}
-	}
+namespace Chess.v4.Engine.Extensions
+{
+    public static class ColorExtensions
+    {
+        public static Color Reverse(this Color color)
+        {
+            return color == Color.White ? Color.Black : Color.White;
+        }
+    }
 }

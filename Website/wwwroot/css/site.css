@@ -1,37 +1,58 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
-for details on configuring this project to bundle and minify static web assets. */
-body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+﻿.wrapper {
+    margin: auto;
+    width: 50%;
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+.container {
+    margin: auto;
+    width: 650px;
 }
 
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
+.chessContainer {
+    width: 450px;
+    text-align: center;
+    float: left;
 }
 
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%;
+.hud {
+    width: 200px;
+    text-align: left;
+    float: left;
 }
 
-/* QR code generator */
-#qrCode {
-    margin: 15px;
+.history {
+    overflow-x: no-display;
+    overflow-y: scroll;
+    height: 500px;
+    background-color: #80808066;
+    padding: 0 10px;
 }
 
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+.chessBoard {
+    margin: auto;
+    width: 400px;
+}
+
+.fen {
+    margin: auto;
+    width: 400px;
+    display: block;
+}
+
+.spacer20 {
+    height: 20px
+}
+
+button {
+    width: 80px;
+    margin: 0 20px;
+    float: left;
+}
+
+.attacking {
+    background-color: red !important;
+}
+
+.protecting {
+    background-color: green !important;
 }

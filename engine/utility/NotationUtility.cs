@@ -1,108 +1,125 @@
-﻿using chess.v4.models.enumeration;
-using chess.v4.models;
+﻿using Chess.v4.Models;
+using Chess.v4.Models.Enums;
 using System;
 
-namespace chess.v4.engine.Utility {
+namespace Chess.v4.Engine.Utility
+{
+    public static class NotationUtility
+    {
+        public static int CoordinatePairToPosition(int file, int rank)
+        {
+            var fileChar = IntToFile(file);
+            var coord = fileChar + (rank + 1).ToString();
+            return CoordinateToPosition(coord);
+        }
 
-	public static class NotationUtility {
+        public static int CoordinateToPosition(string coordinate)
+        {
+            if (coordinate == "-")
+            {
+                throw new Exception("Invalid Coordinate");
+            }
 
-		public static int CoordinatePairToPosition(int file, int rank) {
-			var fileChar = IntToFile(file);
-			var coord = fileChar + (rank + 1).ToString();
-			return CoordinateToPosition(coord);
-		}
+            var coord = coordinate.Substring(coordinate.Length - 2, 2);
+            var file = FileToInt(coord[0]);
 
-		public static int CoordinateToPosition(string coordinate) {
-			if (coordinate == "-") {
-				throw new Exception("Invalid Coordinate");
-			}
+            int rank = 0;
+            Int32.TryParse(coord[1].ToString(), out rank);
 
-			var coord = coordinate.Substring(coordinate.Length - 2, 2);
-			var file = FileToInt(coord[0]);
+            return file + (8 * (rank - 1));
+        }
 
-			int rank = 0;
-			Int32.TryParse(coord[1].ToString(), out rank);
+        public static int FileToInt(char file)
+        {
+            return (int)(file - 97);
+        }
 
-			return file + (8 * (rank - 1));
-		}
+        public static Color GetColorFromCharacter(char c)
+        {
+            return char.IsUpper(c) ? Color.White : Color.Black;
+        }
 
-		public static int FileToInt(char file) {
-			return (int)(file - 97);
-		}
+        public static Piece GetPieceFromCharacter(char c)
+        {
+            return new Piece(GetPieceTypeFromCharacter(c), GetColorFromCharacter(c));
+        }
 
-		public static Color GetColorFromCharacter(char c) {
-			return char.IsUpper(c) ? Color.White : Color.Black;
-		}
+        public static PieceType GetPieceTypeFromCharacter(char c)
+        {
+            var identity = char.ToLower(c);
+            switch (identity)
+            {
+                case 'p':
+                    return PieceType.Pawn;
 
-		public static Piece GetPieceFromCharacter(char c) {
-			return new Piece (GetPieceTypeFromCharacter(c),	GetColorFromCharacter(c));
-		}
+                case 'n':
+                    return PieceType.Knight;
 
-		public static PieceType GetPieceTypeFromCharacter(char c) {
-			var identity = char.ToLower(c);
-			switch (identity) {
-				case 'p':
-					return PieceType.Pawn;
+                case 'b':
+                    return PieceType.Bishop;
 
-				case 'n':
-					return PieceType.Knight;
+                case 'r':
+                    return PieceType.Rook;
 
-				case 'b':
-					return PieceType.Bishop;
+                case 'q':
+                    return PieceType.Queen;
 
-				case 'r':
-					return PieceType.Rook;
+                case 'k':
+                    return PieceType.King;
 
-				case 'q':
-					return PieceType.Queen;
+                default:
+                    throw new Exception("Incorrect notation!");
+            }
+        }
 
-				case 'k':
-					return PieceType.King;
+        public static char IntToFile(int file)
+        {
+            return (char)(file + 97);
+        }
 
-				default:
-					throw new Exception("Incorrect notation!");
-			}
-		}
+        public static string PositionToCoordinate(int position)
+        {
+            if (position < 0 || position > 63)
+            {
+                throw new Exception($"PositionToCoordinate: position out of bounds: { position } ");
+            }
+            var file = PositionToFileChar(position);
+            var rank = (PositionToRankInt(position) + 1).ToString();
+            return string.Concat(file, rank);
+        }
 
-		public static char IntToFile(int file) {
-			return (char)(file + 97);
-		}
+        public static int PositionToFile(int position)
+        {
+            if (position < 0 || position > 63)
+            {
+                throw new Exception($"PositionToFile: position out of bounds: { position } ");
+            }
+            var file = (position % 8);
+            return file;
+        }
 
-		public static string PositionToCoordinate(int position) {
-			if (position < 0 || position > 63) {
-				throw new Exception($"PositionToCoordinate: position out of bounds: { position } ");
-			}
-			var file = PositionToFileChar(position);
-			var rank = (PositionToRankInt(position) + 1).ToString();
-			return string.Concat(file, rank);
-		}
+        public static int PositionToRank(int position)
+        {
+            var rank = (position / 8);
+            return rank;
+        }
 
-		public static int PositionToFile(int position) {
-			if (position < 0 || position > 63) {
-				throw new Exception($"PositionToFile: position out of bounds: { position } ");
-			}
-			var file = (position % 8);
-			return file;
-		}
-		
-		public static int PositionToRank(int position) {
-			var rank = (position / 8);
-			return rank;
-		}
+        public static char PositionToFileChar(int position)
+        {
+            var file = (char)((position % 8) + 97);
+            return file;
+        }
 
-		public static char PositionToFileChar(int position) {
-			var file = (char)((position % 8) + 97);
-			return file;
-		}
+        public static int PositionToFileInt(int position)
+        {
+            var file = (position % 8);
+            return file;
+        }
 
-		public static int PositionToFileInt(int position) {
-			var file = (position % 8);
-			return file;
-		}
-
-		public static int PositionToRankInt(int position) {
-			var rank = (int)(position / 8);
-			return rank;
-		}
-	}
+        public static int PositionToRankInt(int position)
+        {
+            var rank = (int)(position / 8);
+            return rank;
+        }
+    }
 }
