@@ -1,4 +1,4 @@
-﻿using Chess.v4.Engine.Extensions;
+using Chess.v4.Engine.Extensions;
 using Chess.v4.Engine.Factory;
 using Chess.v4.Engine.Interfaces;
 using Chess.v4.Engine.Reference;
@@ -195,7 +195,7 @@ namespace Chess.v4.Engine.Service
                 var enPassantAttackedPawnSquare = movingGameState.Squares.GetSquare(enPassantAttackedPawnPosition);
                 enPassantAttackedPawnSquare.Piece = null;
             }
-            _notationService.SetGameState_FEN(gameState.Squares, gameState.HalfmoveClock, movingGameState, piecePosition, newPiecePosition);
+            _notationService.SetGameStateSnapshot(gameState.Squares, gameState.HalfmoveClock, movingGameState, piecePosition, newPiecePosition);
             var currentStateFEN = movingGameState.ToString();
 
             //Setup new gamestate

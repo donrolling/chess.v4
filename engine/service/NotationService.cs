@@ -55,7 +55,7 @@ namespace Chess.v4.Engine.Service
             return squares.OrderBy(a => a.Index).ToList();
         }
 
-        public void SetGameState_FEN(List<Square> squares, int halfmoveClock, GameState newGameState, int piecePosition, int newPiecePosition)
+        public void SetGameStateSnapshot(List<Square> squares, int halfmoveClock, GameState newGameState, int piecePosition, int newPiecePosition)
         {
             var position = getPiecePosition(newGameState.Squares);
             var castlingAvailability = getCastlingAvailability(newGameState, newGameState.CastlingAvailability, piecePosition, newPiecePosition);
@@ -160,7 +160,7 @@ namespace Chess.v4.Engine.Service
             var movingPiece = squares.GetPiece(piecePosition);
             var capturePiece = squares.GetPiece(newPiecePosition);
             //if we're captuing, or moving a pawn the clock resets
-            if (capturePiece != null || (movingPiece.PieceType == PieceType.Pawn))
+            if (capturePiece != null || movingPiece.PieceType == PieceType.Pawn)
             {
                 return 0;
             }

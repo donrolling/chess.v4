@@ -22,18 +22,19 @@
                     a.addEventListener('click', e => handlers.handleSquareClick(e))
                 );
         }
-        if (!gameObjects.gameState.feN_Records || gameObjects.gameState.feN_Records.length === 0) {
+        if (!gameObjects.gameState.history || gameObjects.gameState.history.length === 0) {
             return;
         }
         let itemContainer = document.querySelector(constants.selectors.items);
+        logging.log(gameObjects.gameState.history);
         let contentList = gameObjects.gameState
-            .feN_Records
+            .history
             .map(a => {
                 let activeColor = a.activeColor === 0 ? 'w' : 'b'
                 return `${a.piecePlacement} ${activeColor} ${a.castlingAvailability} ${a.enPassantTargetSquare} ${a.halfmoveClock} ${a.fullmoveNumber}`;
             })
             .join('</div><div class="item">');
-        let content = `<div class="item">${ contentList }</div>`;
+        let content = `<div class="item">${contentList}</div><div class="item">${gameState.fen}</div>`;
         itemContainer.innerHTML = content;
     },
 

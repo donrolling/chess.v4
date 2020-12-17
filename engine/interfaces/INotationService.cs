@@ -7,6 +7,6 @@ namespace Chess.v4.Engine.Interfaces
     {
         List<Square> GetSquaresFromFEN_Record(Snapshot fen);
 
-        void SetGameState_FEN(List<Square> squares, int halfmoveClock, GameState newGameState, int piecePosition, int newPiecePosition);
+        void SetGameStateSnapshot(List<Square> squares, int halfmoveClock, GameState newGameState, int piecePosition, int newPiecePosition);
     }
 }
