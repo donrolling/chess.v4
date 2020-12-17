@@ -238,17 +238,15 @@ namespace Chess.v4.Engine.Service
             //figure out if additional information needs to be placed on the pgn move
             var otherSquaresOfThisTypeWithThisAttack = from s in gameState.Attacks
                                                        where s.Index == endPos
+                                                            && s.AttackingSquare.Index != startPos
+                                                            && s.AttackingSquare.Piece.Color == gameState.ActiveColor
                                                        select s;
-            var otherPiecesOfThisTypeWithThisAttack = from s in gameState.Attacks
-                                                      join o in otherSquaresOfThisTypeWithThisAttack on s.Index equals o.Index
-                                                      select s;
-
-            if (otherPiecesOfThisTypeWithThisAttack.Count() <= 0)
+            if (otherSquaresOfThisTypeWithThisAttack.Count() <= 0)
             {
                 return string.Concat(pgnMove.Substring(0, 1), captureMarker, pgnMove.Substring(1, pgnMove.Length - 1));
             }
 
-            var secondPiece = otherPiecesOfThisTypeWithThisAttack.First();
+            var secondPiece = otherSquaresOfThisTypeWithThisAttack.First();
             if (secondPiece.Piece.PieceType == PieceType.Pawn && !isCapture)
             {
                 result = string.Concat(pgnMove.Substring(0, 1), captureMarker, pgnMove.Substring(1, pgnMove.Length - 1));
