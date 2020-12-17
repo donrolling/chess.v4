@@ -137,7 +137,7 @@ namespace Chess.v4.Engine.Service
             return OperationResult<StateInfo>.Ok(moveInfo);
         }
 
-        private OperationResult<GameState> hydrateGameState(FEN_Record fenRecord, string errorMessage = null)
+        private OperationResult<GameState> hydrateGameState(Snapshot fenRecord, string errorMessage = null)
         {
             if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -154,7 +154,7 @@ namespace Chess.v4.Engine.Service
         {
             //store important stuff from old gamestate
             var previousStateFEN = gameState.ToString();
-            var fenRecords = gameState.FEN_Records.DeepCopy();
+            var fenRecords = gameState.History.DeepCopy();
             fenRecords.Add(FenFactory.Create(previousStateFEN));
 
             //verify that the move can be made
@@ -205,7 +205,7 @@ namespace Chess.v4.Engine.Service
                 throw new System.Exception(newGameStateResult.Message);
             }
             var newGameState = newGameStateResult.Result;
-            newGameState.FEN_Records = fenRecords;
+            newGameState.History = fenRecords;
             //make sure we moved out of check.
             if (gameState.StateInfo.IsCheck && newGameState.StateInfo.IsCheck)
             {

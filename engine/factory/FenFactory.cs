@@ -7,14 +7,14 @@ namespace Chess.v4.Engine.Factory
 {
     public static class FenFactory
     {
-        public static FEN_Record Create(string fen)
+        public static Snapshot Create(string fen)
         {
             // 5 could be a bad number
             if (fen.Length < 5 || !fen.Contains(' '))
             {
                 return null;
             }
-            var fenRecord = new FEN_Record();
+            var fenRecord = new Snapshot();
             var gameData = fen.Split(' ');
             fenRecord.PiecePlacement = gameData[0];
 
@@ -41,6 +41,12 @@ namespace Chess.v4.Engine.Factory
             fenRecord.FullmoveNumber = fullmoveNumber;
 
             return fenRecord;
+        }
+
+        public static string Create(Snapshot snapshot)
+        {
+            var activeColor = snapshot.ActiveColor == Color.White ? "w" : "b";
+            return $"{ snapshot.PiecePlacement } { activeColor } { snapshot.CastlingAvailability } { snapshot.EnPassantTargetSquare } { snapshot.HalfmoveClock } { snapshot.FullmoveNumber }";
         }
     }
 }

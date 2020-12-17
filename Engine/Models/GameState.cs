@@ -1,32 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using Chess.v4.Engine.Factory;
+using System.Collections.Generic;
 
 namespace Chess.v4.Models
 {
-    public class GameState : FEN_Record
+    public class GameState : Snapshot
     {
         public List<AttackedSquare> Attacks { get; set; } = new List<AttackedSquare>();
-        public List<FEN_Record> FEN_Records { get; set; } = new List<FEN_Record>();
-        public string PGN { get; set; }
+        public List<Snapshot> History { get; set; } = new List<Snapshot>();
         public List<Square> Squares { get; set; } = new List<Square>();
         public StateInfo StateInfo { get; set; }
+        public string PGN { get; set; }
 
         public GameState()
         {
         }
 
-        public GameState(FEN_Record fenRecord)
+        public GameState(Snapshot snapshot)
         {
-            this.PiecePlacement = fenRecord.PiecePlacement;
-            this.ActiveColor = fenRecord.ActiveColor;
-            this.CastlingAvailability = fenRecord.CastlingAvailability;
-            this.EnPassantTargetSquare = fenRecord.EnPassantTargetSquare;
-            this.HalfmoveClock = fenRecord.HalfmoveClock;
-            this.FullmoveNumber = fenRecord.FullmoveNumber;
+            this.PiecePlacement = snapshot.PiecePlacement;
+            this.ActiveColor = snapshot.ActiveColor;
+            this.CastlingAvailability = snapshot.CastlingAvailability;
+            this.EnPassantTargetSquare = snapshot.EnPassantTargetSquare;
+            this.HalfmoveClock = snapshot.HalfmoveClock;
+            this.FullmoveNumber = snapshot.FullmoveNumber;
         }
 
         public override string ToString()
         {
-            return FEN_Record.ConvertToString(this);
+            return FenFactory.Create(this);
         }
     }
 }

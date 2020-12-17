@@ -1,4 +1,5 @@
-﻿using Chess.v4.Models.Enums;
+﻿using Chess.v4.Engine.Factory;
+using Chess.v4.Models.Enums;
 
 namespace Chess.v4.Models
 {
@@ -22,7 +23,7 @@ namespace Chess.v4.Models
     ///And then after 2. Nf3:
     ///rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
     /// </summary>
-    public class FEN_Record
+    public class Snapshot
     {
         //Active colour. "w" means White moves next, "b" means Black.
         public Color ActiveColor { get; set; }
@@ -57,15 +58,9 @@ namespace Chess.v4.Models
         //lowercase ("pnbrqk"). Empty squares are noted using digits 1 through 8 (the number of empty squares), and "/" separates ranks.
         public string PiecePlacement { get; set; }
 
-        public static string ConvertToString(FEN_Record fenRecord)
-        {
-            var activeColor = fenRecord.ActiveColor == Color.White ? "w" : "b";
-            return $"{ fenRecord.PiecePlacement } { activeColor } { fenRecord.CastlingAvailability } { fenRecord.EnPassantTargetSquare } { fenRecord.HalfmoveClock } { fenRecord.FullmoveNumber }";
-        }
-
         public override string ToString()
         {
-            return ConvertToString(this);
+            return FenFactory.Create(this);
         }
     }
 }

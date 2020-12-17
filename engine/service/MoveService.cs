@@ -108,7 +108,7 @@ namespace Chess.v4.Engine.Service
         /// <returns></returns>
         public bool HasThreefoldRepition(GameState gameState)
         {
-            return gameState.FEN_Records
+            return gameState.History
                     .GroupBy(a => new { a.PiecePlacement, a.CastlingAvailability, a.EnPassantTargetPosition })
                     .Where(a => a.Count() >= 3)
                     .Any();
