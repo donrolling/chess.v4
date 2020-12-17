@@ -7,9 +7,9 @@ using System.Collections.Generic;
 
 namespace Chess.v4.Engine.Utility
 {
-    public static class DiagonalUtility
+    public static class DiagonalEngine
     {
-        private static List<int> File = GeneralUtility.GetEntireFile(7);
+        private static List<int> File = GeneralEngine.GetEntireFile(7);
 
         public static List<int> GetDiagonalLine(int location, int destination)
         {
@@ -45,7 +45,7 @@ namespace Chess.v4.Engine.Utility
                     break;
                 }
                 attackPosition = attackPosition + diagonalLine;
-                var moveViability = GeneralUtility.DetermineMoveViability(gameState, attackingPiece, attackPosition);
+                var moveViability = GeneralEngine.DetermineMoveViability(gameState, attackingPiece, attackPosition);
                 //I don't think either of these conditions should occur.
                 if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null)
                 {
@@ -240,7 +240,7 @@ namespace Chess.v4.Engine.Utility
 
         private static bool isValidDiagonalCoordinate(int position)
         {
-            if (!GeneralUtility.IsValidCoordinate(position)) { return false; }
+            if (!GeneralEngine.IsValidCoordinate(position)) { return false; }
             if (position % 8 == 0 || position % 8 == 7) { return false; }
             if (position < 7 || position > 56) { return false; }
             return true;

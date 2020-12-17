@@ -68,8 +68,8 @@ namespace Chess.v4.Engine.Service
 
         public OperationResult<GameState> MakeMove(GameState gameState, string beginning, string destination, PieceType? piecePromotionType = null)
         {
-            var pos1 = NotationUtility.CoordinateToPosition(beginning);
-            var pos2 = NotationUtility.CoordinateToPosition(destination);
+            var pos1 = NotationEngine.CoordinateToPosition(beginning);
+            var pos2 = NotationEngine.CoordinateToPosition(destination);
             return this.MakeMove(gameState, pos1, pos2, piecePromotionType);
         }
 
@@ -81,7 +81,7 @@ namespace Chess.v4.Engine.Service
             {
                 return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition);
             }
-            var promotedPieceType = NotationUtility.GetPieceTypeFromCharacter(pair.promotedPiece);
+            var promotedPieceType = NotationEngine.GetPieceTypeFromCharacter(pair.promotedPiece);
             return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition, promotedPieceType);
         }
 
@@ -175,7 +175,7 @@ namespace Chess.v4.Engine.Service
                 if (
                     badPawnAttacks.Count() > 1
                     || gameState.EnPassantTargetSquare == "-"
-                    || newPiecePosition != NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare)
+                    || newPiecePosition != NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare)
                 )
                 {
                     return OperationResult<GameState>.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
@@ -185,7 +185,7 @@ namespace Chess.v4.Engine.Service
             var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
             if (stateInfo.IsCastle)
             {
-                var rookPositions = CastleUtility.GetRookPositionsForCastle(gameState.ActiveColor, piecePosition, newPiecePosition);
+                var rookPositions = CastlingEngine.GetRookPositionsForCastle(gameState.ActiveColor, piecePosition, newPiecePosition);
                 movingGameState = manageSquares(movingGameState, stateInfo, rookPositions.RookPos, rookPositions.NewRookPos);
             }
             if (stateInfo.IsEnPassant)

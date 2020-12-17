@@ -4,7 +4,7 @@ using System;
 
 namespace Chess.v4.Engine.Utility
 {
-    public static class NotationUtility
+    public static class NotationEngine
     {
         public static int CoordinatePairToPosition(int file, int rank)
         {

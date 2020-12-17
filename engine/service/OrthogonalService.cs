@@ -12,12 +12,12 @@ namespace Chess.v4.Engine.Service
     {
         public List<int> GetEntireFile(int file)
         {
-            return GeneralUtility.GetEntireFile(file);
+            return GeneralEngine.GetEntireFile(file);
         }
 
         public List<int> GetEntireRank(int rank)
         {
-            return GeneralUtility.GetEntireRank(rank);
+            return GeneralEngine.GetEntireRank(rank);
         }
 
         public List<AttackedSquare> GetOrthogonalLine(GameState gameState, Square square, Direction direction)
@@ -29,9 +29,9 @@ namespace Chess.v4.Engine.Service
             var nextPositionInTheLine = currentPosition + iterator;
             for (var position = nextPositionInTheLine; position != lineTerminator; position = position + iterator)
             {
-                var isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
+                var isValidCoordinate = GeneralEngine.IsValidCoordinate(position);
                 if (!isValidCoordinate) { break; }
-                var moveViability = GeneralUtility.DetermineMoveViability(gameState, square.Piece, position);
+                var moveViability = GeneralEngine.DetermineMoveViability(gameState, square.Piece, position);
                 //these conditions shouldn't occur
                 if (!moveViability.IsValidCoordinate || moveViability.SquareToAdd == null)
                 {
@@ -61,8 +61,8 @@ namespace Chess.v4.Engine.Service
 
         private int getOrthogonalLineTerminator(Direction direction, int position)
         {
-            var file = NotationUtility.PositionToFileInt(position);
-            var rank = NotationUtility.PositionToRankInt(position);
+            var file = NotationEngine.PositionToFileInt(position);
+            var rank = NotationEngine.PositionToRankInt(position);
             var iterator = getIteratorByDirectionEnum(direction);
 
             switch (direction)

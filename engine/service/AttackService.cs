@@ -42,7 +42,7 @@ namespace Chess.v4.Engine.Service
             foreach (var offset in offsets)
             {
                 var destinationPosition = square.Index + offset;
-                var isValidCoordinate = GeneralUtility.IsValidCoordinate(destinationPosition);
+                var isValidCoordinate = GeneralEngine.IsValidCoordinate(destinationPosition);
                 if (!isValidCoordinate)
                 {
                     continue;
@@ -193,8 +193,8 @@ namespace Chess.v4.Engine.Service
             var currentPosition = square.Index;
             var pieceColor = square.Piece.Color;
             var attacks = new List<AttackedSquare>();
-            var coord = NotationUtility.PositionToCoordinate(currentPosition);
-            var file = NotationUtility.FileToInt(coord[0]);
+            var coord = NotationEngine.PositionToCoordinate(currentPosition);
+            var file = NotationEngine.FileToInt(coord[0]);
             var rank = (int)coord[1];
             var potentialPositions = new List<int> { 6, 10, 15, 17, -6, -10, -15, -17 };
             foreach (var potentialPosition in potentialPositions)
@@ -202,7 +202,7 @@ namespace Chess.v4.Engine.Service
                 var position = currentPosition + potentialPosition;
                 var _isValidKnightMove = isValidKnightMove(currentPosition, position, file, rank);
                 var _isValidMove = isValidMove(accumulator, gameState, square, position, pieceColor);
-                var _isValidCoordinate = GeneralUtility.IsValidCoordinate(position);
+                var _isValidCoordinate = GeneralEngine.IsValidCoordinate(position);
 
                 if (!_isValidKnightMove || !_isValidMove.IsValid || !_isValidCoordinate) { continue; }
 
@@ -227,15 +227,15 @@ namespace Chess.v4.Engine.Service
             var squares = gameState.Squares;
             var position = square.Index;
             var pieceColor = square.Piece.Color;
-            var coord = NotationUtility.PositionToCoordinate(position);
-            int file = NotationUtility.FileToInt(coord[0]);
-            int rank = NotationUtility.PositionToRankInt(position);
+            var coord = NotationEngine.PositionToCoordinate(position);
+            int file = NotationEngine.FileToInt(coord[0]);
+            int rank = NotationEngine.PositionToRankInt(position);
 
             var directionIndicator = pieceColor == Color.White ? 1 : -1;
             var homeRankIndicator = pieceColor == Color.White ? 2 : 7;
 
             var nextRank = (rank + directionIndicator);
-            var aheadOneRankPosition = NotationUtility.CoordinatePairToPosition(file, nextRank);
+            var aheadOneRankPosition = NotationEngine.CoordinatePairToPosition(file, nextRank);
             var aheadOneRankSquare = squares.GetSquare(aheadOneRankPosition);
             var attacks = new List<AttackedSquare>();
             if (!aheadOneRankSquare.Occupied)
@@ -249,9 +249,9 @@ namespace Chess.v4.Engine.Service
             //add en passant position: -1 indicates null here
             if (gameState.EnPassantTargetSquare != "-")
             {
-                var enPassantTargetPosition = NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare);
-                var leftPos = NotationUtility.CoordinatePairToPosition(file - 1, nextRank);
-                var rightPos = NotationUtility.CoordinatePairToPosition(file + 1, nextRank);
+                var enPassantTargetPosition = NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare);
+                var leftPos = NotationEngine.CoordinatePairToPosition(file - 1, nextRank);
+                var rightPos = NotationEngine.CoordinatePairToPosition(file + 1, nextRank);
                 if (enPassantTargetPosition == leftPos || enPassantTargetPosition == rightPos)
                 {
                     var enPassantSquare = squares.GetSquare(enPassantTargetPosition);
@@ -266,7 +266,7 @@ namespace Chess.v4.Engine.Service
 
         private void getPawnDiagonalAttack(List<Square> squares, Square square, Color pieceColor, int fileIndicator, int nextRank, List<AttackedSquare> attacks)
         {
-            var pos = NotationUtility.CoordinatePairToPosition(fileIndicator, nextRank);
+            var pos = NotationEngine.CoordinatePairToPosition(fileIndicator, nextRank);
             var attackedSquare = squares.GetSquare(pos);
             if (attackedSquare.Occupied && attackedSquare.Piece.Color != pieceColor)
             {
@@ -291,7 +291,7 @@ namespace Chess.v4.Engine.Service
                     break;
 
                 case PieceType.Bishop:
-                    DiagonalUtility.GetDiagonals(gameState, square, accumulator);
+                    DiagonalEngine.GetDiagonals(gameState, square, accumulator);
                     break;
 
                 case PieceType.Rook:
@@ -300,7 +300,7 @@ namespace Chess.v4.Engine.Service
 
                 case PieceType.Queen:
                     this._orthogonalService.GetOrthogonals(gameState, square, accumulator);
-                    DiagonalUtility.GetDiagonals(gameState, square, accumulator);
+                    DiagonalEngine.GetDiagonals(gameState, square, accumulator);
                     break;
 
                 case PieceType.King:
@@ -314,14 +314,14 @@ namespace Chess.v4.Engine.Service
 
         private bool isValidKnightMove(int position, int tempPosition, int file, int rank)
         {
-            var isValidCoordinate = GeneralUtility.IsValidCoordinate(tempPosition);
+            var isValidCoordinate = GeneralEngine.IsValidCoordinate(tempPosition);
             if (!isValidCoordinate)
             {
                 return false;
             }
 
-            var tempCoord = NotationUtility.PositionToCoordinate(tempPosition);
-            var tempFile = NotationUtility.FileToInt(tempCoord[0]);
+            var tempCoord = NotationEngine.PositionToCoordinate(tempPosition);
+            var tempFile = NotationEngine.FileToInt(tempCoord[0]);
             var tempRank = (int)tempCoord[1];
 
             var fileDiff = Math.Abs(tempFile - file);
@@ -341,7 +341,7 @@ namespace Chess.v4.Engine.Service
 
         private (bool IsValid, bool CanAttackOccupyingPiece) isValidMove(List<AttackedSquare> attacks, GameState gameState, Square locationSquare, int destination, Color pieceColor)
         {
-            var isValidCoordinate = GeneralUtility.IsValidCoordinate(destination);
+            var isValidCoordinate = GeneralEngine.IsValidCoordinate(destination);
             if (!isValidCoordinate || !gameState.Squares.Any(a => a.Index == destination))
             {
                 // throw new Exception($"Invalid position passed: { position }");
@@ -380,13 +380,13 @@ namespace Chess.v4.Engine.Service
                 return (true, true);
             }
             // which direction are we moving?
-            var directionInfo = GeneralUtility.GetDirectionInfo(locationSquare.Index, destination);
+            var directionInfo = GeneralEngine.GetDirectionInfo(locationSquare.Index, destination);
             var directionalDangerPieceTypes = directionInfo.IsDiagonal ? _diagonalDangerPieceTypes : _orthogonalFangerPieceTypes;
             var directionalDangerSquares = attacksOnThisPosition.Where(a => directionalDangerPieceTypes.Contains(a.AttackingSquare.Piece.PieceType) && a.AttackingSquare.Piece.Color != locationSquare.Piece.Color);
             foreach (var dangerSquare in directionalDangerSquares)
             {
                 // is that going to get us out of the attack path that this piece would normally have?
-                var dangerPieceDirectionInfo = GeneralUtility.GetDirectionInfo(dangerSquare.AttackingSquare.Index, locationSquare.Index);
+                var dangerPieceDirectionInfo = GeneralEngine.GetDirectionInfo(dangerSquare.AttackingSquare.Index, locationSquare.Index);
                 if (dangerPieceDirectionInfo.IsDiagonal && directionInfo.IsOrthogonal)
                 {
                     // won't intersect paths
@@ -430,7 +430,7 @@ namespace Chess.v4.Engine.Service
             }
 
             // if it is your teammate, you can't do that
-            if (GeneralUtility.IsTeamPiece(pieceColor, square.Piece))
+            if (GeneralEngine.IsTeamPiece(pieceColor, square.Piece))
             {
                 return (true, true);
             }
@@ -467,7 +467,7 @@ namespace Chess.v4.Engine.Service
             if (isOnHomeRank)
             {
                 var forwardOne = nextRank + directionIndicator;
-                var rankForwardPosition = NotationUtility.CoordinatePairToPosition(file, forwardOne);
+                var rankForwardPosition = NotationEngine.CoordinatePairToPosition(file, forwardOne);
                 var rankForwardSquare = squares.GetSquare(rankForwardPosition);
                 //pawns don't attack forward, so we don't have attacks when people occupy ahead of us
                 if (!rankForwardSquare.Occupied)

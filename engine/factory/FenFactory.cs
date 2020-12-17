@@ -25,7 +25,7 @@ namespace Chess.v4.Engine.Factory
             fenRecord.EnPassantTargetSquare = gameData[3];
             if (fenRecord.EnPassantTargetSquare != "-")
             {
-                fenRecord.EnPassantTargetPosition = NotationUtility.CoordinateToPosition(fenRecord.EnPassantTargetSquare);
+                fenRecord.EnPassantTargetPosition = NotationEngine.CoordinateToPosition(fenRecord.EnPassantTargetSquare);
             }
 
             var enPassantTargetPosition = -1;

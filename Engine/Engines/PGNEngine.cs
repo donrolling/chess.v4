@@ -1,11 +1,11 @@
 ﻿using Chess.v4.Models.Enums;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Chess.v4.Engine.Utility
 {
-    public static class PGNUtility
+    public static class PGNEngine
     {
         public static char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor)
         {
@@ -77,6 +77,49 @@ namespace Chess.v4.Engine.Utility
                     return PieceType.Rook;
             }
             return PieceType.Pawn;
+        }
+
+        public static List<string> PGNSplit(string pgn)
+        {
+            if (string.IsNullOrEmpty(pgn)) { return null; }
+
+            var regex = @"\d{1,3}\.";
+            var splitResult = Regex.Split(pgn.Trim(), regex);
+            return splitResult.ToList();
+        }
+
+        public static List<string> PGNSplit(string pgn, bool mostConsise)
+        {
+            if (string.IsNullOrEmpty(pgn)) { return null; }
+
+            var pgnData = PGNSplit(pgn);
+            if (!mostConsise) { return pgnData; }
+
+            if (pgnData != null && pgnData.Any())
+            {
+                var iterationData = pgnData.ToList();
+                var emptyStuffs = iterationData.Where(a => a == " " || string.IsNullOrEmpty(a)).ToList();
+                if (emptyStuffs != null && emptyStuffs.Any())
+                {
+                    foreach (var item in emptyStuffs)
+                    {
+                        iterationData.Remove(item);
+                    }
+                }
+                var returnValue = new List<string>();
+
+                foreach (var item in iterationData)
+                {
+                    var movePair = item.Trim().Split(' ');
+                    returnValue.Add(movePair[0]);
+                    if (movePair.Length > 1)
+                    {
+                        returnValue.Add(movePair[1]);
+                    }
+                }
+                return returnValue;
+            }
+            return null;
         }
     }
 }

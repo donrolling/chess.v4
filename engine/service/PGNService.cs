@@ -49,7 +49,7 @@ namespace Chess.v4.Engine.Service
                 if (
                     piece.PieceType == PieceType.Pawn
                     && gameState.EnPassantTargetSquare != "-"
-                    && NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare) == newPiecePosition
+                    && NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare) == newPiecePosition
                 )
                 {
                     var enPassant = gameState.Attacks.Where(a =>
@@ -106,10 +106,6 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        
-
-        
-
         public bool IsRank(char potentialRank)
         {
             return char.IsNumber(potentialRank);
@@ -120,7 +116,7 @@ namespace Chess.v4.Engine.Service
             var positionFromPGNMove = getPositionFromPGNMove(pgnMove, gameState.ActiveColor, gameState.EnPassantTargetSquare);
             var newPiecePosition = positionFromPGNMove.position;
             var promotedPiece = positionFromPGNMove.promotedPiece;
-            var pieceType = PGNUtility.GetPieceTypeFromPGNMove(pgnMove);
+            var pieceType = PGNEngine.GetPieceTypeFromPGNMove(pgnMove);
             var pieceIndicator = pgnMove[0];
             if (pieceIndicator == 'b')
             {
@@ -158,49 +154,6 @@ namespace Chess.v4.Engine.Service
             var piece = new Piece(pieceType, gameState.ActiveColor);
             var piecePosition = GetCurrentPositionFromPGNMove(gameState, piece, newPiecePosition, pgnMove, positionFromPGNMove.isCastle);
             return (piecePosition.Index, newPiecePosition, promotedPiece);
-        }
-
-        public List<string> PGNSplit(string pgn)
-        {
-            if (string.IsNullOrEmpty(pgn)) { return null; }
-
-            var regex = @"\d{1,3}\.";
-            var splitResult = Regex.Split(pgn.Trim(), regex);
-            return splitResult.ToList();
-        }
-
-        public List<string> PGNSplit(string pgn, bool mostConsise)
-        {
-            if (string.IsNullOrEmpty(pgn)) { return null; }
-
-            var pgnData = PGNSplit(pgn);
-            if (!mostConsise) { return pgnData; }
-
-            if (pgnData != null && pgnData.Any())
-            {
-                var iterationData = pgnData.ToList();
-                var emptyStuffs = iterationData.Where(a => a == " " || string.IsNullOrEmpty(a)).ToList();
-                if (emptyStuffs != null && emptyStuffs.Any())
-                {
-                    foreach (var item in emptyStuffs)
-                    {
-                        iterationData.Remove(item);
-                    }
-                }
-                var returnValue = new List<string>();
-
-                foreach (var item in iterationData)
-                {
-                    var movePair = item.Trim().Split(' ');
-                    returnValue.Add(movePair[0]);
-                    if (movePair.Length > 1)
-                    {
-                        returnValue.Add(movePair[1]);
-                    }
-                }
-                return returnValue;
-            }
-            return null;
         }
 
         public string SquarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare, char promoteToPiece)
@@ -247,9 +200,9 @@ namespace Chess.v4.Engine.Service
         {
             var rank = color == Color.White ? 1 : 8;
             var file = 4;
-            var fileChar = NotationUtility.IntToFile(file);
+            var fileChar = NotationEngine.IntToFile(file);
             var coord = string.Concat(fileChar, rank);
-            var origination = NotationUtility.CoordinateToPosition(coord);
+            var origination = NotationEngine.CoordinateToPosition(coord);
             return gameState.Squares.GetSquare(origination);
         }
 
@@ -280,8 +233,8 @@ namespace Chess.v4.Engine.Service
             }
 
             //if other piece is on same the file of departure (if they differ); or
-            var movingPieceFile = NotationUtility.PositionToFileChar(startPos);
-            var otherPieceFile = NotationUtility.PositionToFileChar(secondPiece.Index);
+            var movingPieceFile = NotationEngine.PositionToFileChar(startPos);
+            var otherPieceFile = NotationEngine.PositionToFileChar(secondPiece.Index);
 
             if (movingPieceFile != otherPieceFile)
             {
@@ -298,8 +251,8 @@ namespace Chess.v4.Engine.Service
             else
             {
                 //the rank of departure (if the files are the same but the ranks differ)
-                var movingPieceRank = NotationUtility.PositionToRankInt(startPos);
-                var otherPieceRank = NotationUtility.PositionToRankInt(secondPiece.Index);
+                var movingPieceRank = NotationEngine.PositionToRankInt(startPos);
+                var otherPieceRank = NotationEngine.PositionToRankInt(secondPiece.Index);
                 if (movingPieceRank != otherPieceRank)
                 {
                     result = string.Concat(pgnMove.Substring(0, 1), movingPieceRank, captureMarker, pgnMove.Substring(1, pgnMove.Length - 1));
@@ -325,7 +278,7 @@ namespace Chess.v4.Engine.Service
                 case 'P':
                     if (isCapture)
                     {
-                        var file = NotationUtility.PositionToFileChar(startPos);
+                        var file = NotationEngine.PositionToFileChar(startPos);
                         pgnMove = string.Concat(file, coord);
                     }
                     else
@@ -381,7 +334,7 @@ namespace Chess.v4.Engine.Service
                         isEnPassant = rightSide.Contains("ep") || rightSide.Contains("e.p.");
                         if (isEnPassant)
                         {
-                            return (NotationUtility.CoordinateToPosition(enPassantTargetSquare), promotedPiece, false);
+                            return (NotationEngine.CoordinateToPosition(enPassantTargetSquare), promotedPiece, false);
                         }
                     }
                 }
@@ -399,7 +352,7 @@ namespace Chess.v4.Engine.Service
                     promotedPiece = pgnMove.Substring(pgnMove.Length - 2, 1)[0];
                 }
                 var dest = pawnCapturePromotion ? pgnMove.Substring(2, 2) : pgnMove.Substring(0, 2);
-                return (NotationUtility.CoordinateToPosition(dest), promotedPiece, false);
+                return (NotationEngine.CoordinateToPosition(dest), promotedPiece, false);
             }
             //probably just a regular move
             pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
@@ -410,7 +363,7 @@ namespace Chess.v4.Engine.Service
                 x = 4;
                 throw new Exception("I didn't think this could happen, so I tested it with an exception.");
             }
-            return (NotationUtility.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece, false);
+            return (NotationEngine.CoordinateToPosition(pgnMove.Substring(pgnMove.Length - x, 2)), promotedPiece, false);
         }
 
         private bool isCapture(string move)
@@ -466,7 +419,7 @@ namespace Chess.v4.Engine.Service
         private Square pgnLength3(IEnumerable<AttackedSquare> potentialPositions, string newPgnMove)
         {
             var ambiguityResolver = newPgnMove[0];
-            var files = this._orthogonalService.GetEntireFile(NotationUtility.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
+            var files = this._orthogonalService.GetEntireFile(NotationEngine.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
             var potentialSquares = potentialPositions.Where(a => files.Contains(a.AttackingSquare.Index)).ToList();
             if (potentialSquares.Count() > 1)
             {
@@ -488,7 +441,7 @@ namespace Chess.v4.Engine.Service
             }
             else
             {
-                var iFile = NotationUtility.FileToInt(ambiguityResolver);
+                var iFile = NotationEngine.FileToInt(ambiguityResolver);
                 ambiguityResolutionSet = this._orthogonalService.GetEntireFile(iFile);
             }
             var intersection = potentialPositions.Select(a => a.AttackingSquare.Index).Intersect(ambiguityResolutionSet);
@@ -501,17 +454,17 @@ namespace Chess.v4.Engine.Service
 
         private Square pgnLength5(GameState gameState, string newPgnMove)
         {
-            var _file = NotationUtility.FileToInt(newPgnMove[1]);
+            var _file = NotationEngine.FileToInt(newPgnMove[1]);
             var _rank = 0;
             Int32.TryParse(newPgnMove[2].ToString(), out _rank);
-            var pos = NotationUtility.CoordinatePairToPosition(_file, _rank);
+            var pos = NotationEngine.CoordinatePairToPosition(_file, _rank);
             return gameState.Squares.GetSquare(pos);
         }
 
         private string squarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare)
         {
-            var startPos = NotationUtility.CoordinateToPosition(startSquare);
-            var endPos = NotationUtility.CoordinateToPosition(endSquare);
+            var startPos = NotationEngine.CoordinateToPosition(startSquare);
+            var endPos = NotationEngine.CoordinateToPosition(endSquare);
             var destinationSquare = gameState.Squares.GetSquare(endPos);
             var isCapture = destinationSquare.Occupied && destinationSquare.Piece.Color != playerColor;
 
@@ -533,7 +486,7 @@ namespace Chess.v4.Engine.Service
                 throw new Exception("Color doesn't match given positions.");
             }
             var notationPiece = char.ToUpper(piece.Identity);
-            var coord = NotationUtility.PositionToCoordinate(endPos);
+            var coord = NotationEngine.PositionToCoordinate(endPos);
             var pgnMove = getPgnMove(notationPiece, piece, coord, startPos, endPos, isCapture, gameState);
             return pgnMove;
         }

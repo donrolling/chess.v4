@@ -57,19 +57,19 @@ namespace EngineTests.Tests.EngineTests
         [TestMethod]
         public void Basic()
         {
-            Assert.AreEqual(PieceType.King, PGNUtility.GetPieceTypeFromPGNMove("Kb2"));
-            Assert.AreEqual(PieceType.Queen, PGNUtility.GetPieceTypeFromPGNMove("Qa2"));
-            Assert.AreEqual(PieceType.Rook, PGNUtility.GetPieceTypeFromPGNMove("Ra2"));
-            Assert.AreEqual(PieceType.Bishop, PGNUtility.GetPieceTypeFromPGNMove("Bb2"));
-            Assert.AreEqual(PieceType.Knight, PGNUtility.GetPieceTypeFromPGNMove("Na2"));
-            Assert.AreEqual(PieceType.Pawn, PGNUtility.GetPieceTypeFromPGNMove("a2"));
+            Assert.AreEqual(PieceType.King, PGNEngine.GetPieceTypeFromPGNMove("Kb2"));
+            Assert.AreEqual(PieceType.Queen, PGNEngine.GetPieceTypeFromPGNMove("Qa2"));
+            Assert.AreEqual(PieceType.Rook, PGNEngine.GetPieceTypeFromPGNMove("Ra2"));
+            Assert.AreEqual(PieceType.Bishop, PGNEngine.GetPieceTypeFromPGNMove("Bb2"));
+            Assert.AreEqual(PieceType.Knight, PGNEngine.GetPieceTypeFromPGNMove("Na2"));
+            Assert.AreEqual(PieceType.Pawn, PGNEngine.GetPieceTypeFromPGNMove("a2"));
 
-            Assert.AreEqual(PieceType.King, PGNUtility.GetPieceTypeFromPGNMove("kb2"));
-            Assert.AreEqual(PieceType.Queen, PGNUtility.GetPieceTypeFromPGNMove("qa2"));
-            Assert.AreEqual(PieceType.Rook, PGNUtility.GetPieceTypeFromPGNMove("ra2"));
-            Assert.AreEqual(PieceType.Bishop, PGNUtility.GetPieceTypeFromPGNMove("bb2"));
-            Assert.AreEqual(PieceType.Knight, PGNUtility.GetPieceTypeFromPGNMove("na2"));
-            Assert.AreEqual(PieceType.Pawn, PGNUtility.GetPieceTypeFromPGNMove("a2"));
+            Assert.AreEqual(PieceType.King, PGNEngine.GetPieceTypeFromPGNMove("kb2"));
+            Assert.AreEqual(PieceType.Queen, PGNEngine.GetPieceTypeFromPGNMove("qa2"));
+            Assert.AreEqual(PieceType.Rook, PGNEngine.GetPieceTypeFromPGNMove("ra2"));
+            Assert.AreEqual(PieceType.Bishop, PGNEngine.GetPieceTypeFromPGNMove("bb2"));
+            Assert.AreEqual(PieceType.Knight, PGNEngine.GetPieceTypeFromPGNMove("na2"));
+            Assert.AreEqual(PieceType.Pawn, PGNEngine.GetPieceTypeFromPGNMove("a2"));
         }
 
         [TestMethod]

@@ -18,7 +18,7 @@ namespace EngineTests.Tests.EngineTests
         [TestMethod]
         public void GetEntireDiagonalByPosition()
         {
-            var list = DiagonalUtility.GetEntireDiagonalByPosition(35);
+            var list = DiagonalEngine.GetEntireDiagonalByPosition(35);
             var accepted = new List<int> { 8, 17, 26, 35, 44, 53, 62, 56, 49, 42, 28, 21, 14, 7 };
             var remaining = accepted.Except(list);
             Assert.IsFalse(remaining.Any());
@@ -27,22 +27,22 @@ namespace EngineTests.Tests.EngineTests
         [TestMethod]
         public void IsDiagonal()
         {
-            Assert.IsTrue(DiagonalUtility.IsDiagonal(9, 27));
-            Assert.IsTrue(DiagonalUtility.IsDiagonal(27, 9));
-            Assert.IsTrue(DiagonalUtility.IsDiagonal(49, 35));
-            Assert.IsTrue(DiagonalUtility.IsDiagonal(35, 49));
-            Assert.IsFalse(DiagonalUtility.IsDiagonal(0, 7));
-            Assert.IsFalse(DiagonalUtility.IsDiagonal(7, 0));
+            Assert.IsTrue(DiagonalEngine.IsDiagonal(9, 27));
+            Assert.IsTrue(DiagonalEngine.IsDiagonal(27, 9));
+            Assert.IsTrue(DiagonalEngine.IsDiagonal(49, 35));
+            Assert.IsTrue(DiagonalEngine.IsDiagonal(35, 49));
+            Assert.IsFalse(DiagonalEngine.IsDiagonal(0, 7));
+            Assert.IsFalse(DiagonalEngine.IsDiagonal(7, 0));
         }
 
         [TestMethod]
         public void IsOrthogonal()
         {
-            Assert.IsTrue(GeneralUtility.IsOrthogonal(0, 7));
-            Assert.IsTrue(GeneralUtility.IsOrthogonal(7, 0));
-            Assert.IsTrue(GeneralUtility.IsOrthogonal(56, 0));
-            Assert.IsTrue(GeneralUtility.IsOrthogonal(0, 56));
-            Assert.IsFalse(GeneralUtility.IsOrthogonal(0, 9));
+            Assert.IsTrue(GeneralEngine.IsOrthogonal(0, 7));
+            Assert.IsTrue(GeneralEngine.IsOrthogonal(7, 0));
+            Assert.IsTrue(GeneralEngine.IsOrthogonal(56, 0));
+            Assert.IsTrue(GeneralEngine.IsOrthogonal(0, 56));
+            Assert.IsFalse(GeneralEngine.IsOrthogonal(0, 9));
         }
     }
 }

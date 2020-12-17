@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace Chess.v4.Engine.Utility
 {
-    public static class CastleUtility
+    public static class CastlingEngine
     {
         public static bool DetermineCastleThroughCheck(GameState gameState, int kingPos, int rookPos)
         {
             var oppositeColor = gameState.ActiveColor.Reverse();
-            var positions = CastleUtility.GetKingPositionsDuringCastle(kingPos, rookPos);
+            var positions = CastlingEngine.GetKingPositionsDuringCastle(kingPos, rookPos);
             var opponentAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Piece.Color == oppositeColor).Select(a => a.Index);
             var arePositionsAttacked = positions.Intersect<int>(opponentAttacks).Any();
             return arePositionsAttacked;
@@ -31,11 +31,11 @@ namespace Chess.v4.Engine.Utility
         {
             //manage the castle
             var rookRank = color == Color.White ? 1 : 8; //intentionally not zero based
-            var rookFile = NotationUtility.IntToFile(piecePosition - newPiecePosition > 0 ? 0 : 7);
-            var rookPos = NotationUtility.CoordinateToPosition(string.Concat(rookFile, rookRank.ToString()));
+            var rookFile = NotationEngine.IntToFile(piecePosition - newPiecePosition > 0 ? 0 : 7);
+            var rookPos = NotationEngine.CoordinateToPosition(string.Concat(rookFile, rookRank.ToString()));
 
-            var newRookFile = NotationUtility.IntToFile(piecePosition - newPiecePosition > 0 ? 3 : 5);
-            var newRookPos = NotationUtility.CoordinateToPosition(string.Concat(newRookFile, rookRank.ToString()));
+            var newRookFile = NotationEngine.IntToFile(piecePosition - newPiecePosition > 0 ? 3 : 5);
+            var newRookPos = NotationEngine.CoordinateToPosition(string.Concat(newRookFile, rookRank.ToString()));
 
             return (rookPos, newRookPos);
         }

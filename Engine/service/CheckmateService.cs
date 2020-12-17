@@ -110,12 +110,12 @@ namespace Chess.v4.Engine.Service
             List<int> result;
             if (isRankMove)
             {
-                var file = NotationUtility.PositionToFile(x.Index);
+                var file = NotationEngine.PositionToFile(x.Index);
                 result = this._orthogonalService.GetEntireFile(file);
             }
             else
             {
-                var rank = NotationUtility.PositionToRank(x.Index);
+                var rank = NotationEngine.PositionToRank(x.Index);
                 result = this._orthogonalService.GetEntireRank(rank);
             }
             if (!trim)
@@ -179,12 +179,12 @@ namespace Chess.v4.Engine.Service
         {
             foreach (var attackOnKing in attacksOnKing)
             {
-                var attackIsOrthogonal = GeneralUtility.IsOrthogonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
-                var attackIsDiagonal = DiagonalUtility.IsDiagonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+                var attackIsOrthogonal = GeneralEngine.IsOrthogonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+                var attackIsDiagonal = DiagonalEngine.IsDiagonal(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
                 var range = new List<Square>();
                 if (attackIsOrthogonal)
                 {
-                    var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+                    var isRankMove = GeneralEngine.GivenOrthogonalMove_IsItARankMove(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
                     var oxs = getEntireOrthogonalLine(isRankMove, attackOnKing, true);
                     var ixs = teamAttacks.Select(a => a.Index).Intersect(oxs);
                     if (ixs.Any())
@@ -194,7 +194,7 @@ namespace Chess.v4.Engine.Service
                 }
                 else if (attackIsDiagonal)
                 {
-                    var dxs = DiagonalUtility.GetDiagonalLine(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
+                    var dxs = DiagonalEngine.GetDiagonalLine(attackOnKing.AttackingSquare.Index, attackOnKing.Index);
                     //if dxs contains the clearMove.Index, then the king has not moved out of check
                     var ixs = teamAttacks.Select(a => a.Index).Intersect(dxs);
                     if (ixs.Any())
@@ -228,7 +228,7 @@ namespace Chess.v4.Engine.Service
                 //clearMove.AttackerSquare is the king here
                 //clearMove.Index is where he is going
                 var clearMove = kingMoves.GetSquare(clearMoveIndex);
-                var isOrthogonal = GeneralUtility.IsOrthogonal(clearMove.AttackingSquare.Index, clearMove.Index);
+                var isOrthogonal = GeneralEngine.IsOrthogonal(clearMove.AttackingSquare.Index, clearMove.Index);
                 var _mayKingMoveHere = false;
                 if (isOrthogonal)
                 {
@@ -262,12 +262,12 @@ namespace Chess.v4.Engine.Service
             }
             var diagonalAttacksOnKing = attacksOnKing.Where(a =>
                 diagonalAttackers.Contains(a.AttackingSquare.Piece.PieceType)
-                && DiagonalUtility.IsDiagonal(a.Index, a.AttackingSquare.Index)
+                && DiagonalEngine.IsDiagonal(a.Index, a.AttackingSquare.Index)
             );
             if (!diagonalAttacksOnKing.Any()) { return true; }
             foreach (var x in diagonalAttacksOnKing)
             {
-                var dxs = DiagonalUtility.GetDiagonalLine(x.Index, x.AttackingSquare.Index);
+                var dxs = DiagonalEngine.GetDiagonalLine(x.Index, x.AttackingSquare.Index);
                 //if dxs contains the clearMove.Index, then the king has not moved out of check
                 if (dxs.Contains(clearMove.Index))
                 {
@@ -288,7 +288,7 @@ namespace Chess.v4.Engine.Service
             }
             //now make sure we're not ignoring the issue where an attack isn't displayed because the king was blocking the square
             //that he would move into, that is still being attacked by the original attacker.
-            var isRankMove = GeneralUtility.GivenOrthogonalMove_IsItARankMove(clearMove.AttackingSquare.Index, clearMove.Index);
+            var isRankMove = GeneralEngine.GivenOrthogonalMove_IsItARankMove(clearMove.AttackingSquare.Index, clearMove.Index);
             //find all attackers who attack orthogonally and determine if they are on the same line
             var orthogonalAttacksOnKing = attacksOnKing.Where(a => orthogonalAttackers.Contains(a.AttackingSquare.Piece.PieceType));
             foreach (var x in orthogonalAttacksOnKing)

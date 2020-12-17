@@ -36,7 +36,7 @@ namespace Chess.v4.Engine.Service
                         {
                             var index = leftSideIndex + charIndex + j;
                             squares.Add(
-                                new Square(index, NotationUtility.PositionToCoordinate(index), null)
+                                new Square(index, NotationEngine.PositionToCoordinate(index), null)
                             );
                         }
                         //in FEN we move ahead the number of squares that the number says
@@ -46,7 +46,7 @@ namespace Chess.v4.Engine.Service
                     {
                         var index = leftSideIndex + charIndex;
                         squares.Add(
-                            new Square(index, NotationUtility.PositionToCoordinate(index), NotationUtility.GetPieceFromCharacter(c))
+                            new Square(index, NotationEngine.PositionToCoordinate(index), NotationEngine.GetPieceFromCharacter(c))
                         );
                         charIndex++;
                     }
@@ -68,7 +68,7 @@ namespace Chess.v4.Engine.Service
             newGameState.EnPassantTargetSquare = enPassantCoord;
             if (enPassantCoord != "-")
             {
-                newGameState.EnPassantTargetPosition = NotationUtility.CoordinateToPosition(enPassantCoord);
+                newGameState.EnPassantTargetPosition = NotationEngine.CoordinateToPosition(enPassantCoord);
             }
             newGameState.HalfmoveClock = newHalfmoveClock;
             //better to calculate this value after setting the ActiveColor
@@ -135,7 +135,7 @@ namespace Chess.v4.Engine.Service
             }
             var moveMarker = activeColor == Color.White ? 8 : -8;
             var enPassantSquare = piecePosition + moveMarker;
-            return NotationUtility.PositionToCoordinate(enPassantSquare);
+            return NotationEngine.PositionToCoordinate(enPassantSquare);
         }
 
         private int getFullmoveNumber(int fullmoveNumber, Color activeColor)

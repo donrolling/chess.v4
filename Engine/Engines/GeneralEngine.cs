@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Chess.v4.Engine.Utility
 {
-    public static class GeneralUtility
+    public static class GeneralEngine
     {
         public static bool BreakAfterAction(Piece piece, Color activeColor)
         {
@@ -37,7 +37,7 @@ namespace Chess.v4.Engine.Utility
 
         public static MoveViability DetermineMoveViability(GameState gameState, Piece attacker, int position)
         {
-            if (!GeneralUtility.IsValidCoordinate(position))
+            if (!GeneralEngine.IsValidCoordinate(position))
             {
                 return new MoveViability(false, false, null);
             }
@@ -47,7 +47,7 @@ namespace Chess.v4.Engine.Utility
                 return new MoveViability(true, false, square);
             }
             var blockingPiece = square.Piece;
-            var isTeamPiece = GeneralUtility.IsTeamPiece(attacker.Color, blockingPiece);
+            var isTeamPiece = GeneralEngine.IsTeamPiece(attacker.Color, blockingPiece);
             if (!isTeamPiece)
             {
                 return new MoveViability(true, true, square);
@@ -138,7 +138,7 @@ namespace Chess.v4.Engine.Utility
 
         public static bool IsOrthogonal(int p1, int p2)
         {
-            var rank = GetEntireRank(NotationUtility.PositionToRankInt(p1));
+            var rank = GetEntireRank(NotationEngine.PositionToRankInt(p1));
             var file = GetEntireFile(p1);
             return rank.Contains(p2) || file.Contains(p2);
         }
@@ -162,7 +162,7 @@ namespace Chess.v4.Engine.Utility
             var result = new DirectionInfo();
             // which direction are we moving?
             result.IsOrthogonal = IsOrthogonal(location, destination);
-            result.IsDiagonal = DiagonalUtility.IsDiagonal(location, destination);
+            result.IsDiagonal = DiagonalEngine.IsDiagonal(location, destination);
             if (result.IsOrthogonal)
             {
                 var rankMove = GivenOrthogonalMove_IsItARankMove(location, destination);

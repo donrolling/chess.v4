@@ -137,7 +137,7 @@ namespace EngineTests.Tests.EngineTests
 
         private void testDiagonalLine(int file, DiagonalDirectionFromFileNumber direction, List<int> squares)
         {
-            var diagonalLine = DiagonalUtility.GetEntireDiagonalByFile(_gameState, file, direction);
+            var diagonalLine = DiagonalEngine.GetEntireDiagonalByFile(_gameState, file, direction);
             TestUtility.ListContainsSquares(diagonalLine, squares);
         }
     }

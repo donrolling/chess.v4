@@ -25,7 +25,7 @@ namespace EngineTests.Tests.EngineTests
             var fen = "r1bqk2r/ppp2ppp/8/3P4/1Q2P3/6P1/PPP2P1P/R1B1KB1R b KQkq - 0 9";
             var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
-            var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 60, 63);
+            var isCastleThroughCheck = CastlingEngine.DetermineCastleThroughCheck(gameState, 60, 63);
             Assert.IsTrue(isCastleThroughCheck);
 
             var newGameStateResult = _gameStateService.MakeMove(gameState, 60, 62);
@@ -38,7 +38,7 @@ namespace EngineTests.Tests.EngineTests
             var fen = "r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R1B1KB1R b KQkq - 0 9";
             var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
-            var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 60, 63);
+            var isCastleThroughCheck = CastlingEngine.DetermineCastleThroughCheck(gameState, 60, 63);
             Assert.IsFalse(isCastleThroughCheck);
 
             var newGameStateResult = _gameStateService.MakeMove(gameState, 60, 62);
@@ -64,22 +64,22 @@ namespace EngineTests.Tests.EngineTests
         [TestMethod]
         public void KingAttacks3()
         {
-            var positions = CastleUtility.GetKingPositionsDuringCastle(60, 63);
+            var positions = CastlingEngine.GetKingPositionsDuringCastle(60, 63);
             Assert.AreEqual(2, positions.Count());
             Assert.AreEqual(61, positions[0]);
             Assert.AreEqual(62, positions[1]);
 
-            var positions2 = CastleUtility.GetKingPositionsDuringCastle(60, 56);
+            var positions2 = CastlingEngine.GetKingPositionsDuringCastle(60, 56);
             Assert.AreEqual(2, positions2.Count());
             Assert.AreEqual(59, positions2[0]);
             Assert.AreEqual(58, positions2[1]);
 
-            var positions3 = CastleUtility.GetKingPositionsDuringCastle(4, 7);
+            var positions3 = CastlingEngine.GetKingPositionsDuringCastle(4, 7);
             Assert.AreEqual(2, positions3.Count());
             Assert.AreEqual(5, positions3[0]);
             Assert.AreEqual(6, positions3[1]);
 
-            var positions4 = CastleUtility.GetKingPositionsDuringCastle(4, 0);
+            var positions4 = CastlingEngine.GetKingPositionsDuringCastle(4, 0);
             Assert.AreEqual(2, positions4.Count());
             Assert.AreEqual(3, positions4[0]);
             Assert.AreEqual(2, positions4[1]);
@@ -100,7 +100,7 @@ namespace EngineTests.Tests.EngineTests
             var fen = "r3k2r/pp3ppp/2pq4/7b/1Q2PB2/1P6/P1P1BPPP/R3K2R w KQkq - 3 13";
             var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
-            var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
+            var isCastleThroughCheck = CastlingEngine.DetermineCastleThroughCheck(gameState, 4, 0);
             Assert.IsTrue(isCastleThroughCheck);
 
             var newGameStateResult = _gameStateService.MakeMove(gameState, 4, 2);
@@ -129,7 +129,7 @@ namespace EngineTests.Tests.EngineTests
             // This test is broken
             // I'm guessing that the code I wrote to fix the issue in WhiteKingIsInCheckmateAndHasNoValidMoves
             // is making pieces seem like they are attacking the king when they are not
-            var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
+            var isCastleThroughCheck = CastlingEngine.DetermineCastleThroughCheck(gameState, 4, 0);
             Assert.IsFalse(isCastleThroughCheck);
 
             var newGameStateResult = _gameStateService.MakeMove(gameState, 4, 2);

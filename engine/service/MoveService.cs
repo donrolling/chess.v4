@@ -38,7 +38,7 @@ namespace Chess.v4.Engine.Service
             stateInfo.IsPawnPromotion = this.isPawnPromotion(oldSquare, newPiecePosition);
             if (gameState.EnPassantTargetSquare != "-" && oldSquare.Piece.PieceType == PieceType.Pawn)
             {
-                var pawnEnPassantPosition = NotationUtility.CoordinateToPosition(gameState.EnPassantTargetSquare);
+                var pawnEnPassantPosition = NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare);
                 if (newPiecePosition == pawnEnPassantPosition)
                 {
                     stateInfo.IsEnPassant = true;
@@ -161,7 +161,7 @@ namespace Chess.v4.Engine.Service
             }
             var piece = square.Piece;
             if (piece.PieceType != PieceType.Pawn) { return false; } //only pawns can perform en passant
-            var enPassantPosition = NotationUtility.CoordinateToPosition(enPassantTargetSquare);
+            var enPassantPosition = NotationEngine.CoordinateToPosition(enPassantTargetSquare);
             if (enPassantPosition != newPiecePosition) { return false; } //if we're not moving to the en passant position, this is not en passant
             var moveDistance = Math.Abs(square.Index - newPiecePosition);
             if (!new List<int> { 7, 9 }.Contains(moveDistance)) { return false; } //is this a diagonal move?
@@ -223,7 +223,7 @@ namespace Chess.v4.Engine.Service
                 return OperationResult<bool>.Fail("Can't castle out of check.");
             }
 
-            var castleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, square.Index, castleInfo.RookPosition);
+            var castleThroughCheck = CastlingEngine.DetermineCastleThroughCheck(gameState, square.Index, castleInfo.RookPosition);
             if (castleThroughCheck)
             {
                 return OperationResult<bool>.Fail("Can't castle through check.");
@@ -244,7 +244,7 @@ namespace Chess.v4.Engine.Service
         //	var kingHasEscape = false;
         public bool IsValidPawnMove(Square currentSquare, List<Square> squares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant)
         {
-            var isDiagonalMove = DiagonalUtility.IsDiagonal(currentSquare.Index, newPiecePosition);
+            var isDiagonalMove = DiagonalEngine.IsDiagonal(currentSquare.Index, newPiecePosition);
             if (!isDiagonalMove)
             {
                 return true;
