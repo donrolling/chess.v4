@@ -1,39 +1,34 @@
 ﻿using Chess.v4.Engine.Extensions;
 using Chess.v4.Engine.Interfaces;
 using Chess.v4.Engine.Utility;
+using EngineTests.Models;
+using EngineTests.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Tests.Models;
-using Tests.Utility;
 
-namespace Tests
+namespace EngineTests.Tests.EngineTests
 {
     [TestClass]
     public class KingAttackTests : TestBase
     {
-        public IAttackService AttackService { get; }
-
-        public IGameStateService GameStateService { get; }
-        public IMoveService MoveService { get; }
+        private readonly IGameStateService _gameStateService;
 
         public KingAttackTests()
         {
-            this.AttackService = this.ServiceProvider.GetService<IAttackService>();
-            this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
-            this.MoveService = this.ServiceProvider.GetService<IMoveService>();
+            _gameStateService = ServiceProvider.GetService<IGameStateService>();
         }
 
         [TestMethod]
         public void BlackKingAttemptsToCastleThroughCheck_Fails()
         {
             var fen = "r1bqk2r/ppp2ppp/8/3P4/1Q2P3/6P1/PPP2P1P/R1B1KB1R b KQkq - 0 9";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
             var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 60, 63);
             Assert.IsTrue(isCastleThroughCheck);
 
-            var newGameStateResult = this.GameStateService.MakeMove(gameState, 60, 62);
+            var newGameStateResult = _gameStateService.MakeMove(gameState, 60, 62);
             Assert.IsFalse(newGameStateResult.Success);
         }
 
@@ -41,12 +36,12 @@ namespace Tests
         public void BlackKingCastles_Succeeds()
         {
             var fen = "r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R1B1KB1R b KQkq - 0 9";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
             var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 60, 63);
             Assert.IsFalse(isCastleThroughCheck);
 
-            var newGameStateResult = this.GameStateService.MakeMove(gameState, 60, 62);
+            var newGameStateResult = _gameStateService.MakeMove(gameState, 60, 62);
             Assert.IsTrue(newGameStateResult.Success, $"Castle should have succeeded. { newGameStateResult.Message }");
 
             var newFEN = newGameStateResult.Result.ToString();
@@ -57,7 +52,7 @@ namespace Tests
         public void BlackKingIsInCheckmate_HasNoValidAttacks()
         {
             var fen = "2r5/8/2n1Q3/5R1k/3Pp1p1/p1P3Pp/P6P/R1BK4 b - - 1 41";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var blackKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
             Assert.AreEqual(0, blackKingAttacks.Count());
             Assert.IsTrue(gameState.StateInfo.IsCheck);
@@ -94,7 +89,7 @@ namespace Tests
         public void KingMusntMoveIntoPawnAttack()
         {
             var fen = "rnbqkbnr/1pp2ppp/4p3/p2p4/8/4K3/PPPP1PPP/RNBQ1BNR w kq - 0 4";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "e3").ToList();
             Assert.IsFalse(whiteKingAttacks.Select(a => a.Name).Contains("e4"), "King should not be able to move into e4 because a pawn attacks there.");
         }
@@ -103,12 +98,12 @@ namespace Tests
         public void WhiteKingAttemptsToCastleThroughCheck_Fails()
         {
             var fen = "r3k2r/pp3ppp/2pq4/7b/1Q2PB2/1P6/P1P1BPPP/R3K2R w KQkq - 3 13";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
             var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
             Assert.IsTrue(isCastleThroughCheck);
 
-            var newGameStateResult = this.GameStateService.MakeMove(gameState, 4, 2);
+            var newGameStateResult = _gameStateService.MakeMove(gameState, 4, 2);
             Assert.IsFalse(newGameStateResult.Success);
         }
 
@@ -117,11 +112,11 @@ namespace Tests
         {
             //should have one valid move only
             var fen = "6k1/5pbp/5Qp1/8/r3P3/3PK3/r4PPP/2q5 w - - 0 1";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "e3").ToList();
             Assert.IsTrue(gameState.StateInfo.IsCheck);
             Assert.IsTrue(gameState.StateInfo.IsWhiteCheck);
-            var gameStateResult = GameStateService.MakeMove(gameState, "e3", "f4");
+            var gameStateResult = _gameStateService.MakeMove(gameState, "e3", "f4");
             Assert.IsTrue(gameStateResult.Failure, "Make Move should result in a failure.");
         }
 
@@ -129,7 +124,7 @@ namespace Tests
         public void WhiteKingCastles_Succeeds()
         {
             var fen = "r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
 
             // This test is broken
             // I'm guessing that the code I wrote to fix the issue in WhiteKingIsInCheckmateAndHasNoValidMoves
@@ -137,7 +132,7 @@ namespace Tests
             var isCastleThroughCheck = CastleUtility.DetermineCastleThroughCheck(gameState, 4, 0);
             Assert.IsFalse(isCastleThroughCheck);
 
-            var newGameStateResult = this.GameStateService.MakeMove(gameState, 4, 2);
+            var newGameStateResult = _gameStateService.MakeMove(gameState, 4, 2);
             Assert.IsTrue(newGameStateResult.Success);
 
             var newFEN = newGameStateResult.Result.ToString();
@@ -148,7 +143,7 @@ namespace Tests
         public void WhiteKingHasTwoValidMoves()
         {
             var fen = "3q1rk1/5pbp/5Qp1/8/8/2B5/5PPP/6K1 w - - 0 1";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1").ToList();
             Assert.AreEqual(2, whiteKingAttacks.Where(a => !a.IsProtecting).Count());
         }
@@ -157,7 +152,7 @@ namespace Tests
         public void WhiteKingIsInCheckmateAndHasNoValidMovesTestsLackOfOrthogonalRetreat()
         {
             var fen = "5rk1/5pbp/5Qp1/8/8/8/5PPP/3q2K1 w - - 0 1";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g1" && !a.IsProtecting).ToList();
             //king checkmate make sure that the king has no attacks
             Assert.AreEqual(0, whiteKingAttacks.Count());
@@ -171,7 +166,7 @@ namespace Tests
         public void WhiteKingIsInCheckmateAndHasNoValidMovesTestsLackOfDiagonalRetreat()
         {
             var fen = "8/7k/6pp/8/r5P1/5PKP/r7/4q3 w - - 1 41";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "g3" && !a.IsProtecting).ToList();
             //king checkmate make sure that the king has no attacks
             Assert.AreEqual(0, whiteKingAttacks.Count());
@@ -182,15 +177,16 @@ namespace Tests
         }
 
         [TestMethod]
-        public void KingFaceoff() { 
-        
+        public void KingFaceoff()
+        {
+
         }
 
         [TestMethod]
         public void WhiteKingMayCastle()
         {
             var fen = "r2qkbnr/p2ppppp/b1n5/1pp5/4P3/BPN5/P1PPQPPP/R3KBNR w KQkq - 3 5";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var whiteKingAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "e1").ToList();
             var allSquareIndexs = new int[] { 2, 3 };
             foreach (var x in allSquareIndexs)

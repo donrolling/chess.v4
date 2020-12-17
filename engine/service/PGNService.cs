@@ -36,7 +36,7 @@ namespace Chess.v4.Engine.Service
             {
                 return getOriginationPositionForCastling(gameState, piece.Color);
             }
-            //adding !a.CanOnlyMoveHereIfOccupied fixed the test I was working on, but there may be a deeper issue here.
+            //adding !a.MayOnlyMoveHereIfOccupiedByEnemy fixed the test I was working on, but there may be a deeper issue here.
             var potentialSquares = gameState.Attacks.Where(a =>
                                                         a.Index == newPiecePosition
                                                         && (
@@ -108,77 +108,9 @@ namespace Chess.v4.Engine.Service
             }
         }
 
-        public char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor)
-        {
-            char pieceChar = 'a';
-            switch (piece)
-            {
-                case PieceType.Bishop:
-                    pieceChar = 'b';
-                    break;
+        
 
-                case PieceType.Pawn:
-                    pieceChar = 'p';
-                    break;
-
-                case PieceType.King:
-                    pieceChar = 'k';
-                    break;
-
-                case PieceType.Knight:
-                    pieceChar = 'n';
-                    break;
-
-                case PieceType.Queen:
-                    pieceChar = 'q';
-                    break;
-
-                case PieceType.Rook:
-                    pieceChar = 'r';
-                    break;
-            }
-            if (playerColor == Color.White)
-            {
-                pieceChar = char.ToUpper(pieceChar);
-            }
-            return pieceChar;
-        }
-
-        public PieceType GetPieceTypeFromPGNMove(string pgnMove)
-        {
-            if (pgnMove.Length == 2)
-            {
-                return PieceType.Pawn;
-            }
-            if (pgnMove == "O-O" || pgnMove == "O-O-O")
-            {
-                return PieceType.King;
-            }
-            var piece = pgnMove[0]; //should not capitalize this to check because all piece disambiguity notation is caps, therefore a file indicator will not be.
-            switch (piece)
-            {
-                case 'B':
-                case 'b':
-                    return PieceType.Bishop;
-
-                case 'K':
-                case 'k':
-                    return PieceType.King;
-
-                case 'N':
-                case 'n':
-                    return PieceType.Knight;
-
-                case 'Q':
-                case 'q':
-                    return PieceType.Queen;
-
-                case 'R':
-                case 'r':
-                    return PieceType.Rook;
-            }
-            return PieceType.Pawn;
-        }
+        
 
         public bool IsRank(char potentialRank)
         {
@@ -190,7 +122,7 @@ namespace Chess.v4.Engine.Service
             var positionFromPGNMove = getPositionFromPGNMove(pgnMove, gameState.ActiveColor, gameState.EnPassantTargetSquare);
             var newPiecePosition = positionFromPGNMove.position;
             var promotedPiece = positionFromPGNMove.promotedPiece;
-            var pieceType = GetPieceTypeFromPGNMove(pgnMove);
+            var pieceType = PGNUtility.GetPieceTypeFromPGNMove(pgnMove);
             var pieceIndicator = pgnMove[0];
             if (pieceIndicator == 'b')
             {

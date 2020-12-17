@@ -8,10 +8,6 @@ namespace Chess.v4.Engine.Interfaces
     {
         Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove, bool isCastle);
 
-        char GetPieceCharFromPieceTypeColor(PieceType piece, Color playerColor);
-
-        PieceType GetPieceTypeFromPGNMove(string pgnMove);
-
         bool IsRank(char potentialRank);
 
         (int piecePosition, int newPiecePosition, char promotedPiece) PGNMoveToSquarePair(GameState gameState, string pgnMove);

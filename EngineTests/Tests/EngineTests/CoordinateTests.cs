@@ -1,31 +1,30 @@
 ﻿using Chess.v4.Engine.Interfaces;
+using EngineTests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Tests.Models;
 
-namespace Tests
+namespace EngineTests.Tests.EngineTests
 {
     [TestClass]
     public class CoordinateTests : TestBase
     {
-        public IAttackService AttackService { get; }
-
-        public IGameStateService GameStateService { get; }
-        public IMoveService MoveService { get; }
-        public IOrthogonalService OrthogonalService { get; }
+        private readonly IAttackService _attackService;
+        private readonly IGameStateService _gameStateService;
+        private readonly IMoveService _moveService;
+        private readonly IOrthogonalService _orthogonalService;
 
         public CoordinateTests()
         {
-            this.OrthogonalService = this.ServiceProvider.GetService<IOrthogonalService>();
-            this.AttackService = this.ServiceProvider.GetService<IAttackService>();
-            this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
-            this.MoveService = this.ServiceProvider.GetService<IMoveService>();
+            _orthogonalService = ServiceProvider.GetService<IOrthogonalService>();
+            _attackService = ServiceProvider.GetService<IAttackService>();
+            _gameStateService = ServiceProvider.GetService<IGameStateService>();
+            _moveService = ServiceProvider.GetService<IMoveService>();
         }
 
         [TestMethod]
         public void RankFileTests()
         {
-            var a1RookAttackRank = OrthogonalService.GetEntireRank(0);
+            var a1RookAttackRank = _orthogonalService.GetEntireRank(0);
             Assert.IsTrue(a1RookAttackRank.Contains(0));
             Assert.IsTrue(a1RookAttackRank.Contains(1));
             Assert.IsTrue(a1RookAttackRank.Contains(2));
@@ -34,7 +33,7 @@ namespace Tests
             Assert.IsTrue(a1RookAttackRank.Contains(5));
             Assert.IsTrue(a1RookAttackRank.Contains(6));
             Assert.IsTrue(a1RookAttackRank.Contains(7));
-            var a1RookAttackFile = OrthogonalService.GetEntireFile(0);
+            var a1RookAttackFile = _orthogonalService.GetEntireFile(0);
             Assert.IsTrue(a1RookAttackFile.Contains(0));
             Assert.IsTrue(a1RookAttackFile.Contains(8));
             Assert.IsTrue(a1RookAttackFile.Contains(16));

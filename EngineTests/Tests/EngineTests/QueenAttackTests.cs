@@ -1,25 +1,21 @@
 ﻿using Chess.v4.Engine.Interfaces;
 using Chess.v4.Models.Enums;
+using EngineTests.Models;
+using EngineTests.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Tests.Models;
-using Tests.Utility;
 
-namespace Tests
+namespace EngineTests.Tests.EngineTests
 {
     [TestClass]
     public class QueenAttackTests : TestBase
     {
-        public IAttackService AttackService { get; }
-        public IGameStateService GameStateService { get; }
-        public IMoveService MoveService { get; }
+        private readonly IGameStateService _gameStateService;
 
         public QueenAttackTests()
         {
-            this.AttackService = this.ServiceProvider.GetService<IAttackService>();
-            this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
-            this.MoveService = this.ServiceProvider.GetService<IMoveService>();
+            _gameStateService = ServiceProvider.GetService<IGameStateService>();
         }
 
         [TestMethod]
@@ -27,7 +23,7 @@ namespace Tests
         {
             //only kings and a queen on the board
             var fen = "7k/8/8/8/3Q4/8/8/7K b - - 0 32";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d4").ToList();
             var allSquareIndexs = new int[] { 0, 3, 6, 9, 11, 13, 18, 19, 20, 24, 25, 26, 28, 29, 30, 31, 34, 35, 36, 41, 43, 45, 48, 51, 54, 59, 63 };
             TestUtility.ListContainsSquares(attacks, allSquareIndexs.ToList(), PieceType.Queen);
@@ -36,7 +32,7 @@ namespace Tests
         [TestMethod]
         public void WhiteQueenAttacksStartingPosition()
         {
-            var gameState = TestUtility.GetGameState(this.GameStateService);
+            var gameState = TestUtility.GetGameState(_gameStateService);
             var whiteQueenAttacks = gameState.Attacks.Where(a =>
                 a.AttackingSquare.Name == "d1"
                 && !a.IsProtecting

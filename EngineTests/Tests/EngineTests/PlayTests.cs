@@ -2,29 +2,27 @@
 using Chess.v4.Engine.Reference;
 using Chess.v4.Models;
 using Common.IO;
+using EngineTests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Omu.ValueInjecter;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Tests.Models;
 
-namespace Tests
+namespace EngineTests.Tests.EngineTests
 {
     [TestClass]
     public class PlayTests : TestBase
     {
         private readonly IGameStateService _gameStateService;
         private readonly IPGNFileService _pgnFileService;
-        private readonly IPGNService _pgnService;
         private readonly Regex _endgamePattern = new Regex(@"\d\-\d");
 
         public PlayTests()
         {
-            this._gameStateService = this.ServiceProvider.GetService<IGameStateService>();
-            this._pgnService = this.ServiceProvider.GetService<IPGNService>();
-            this._pgnFileService = this.ServiceProvider.GetService<IPGNFileService>();
+            _gameStateService = ServiceProvider.GetService<IGameStateService>();
+            _pgnFileService = ServiceProvider.GetService<IPGNFileService>();
         }
 
         [TestMethod]
@@ -87,13 +85,13 @@ namespace Tests
             playGameInfo.GameString = game.GameToString();
             FileUtility.WriteFile<PlayTests>("playGame.pgn", "Output", playGameInfo.GameString);
             var result = playGameInfo.GameString.Split(" ").Last();
-            var gameStateResult = this._gameStateService.Initialize();
+            var gameStateResult = _gameStateService.Initialize();
             playGameInfo.GameState = gameStateResult.Result;
             game.FEN = GeneralReference.Starting_FEN_Position;
             playGameInfo.HasCheckmate = playGameInfo.GameString.Split("\r\n\r\n")[1].Contains('#');
             playGameInfo.IsDraw = game.Result == "1/2-1/2";
             playGameInfo.FinalMove = string.Empty;
-            playGameInfo.GameData = this._pgnFileService.ParsePGNData(playGameInfo.GameString);
+            playGameInfo.GameData = _pgnFileService.ParsePGNData(playGameInfo.GameString);
             return playGameInfo;
         }
 
@@ -105,7 +103,7 @@ namespace Tests
             var a = xs[0];
             if (_endgamePattern.Matches(a).Any())
             {
-                return (gameState);
+                return gameState;
             }
             if (moveCount >= moveBreak)
             {
@@ -113,28 +111,28 @@ namespace Tests
                 //fool the compiler into not giving me warnings about "test"
                 if (string.IsNullOrEmpty(test)) { }
             }
-            var gameStateResult = this._gameStateService.MakeMove(gameState, a);
+            var gameStateResult = _gameStateService.MakeMove(gameState, a);
             Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { a } | { game.FEN }");
             //record and save the FEN at every step so I can figure out where things went wrong.
             game.FEN = gameStateResult.Result.ToString();
             if (xs.Length == 1)
             {
-                return (gameStateResult.Result);
+                return gameStateResult.Result;
             }
             var b = xs[1];
             if (string.IsNullOrEmpty(b))
             {
-                return (gameStateResult.Result);
+                return gameStateResult.Result;
             }
             if (_endgamePattern.Matches(b).Any())
             {
-                return (gameStateResult.Result);
+                return gameStateResult.Result;
             }
             if (moveCount >= moveBreak)
             {
                 test = "";
             }
-            gameStateResult = this._gameStateService.MakeMove(gameStateResult.Result, b);
+            gameStateResult = _gameStateService.MakeMove(gameStateResult.Result, b);
             Assert.IsTrue(gameStateResult.Success, $"Move should have been successful. { b } | { game.FEN } \r\n{ gameStateResult.Message }");
             //record and save the FEN at every step so I can figure out where things went wrong.
             game.FEN = gameStateResult.Result.ToString();
@@ -152,10 +150,10 @@ namespace Tests
                 var regex = new Regex("[ ]{2,}", RegexOptions.None);
                 var moves = regex.Replace(groups[i + 1].Replace('\r', ' ').Replace('\n', ' '), " ");
                 var regexResult = moves.Split(" ").Last();
-                var gameData = this._pgnFileService.ParsePGNData($"{ metadata }\r\n\r\n{ moves }");
+                var gameData = _pgnFileService.ParsePGNData($"{ metadata }\r\n\r\n{ moves }");
                 var game = new Game();
                 game.InjectFrom(gameData);
-                var gameStateResult = this._gameStateService.Initialize();
+                var gameStateResult = _gameStateService.Initialize();
                 var gameState = gameStateResult.Result;
                 game.FEN = gameState.ToString();
                 game.PGN = moves;

@@ -1,6 +1,6 @@
 ﻿using Chess.v4.Models;
 
-namespace Tests
+namespace EngineTests.Models
 {
     public class PlayGameInfo
     {

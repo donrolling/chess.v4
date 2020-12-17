@@ -1,23 +1,18 @@
 ﻿using Chess.v4.Engine.Interfaces;
 using Chess.v4.Engine.Utility;
+using EngineTests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using Tests.Models;
 
-namespace Tests
+namespace EngineTests.Tests.EngineTests
 {
     [TestClass]
     public class GeneralUtilityTests : TestBase
     {
-        public IGameStateService GameStateService { get; }
-        public IPGNService PGNService { get; }
-
         public GeneralUtilityTests()
         {
-            this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
-            this.PGNService = this.ServiceProvider.GetService<IPGNService>();
         }
 
         [TestMethod]

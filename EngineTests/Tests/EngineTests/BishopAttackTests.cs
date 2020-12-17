@@ -1,33 +1,29 @@
 ﻿using Chess.v4.Engine.Interfaces;
 using Chess.v4.Models.Enums;
+using EngineTests.Models;
+using EngineTests.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using Tests.Models;
-using Tests.Utility;
 
-namespace Tests
+namespace EngineTests.Tests.EngineTests
 {
     [TestClass]
     public class BishopAttackTests : TestBase
     {
-        public IAttackService AttackService { get; }
-        public IGameStateService GameStateService { get; }
-        public IMoveService MoveService { get; }
+        private readonly IGameStateService _gameStateService;
 
         public BishopAttackTests()
         {
-            this.AttackService = this.ServiceProvider.GetService<IAttackService>();
-            this.GameStateService = this.ServiceProvider.GetService<IGameStateService>();
-            this.MoveService = this.ServiceProvider.GetService<IMoveService>();
+            _gameStateService = ServiceProvider.GetService<IGameStateService>();
         }
 
         [TestMethod]
         public void AllBishops_Given_SweetOpening_ValidateBasicOpeningAttacks()
         {
             var fen = "rnbqkbnr/p1p2p1p/1p4p1/3pp3/3PP3/1P4P1/P1P2P1P/RNBQKBNR w KQkq - 0 1";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "c1").ToList();
             var squares = new List<int> { 9, 16, 11, 20, 29, 38, 47 };
             TestUtility.ListContainsSquares(attacks, squares, PieceType.Bishop);
@@ -54,7 +50,7 @@ namespace Tests
             // this could be a side effect of code that makes sure that the queen attack is registered in the WhiteKingIsInCheckmateAndHasNoValidMoves test
             // I might need a cleaner way to program that
             var fen = "rnbqkbnr/pppppppp/8/8/3B4/8/PPPPPPPP/RN1QKBNR b KQkq - 0 1";
-            var gameState = TestUtility.GetGameState(this.GameStateService, fen);
+            var gameState = TestUtility.GetGameState(_gameStateService, fen);
             var attacks = gameState.Attacks.Where(a => a.AttackingSquare.Name == "d4" && !a.IsProtecting).ToList();
             var squares = new List<int> { 20, 34, 41, 48, 18, 36, 45, 54 };
             TestUtility.ListContainsSquares(attacks, squares, PieceType.Bishop);

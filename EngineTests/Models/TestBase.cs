@@ -12,7 +12,7 @@ using NLog.Config;
 using NLog.Extensions.Logging;
 using System;
 
-namespace Tests.Models
+namespace EngineTests.Models
 {
     public class TestBase
     {
@@ -25,7 +25,7 @@ namespace Tests.Models
         {
             get
             {
-                return this.TestContext.TestName;
+                return TestContext.TestName;
             }
         }
 
@@ -37,7 +37,7 @@ namespace Tests.Models
             LogManager.Configuration = new XmlLoggingConfiguration(pathToNLogConfig.filePath);
             var services = new ServiceCollection();
             var loggerFactory = new LoggerFactory().AddNLog();
-            services.AddSingleton<ILoggerFactory>(loggerFactory);
+            services.AddSingleton(loggerFactory);
             services.AddSingleton<IFileProvider>(provider);
 
             //chess services
@@ -51,11 +51,11 @@ namespace Tests.Models
             services.AddTransient<IPGNService, PGNService>();
             services.AddTransient<ILoggerFactory, LoggerFactory>();
 
-            this.ServiceProvider = services.BuildServiceProvider();
+            ServiceProvider = services.BuildServiceProvider();
 
             //settings
-            this.LoggerFactory = loggerFactory;
-            this.Logger = LogUtility.GetLogger(loggerFactory, this.GetType());
+            LoggerFactory = loggerFactory;
+            Logger = LogUtility.GetLogger(loggerFactory, GetType());
         }
     }
 }
