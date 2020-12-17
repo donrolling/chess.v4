@@ -11,17 +11,16 @@ namespace Chess.v4.Engine.Service
 {
     public class CheckmateService : ICheckmateService
     {
-        public IOrthogonalService OrthogonalService { get; }
-
         //kings don't count here
         private static List<PieceType> diagonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Pawn, PieceType.Bishop };
-
         //kings don't count here
         private static List<PieceType> orthogonalAttackers = new List<PieceType> { PieceType.Queen, PieceType.Rook };
 
+        private readonly IOrthogonalService _orthogonalService;
+
         public CheckmateService(IOrthogonalService orthogonalService)
         {
-            OrthogonalService = orthogonalService;
+            _orthogonalService = orthogonalService;
         }
 
         public bool IsCheckMate(GameState gameState, Color kingColor, IEnumerable<AttackedSquare> attacksOnKing)
@@ -112,12 +111,12 @@ namespace Chess.v4.Engine.Service
             if (isRankMove)
             {
                 var file = NotationUtility.PositionToFile(x.Index);
-                result = this.OrthogonalService.GetEntireFile(file);
+                result = this._orthogonalService.GetEntireFile(file);
             }
             else
             {
                 var rank = NotationUtility.PositionToRank(x.Index);
-                result = this.OrthogonalService.GetEntireRank(rank);
+                result = this._orthogonalService.GetEntireRank(rank);
             }
             if (!trim)
             {

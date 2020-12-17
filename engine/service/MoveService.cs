@@ -12,11 +12,11 @@ namespace Chess.v4.Engine.Service
 {
     public class MoveService : IMoveService
     {
-        public ICheckmateService CheckmateService { get; }
+        private readonly ICheckmateService _checkmateService;
 
         public MoveService(ICheckmateService checkmateService)
         {
-            CheckmateService = checkmateService;
+            _checkmateService = checkmateService;
         }
 
         public OperationResult<StateInfo> GetStateInfo(GameState gameState, int piecePosition, int newPiecePosition)
@@ -73,7 +73,7 @@ namespace Chess.v4.Engine.Service
             stateInfo.IsWhiteCheck = whiteKingAttacks.Any();
             if (stateInfo.IsWhiteCheck)
             {
-                var isCheckMate = this.CheckmateService.IsCheckMate(gameState, Color.White, whiteKingAttacks);
+                var isCheckMate = this._checkmateService.IsCheckMate(gameState, Color.White, whiteKingAttacks);
                 if (isCheckMate)
                 {
                     stateInfo.IsCheckmate = true;
@@ -86,7 +86,7 @@ namespace Chess.v4.Engine.Service
                 stateInfo.IsBlackCheck = blackKingAttacks.Any();
                 if (stateInfo.IsBlackCheck)
                 {
-                    var isCheckMate = this.CheckmateService.IsCheckMate(gameState, Color.Black, blackKingAttacks);
+                    var isCheckMate = this._checkmateService.IsCheckMate(gameState, Color.Black, blackKingAttacks);
                     if (isCheckMate)
                     {
                         stateInfo.IsCheckmate = true;

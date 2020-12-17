@@ -13,7 +13,6 @@ namespace Chess.v4.Engine.Service
     public class NotationService : INotationService
     {
         private static List<PieceType> _castlingPieces { get; set; } = new List<PieceType> { PieceType.Rook, PieceType.King };
-        private const string defaultCastlingAvailability = "KQkq";
 
         public List<Square> GetSquaresFromFEN_Record(FEN_Record fen)
         {
@@ -56,13 +55,12 @@ namespace Chess.v4.Engine.Service
             return squares.OrderBy(a => a.Index).ToList();
         }
 
-        public void SetGameState_FEN(GameState gameState, GameState newGameState, int piecePosition, int newPiecePosition)
+        public void SetGameState_FEN(List<Square> squares, int halfmoveClock, GameState newGameState, int piecePosition, int newPiecePosition)
         {
             var position = getPiecePosition(newGameState.Squares);
             var castlingAvailability = getCastlingAvailability(newGameState, newGameState.CastlingAvailability, piecePosition, newPiecePosition);
             var enPassantCoord = getEnPassantCoord(newGameState.Squares, newGameState.ActiveColor, piecePosition, newPiecePosition);
-            //use old gamestate for halfmove clock
-            var halfmoveClock = getHalfmoveClock(gameState.Squares, gameState.HalfmoveClock, piecePosition, newPiecePosition);
+            var newHalfmoveClock = getHalfmoveClock(squares, halfmoveClock, piecePosition, newPiecePosition);
             var activeColor = newGameState.ActiveColor.Reverse();
             newGameState.PiecePlacement = position;
             newGameState.ActiveColor = activeColor;
@@ -72,7 +70,7 @@ namespace Chess.v4.Engine.Service
             {
                 newGameState.EnPassantTargetPosition = NotationUtility.CoordinateToPosition(enPassantCoord);
             }
-            newGameState.HalfmoveClock = halfmoveClock;
+            newGameState.HalfmoveClock = newHalfmoveClock;
             //better to calculate this value after setting the ActiveColor
             var fullmoveNumber = getFullmoveNumber(newGameState.FullmoveNumber, newGameState.ActiveColor);
             newGameState.FullmoveNumber = fullmoveNumber;

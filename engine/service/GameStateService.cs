@@ -18,17 +18,17 @@ namespace Chess.v4.Engine.Service
     /// </summary>
     public class GameStateService : IGameStateService
     {
-        public IAttackService AttackService { get; }
-        public IMoveService MoveService { get; }
-        public INotationService NotationService { get; }
-        public IPGNService PGNService { get; }
+        private readonly IAttackService _attackService;
+        private readonly IMoveService _moveService;
+        private readonly INotationService _notationService;
+        private readonly IPGNService _pgnService;
 
         public GameStateService(INotationService notationService, IPGNService pgnService, IMoveService moveService, IAttackService attackService)
         {
-            NotationService = notationService;
-            PGNService = pgnService;
-            MoveService = moveService;
-            AttackService = attackService;
+            _notationService = notationService;
+            _pgnService = pgnService;
+            _moveService = moveService;
+            _attackService = attackService;
         }
 
         public OperationResult<GameState> Initialize(string fen)
@@ -75,7 +75,7 @@ namespace Chess.v4.Engine.Service
 
         public OperationResult<GameState> MakeMove(GameState gameState, string pgnMove)
         {
-            var pair = this.PGNService.PGNMoveToSquarePair(gameState, pgnMove);
+            var pair = _pgnService.PGNMoveToSquarePair(gameState, pgnMove);
             //todo: what about piece promotion?
             if (pair.promotedPiece == '-')
             {
@@ -115,7 +115,7 @@ namespace Chess.v4.Engine.Service
             {
                 return OperationResult<StateInfo>.Fail("Wrong team.");
             }
-            var moveInfoResult = this.MoveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
+            var moveInfoResult = _moveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
             if (moveInfoResult.Failure)
             {
                 return OperationResult<StateInfo>.Fail(moveInfoResult.Message);
@@ -144,9 +144,9 @@ namespace Chess.v4.Engine.Service
                 return OperationResult<GameState>.Fail(errorMessage);
             }
             var gameState = new GameState(fenRecord);
-            gameState.Squares = NotationService.GetSquaresFromFEN_Record(gameState);
-            gameState.Attacks = this.AttackService.GetAttacks(gameState).ToList();
-            gameState.StateInfo = this.MoveService.GetStateInfo(gameState);
+            gameState.Squares = _notationService.GetSquaresFromFEN_Record(gameState);
+            gameState.Attacks = _attackService.GetAttacks(gameState).ToList();
+            gameState.StateInfo = _moveService.GetStateInfo(gameState);
             return OperationResult<GameState>.Ok(gameState);
         }
 
@@ -195,7 +195,7 @@ namespace Chess.v4.Engine.Service
                 var enPassantAttackedPawnSquare = movingGameState.Squares.GetSquare(enPassantAttackedPawnPosition);
                 enPassantAttackedPawnSquare.Piece = null;
             }
-            this.NotationService.SetGameState_FEN(gameState, movingGameState, piecePosition, newPiecePosition);
+            _notationService.SetGameState_FEN(gameState.Squares, gameState.HalfmoveClock, movingGameState, piecePosition, newPiecePosition);
             var currentStateFEN = movingGameState.ToString();
 
             //Setup new gamestate

@@ -16,18 +16,16 @@ namespace Chess.v4.Engine.Service
     // kingside castling is indicated by the sequence "O-O"; queenside castling is indicated by the sequence "O-O-O"
     public class PGNService : IPGNService
     {
-        public IMoveService DiagonalService { get; }
-        public IOrthogonalService OrthogonalService { get; }
+        private readonly IOrthogonalService _orthogonalService;
         private Regex pawnCapturePromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbnkqRBNKQ][\+\#]?");
         private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbnkqRBNKQ][\+\#]?");
         private Regex castlePattern { get; } = new Regex(@"O\-O(\-O)?[\+\#]?");
         public const char NullPiece = '-';
         public const char PawnPromotionIndicator = '=';
 
-        public PGNService(IMoveService diagonalService, IOrthogonalService orthogonalService)
+        public PGNService(IOrthogonalService orthogonalService)
         {
-            DiagonalService = diagonalService;
-            OrthogonalService = orthogonalService;
+            _orthogonalService = orthogonalService;
         }
 
         public Square GetCurrentPositionFromPGNMove(GameState gameState, Piece piece, int newPiecePosition, string pgnMove, bool isCastle)
@@ -140,7 +138,7 @@ namespace Chess.v4.Engine.Service
                     //I'm concerned that there might be a situation where the pgn move differentiates between
                     //the pawn and bishop move, yet we haven't looked close enough.
                     //should probably attempt to induce this scenario
-                    var bFile = this.OrthogonalService.GetEntireFile(1);
+                    var bFile = this._orthogonalService.GetEntireFile(1);
                     var potentialPawnSquares = gameState.Attacks.Where(a =>
                                             a.Index == newPiecePosition
                                             && bFile.Contains(a.AttackingSquare.Index)
@@ -468,7 +466,7 @@ namespace Chess.v4.Engine.Service
         private Square pgnLength3(IEnumerable<AttackedSquare> potentialPositions, string newPgnMove)
         {
             var ambiguityResolver = newPgnMove[0];
-            var files = this.OrthogonalService.GetEntireFile(NotationUtility.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
+            var files = this._orthogonalService.GetEntireFile(NotationUtility.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
             var potentialSquares = potentialPositions.Where(a => files.Contains(a.AttackingSquare.Index)).ToList();
             if (potentialSquares.Count() > 1)
             {
@@ -486,12 +484,12 @@ namespace Chess.v4.Engine.Service
             {
                 int rank = 0;
                 Int32.TryParse(ambiguityResolver.ToString(), out rank);
-                ambiguityResolutionSet = this.OrthogonalService.GetEntireRank(rank - 1);//needs to be using zero-based rank offset
+                ambiguityResolutionSet = this._orthogonalService.GetEntireRank(rank - 1);//needs to be using zero-based rank offset
             }
             else
             {
                 var iFile = NotationUtility.FileToInt(ambiguityResolver);
-                ambiguityResolutionSet = this.OrthogonalService.GetEntireFile(iFile);
+                ambiguityResolutionSet = this._orthogonalService.GetEntireFile(iFile);
             }
             var intersection = potentialPositions.Select(a => a.AttackingSquare.Index).Intersect(ambiguityResolutionSet);
             if (intersection.Count() > 1)

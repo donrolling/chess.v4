@@ -11,17 +11,15 @@ namespace Chess.v4.Engine.Service
 {
     public class AttackService : IAttackService
     {
-        public INotationService NotationService { get; }
-        public IOrthogonalService OrthogonalService { get; }
-
         private static readonly List<PieceType> _dangerPieceTypes = new List<PieceType> { PieceType.Queen, PieceType.Rook, PieceType.Bishop };
         private static readonly List<PieceType> _diagonalDangerPieceTypes = new List<PieceType> { PieceType.Queen, PieceType.Bishop };
         private static readonly List<PieceType> _orthogonalFangerPieceTypes = new List<PieceType> { PieceType.Queen, PieceType.Rook };
+        
+        private readonly IOrthogonalService _orthogonalService;
 
-        public AttackService(INotationService notationService, IOrthogonalService orthogonalService)
+        public AttackService(IOrthogonalService orthogonalService)
         {
-            NotationService = notationService;
-            OrthogonalService = orthogonalService;
+            _orthogonalService = orthogonalService;
         }
 
         public IEnumerable<AttackedSquare> GetAttacks(GameState gameState)
@@ -297,11 +295,11 @@ namespace Chess.v4.Engine.Service
                     break;
 
                 case PieceType.Rook:
-                    this.OrthogonalService.GetOrthogonals(gameState, square, accumulator);
+                    this._orthogonalService.GetOrthogonals(gameState, square, accumulator);
                     break;
 
                 case PieceType.Queen:
-                    this.OrthogonalService.GetOrthogonals(gameState, square, accumulator);
+                    this._orthogonalService.GetOrthogonals(gameState, square, accumulator);
                     DiagonalUtility.GetDiagonals(gameState, square, accumulator);
                     break;
 

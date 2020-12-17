@@ -12,7 +12,7 @@ namespace Chess.v4.Engine.Service
     public class PGNFileService : IPGNFileService
     {
         public string CurrentDirectory { get; }
-        private const string movePattern = @"\d*\.\s?(([\w\d-+#]*\s[\w\d-+#]*)|(\d-\d))";
+        // private const string movePattern = @"\d*\.\s?(([\w\d-+#]*\s[\w\d-+#]*)|(\d-\d))";
         private const string nodePattern = @"(?<=\[)(.*?)(?=\])";
         private const string testData = @"\data\Tests\";
         private const string removeComments = @"\{[\w\d\s.]*\}\s\d*...\s";
