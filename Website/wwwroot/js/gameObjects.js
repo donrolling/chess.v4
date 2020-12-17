@@ -1,0 +1,4 @@
+﻿let gameObjects = {
+    board: {},
+    gameState: {}
+};
