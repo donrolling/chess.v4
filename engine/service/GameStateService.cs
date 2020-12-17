@@ -195,7 +195,7 @@ namespace Chess.v4.Engine.Service
                 var enPassantAttackedPawnSquare = movingGameState.Squares.GetSquare(enPassantAttackedPawnPosition);
                 enPassantAttackedPawnSquare.Piece = null;
             }
-            _notationService.SetGameStateSnapshot(gameState.Squares, gameState.HalfmoveClock, movingGameState, piecePosition, newPiecePosition);
+            _notationService.SetGameStateSnapshot(gameState, movingGameState, stateInfo, piecePosition, newPiecePosition);
             var currentStateFEN = movingGameState.ToString();
 
             //Setup new gamestate

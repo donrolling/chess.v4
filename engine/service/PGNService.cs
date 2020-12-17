@@ -17,6 +17,7 @@ namespace Chess.v4.Engine.Service
     public class PGNService : IPGNService
     {
         private readonly IOrthogonalService _orthogonalService;
+
         private Regex pawnCapturePromotionPattern { get; } = new Regex(@"[a-h]x[a-h]\d[rbnkqRBNKQ][\+\#]?");
         private Regex pawnPromotionPattern { get; } = new Regex(@"[a-h]\d[rbnkqRBNKQ][\+\#]?");
         private Regex castlePattern { get; } = new Regex(@"O\-O(\-O)?[\+\#]?");
@@ -156,16 +157,38 @@ namespace Chess.v4.Engine.Service
             return (piecePosition.Index, newPiecePosition, promotedPiece);
         }
 
-        public string SquarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare, char promoteToPiece)
+        public string SquarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare)
+        {
+            return squarePairToPGNMove(gameState, playerColor, startSquare, endSquare);
+        }
+
+        public string SquarePairToPGNMove(GameState gameState, Color playerColor, int startSquare, int endSquare)
+        {
+            return squarePairToPGNMove(gameState, playerColor, startSquare, endSquare);
+        }
+
+        public string SquarePairToPGNMove(GameState gameState, Color playerColor, int startSquare, int endSquare, PieceType promoteToPiece)
         {
             var pgnMove = squarePairToPGNMove(gameState, playerColor, startSquare, endSquare);
-            if (promoteToPiece == PGNService.NullPiece)
+            return finishPGNMove(pgnMove, promoteToPiece, playerColor);
+
+        }
+
+        public string SquarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare, PieceType promoteToPiece)
+        {
+            var pgnMove = squarePairToPGNMove(gameState, playerColor, startSquare, endSquare);
+            return finishPGNMove(pgnMove, promoteToPiece, playerColor);
+        }
+
+        private static string finishPGNMove(string pgnMove, PieceType promoteToPiece, Color playerColor) {
+            var promotedPiece = PGNEngine.GetPieceCharFromPieceTypeColor(promoteToPiece, playerColor);
+            if (promotedPiece == PGNService.NullPiece)
             {
                 return pgnMove;
             }
             else
             {
-                return $"{ pgnMove }{ PGNService.PawnPromotionIndicator }{ promoteToPiece }";
+                return $"{ pgnMove }{ PGNService.PawnPromotionIndicator }{ promotedPiece }";
             }
         }
 
@@ -461,10 +484,8 @@ namespace Chess.v4.Engine.Service
             return gameState.Squares.GetSquare(pos);
         }
 
-        private string squarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare)
+        private string squarePairToPGNMove(GameState gameState, Color playerColor, int startPos, int endPos)
         {
-            var startPos = NotationEngine.CoordinateToPosition(startSquare);
-            var endPos = NotationEngine.CoordinateToPosition(endSquare);
             var destinationSquare = gameState.Squares.GetSquare(endPos);
             var isCapture = destinationSquare.Occupied && destinationSquare.Piece.Color != playerColor;
 
@@ -489,6 +510,13 @@ namespace Chess.v4.Engine.Service
             var coord = NotationEngine.PositionToCoordinate(endPos);
             var pgnMove = getPgnMove(notationPiece, piece, coord, startPos, endPos, isCapture, gameState);
             return pgnMove;
+        }
+
+        private string squarePairToPGNMove(GameState gameState, Color playerColor, string startSquare, string endSquare)
+        {
+            var startPos = NotationEngine.CoordinateToPosition(startSquare);
+            var endPos = NotationEngine.CoordinateToPosition(endSquare);
+            return squarePairToPGNMove(gameState, playerColor, startPos, endPos);
         }
     }
 }

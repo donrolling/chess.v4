@@ -12,6 +12,13 @@ namespace Chess.v4.Engine.Service
 {
     public class NotationService : INotationService
     {
+        private readonly IPGNService _pgnService;
+
+        public NotationService(IPGNService pgnService)
+        {
+            _pgnService = pgnService;
+        }
+
         private static List<PieceType> _castlingPieces { get; set; } = new List<PieceType> { PieceType.Rook, PieceType.King };
 
         public List<Square> GetSquaresFromFEN_Record(Snapshot fen)
@@ -55,14 +62,14 @@ namespace Chess.v4.Engine.Service
             return squares.OrderBy(a => a.Index).ToList();
         }
 
-        public void SetGameStateSnapshot(List<Square> squares, int halfmoveClock, GameState newGameState, int piecePosition, int newPiecePosition)
+        public void SetGameStateSnapshot(GameState oldGameState, GameState newGameState, StateInfo stateInfo, int piecePosition, int newPiecePosition)
         {
-            var position = getPiecePosition(newGameState.Squares);
+            var fenPosition = getFENPosition(newGameState.Squares);
             var castlingAvailability = getCastlingAvailability(newGameState, newGameState.CastlingAvailability, piecePosition, newPiecePosition);
             var enPassantCoord = getEnPassantCoord(newGameState.Squares, newGameState.ActiveColor, piecePosition, newPiecePosition);
-            var newHalfmoveClock = getHalfmoveClock(squares, halfmoveClock, piecePosition, newPiecePosition);
+            var newHalfmoveClock = getHalfmoveClock(oldGameState.Squares, oldGameState.HalfmoveClock, piecePosition, newPiecePosition);
             var activeColor = newGameState.ActiveColor.Reverse();
-            newGameState.PiecePlacement = position;
+            newGameState.PiecePlacement = fenPosition;
             newGameState.ActiveColor = activeColor;
             newGameState.CastlingAvailability = castlingAvailability;
             newGameState.EnPassantTargetSquare = enPassantCoord;
@@ -74,6 +81,10 @@ namespace Chess.v4.Engine.Service
             //better to calculate this value after setting the ActiveColor
             var fullmoveNumber = getFullmoveNumber(newGameState.FullmoveNumber, newGameState.ActiveColor);
             newGameState.FullmoveNumber = fullmoveNumber;
+            var pgnMove = stateInfo.IsPawnPromotion
+                ? _pgnService.SquarePairToPGNMove(oldGameState, oldGameState.ActiveColor, piecePosition, newPiecePosition, stateInfo.PawnPromotedTo)
+                : _pgnService.SquarePairToPGNMove(oldGameState, oldGameState.ActiveColor, piecePosition, newPiecePosition);
+            newGameState.PGN += pgnMove;
         }
 
         public void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo)
@@ -167,7 +178,7 @@ namespace Chess.v4.Engine.Service
             return halfmoveClock + 1;
         }
 
-        private string getPiecePosition(List<Square> squares)
+        private string getFENPosition(List<Square> squares)
         {
             var position = new StringBuilder();
             for (int i = 0; i < 8; i++)
