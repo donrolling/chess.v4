@@ -247,7 +247,7 @@ namespace Chess.v4.Engine.Service
             }
 
             var secondPiece = otherSquaresOfThisTypeWithThisAttack.First();
-            if (secondPiece.Piece.PieceType == PieceType.Pawn && !isCapture)
+            if (secondPiece.AttackingSquare.Piece.PieceType == PieceType.Pawn && !isCapture)
             {
                 result = string.Concat(pgnMove.Substring(0, 1), captureMarker, pgnMove.Substring(1, pgnMove.Length - 1));
                 return result;

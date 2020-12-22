@@ -42,7 +42,8 @@
         protecting: '.protecting',
         square: '.square-',
         history: '.history',
-        items: '.items'
+        items: '.items',
+        item: '.item'
     },
 
     urls: {

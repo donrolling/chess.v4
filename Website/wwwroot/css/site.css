@@ -56,3 +56,18 @@ button {
 .protecting {
     background-color: green !important;
 }
+
+.item {
+    display: inline;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.item:first-child {
+    margin-left: 0;
+}
+
+.fen {
+    display: block;
+    margin-top: 10px;
+}

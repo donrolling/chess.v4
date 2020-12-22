@@ -12,7 +12,6 @@
 
     onDrop: (source, target, piece, newPos, oldPos, orientation) => {
         let squareAttacks = utilities.getSquareAttacks(source);
-        // logging.logDrop(source, target, piece, newPos, oldPos, orientation, squareAttacks);
         if (!squareAttacks.some(x => x.name === target)) {
             return constants.snapback;
         }
@@ -20,5 +19,10 @@
         // constants.pieceTypes.Bishop....
         let piecePromotionType = null;
         gameService.move(source, target, piecePromotionType);
+    },
+
+    onPGNClick: (e) => {
+        let index = e.target.getAttribute('data-index');
+
     }
 };

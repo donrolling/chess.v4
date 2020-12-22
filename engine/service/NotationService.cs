@@ -84,7 +84,9 @@ namespace Chess.v4.Engine.Service
             var pgnMove = stateInfo.IsPawnPromotion
                 ? _pgnService.SquarePairToPGNMove(oldGameState, oldGameState.ActiveColor, piecePosition, newPiecePosition, stateInfo.PawnPromotedTo)
                 : _pgnService.SquarePairToPGNMove(oldGameState, oldGameState.ActiveColor, piecePosition, newPiecePosition);
-            newGameState.PGN += pgnMove;
+            newGameState.PGN = string.IsNullOrEmpty(newGameState.PGN)
+                ? pgnMove
+                : $"{ newGameState.PGN } { pgnMove }";
         }
 
         public void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo)

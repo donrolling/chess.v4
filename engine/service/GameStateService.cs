@@ -158,53 +158,23 @@ namespace Chess.v4.Engine.Service
             fenRecords.Add(FenFactory.Create(previousStateFEN));
 
             //verify that the move can be made
-            var oldSquare = gameState.Squares.GetSquare(piecePosition);
-            var attacks = gameState.Attacks.GetPositionAttacksOnPosition(piecePosition, newPiecePosition);
-            if (!attacks.Any())
+            var verifiedMove = verifyMove(gameState, piecePosition, newPiecePosition);
+            if (verifiedMove.Failure)
             {
-                return OperationResult<GameState>.Fail($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+                return OperationResult<GameState>.Fail(verifiedMove.Message);
             }
-            var badPawnAttacks = attacks.Where(a =>
-                                            a.AttackingSquare.Index == piecePosition
-                                            && a.Index == newPiecePosition
-                                            && a.Piece == null
-                                            && a.MayOnlyMoveHereIfOccupiedByEnemy
-                                        );
-            if (badPawnAttacks.Any())
-            {
-                if (
-                    badPawnAttacks.Count() > 1
-                    || gameState.EnPassantTargetSquare == "-"
-                    || newPiecePosition != NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare)
-                )
-                {
-                    return OperationResult<GameState>.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
-                }
-            }
+
             //make the move
-            var movingGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
-            if (stateInfo.IsCastle)
-            {
-                var rookPositions = CastlingEngine.GetRookPositionsForCastle(gameState.ActiveColor, piecePosition, newPiecePosition);
-                movingGameState = manageSquares(movingGameState, stateInfo, rookPositions.RookPos, rookPositions.NewRookPos);
-            }
-            if (stateInfo.IsEnPassant)
-            {
-                //remove the attacked pawn
-                var enPassantAttackedPawnPosition = gameState.ActiveColor == Color.White ? newPiecePosition - 8 : newPiecePosition + 8;
-                var enPassantAttackedPawnSquare = movingGameState.Squares.GetSquare(enPassantAttackedPawnPosition);
-                enPassantAttackedPawnSquare.Piece = null;
-            }
-            _notationService.SetGameStateSnapshot(gameState, movingGameState, stateInfo, piecePosition, newPiecePosition);
-            var currentStateFEN = movingGameState.ToString();
+            var newGameStateFENandPGN = GetNewGameStateFENandPGN(gameState, piecePosition, stateInfo, newPiecePosition);
 
             //Setup new gamestate
-            var newGameStateResult = hydrateGameState(FenFactory.Create(currentStateFEN));
+            var newGameStateResult = hydrateGameState(FenFactory.Create(newGameStateFENandPGN.fen));
             if (newGameStateResult.Failure)
             {
                 throw new System.Exception(newGameStateResult.Message);
             }
             var newGameState = newGameStateResult.Result;
+            newGameState.PGN = newGameStateFENandPGN.pgn;
             newGameState.History = fenRecords;
             //make sure we moved out of check.
             if (gameState.StateInfo.IsCheck && newGameState.StateInfo.IsCheck)
@@ -225,6 +195,53 @@ namespace Chess.v4.Engine.Service
                 }
             }
             return OperationResult<GameState>.Ok(newGameState);
+        }
+
+        private OperationResult verifyMove(GameState gameState, int piecePosition, int newPiecePosition)
+        {
+            var oldSquare = gameState.Squares.GetSquare(piecePosition);
+            var attacks = gameState.Attacks.GetPositionAttacksOnPosition(piecePosition, newPiecePosition);
+            if (!attacks.Any())
+            {
+                return OperationResult.Fail($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+            }
+            var badPawnAttacks = attacks.Where(a =>
+                                            a.AttackingSquare.Index == piecePosition
+                                            && a.Index == newPiecePosition
+                                            && a.Piece == null
+                                            && a.MayOnlyMoveHereIfOccupiedByEnemy
+                                        );
+            if (badPawnAttacks.Any())
+            {
+                if (
+                    badPawnAttacks.Count() > 1
+                    || gameState.EnPassantTargetSquare == "-"
+                    || newPiecePosition != NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare)
+                )
+                {
+                    return OperationResult.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+                }
+            }
+            return OperationResult.Ok();
+        }
+
+        private (string fen, string pgn) GetNewGameStateFENandPGN(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
+        {
+            var transitionGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
+            if (stateInfo.IsCastle)
+            {
+                var rookPositions = CastlingEngine.GetRookPositionsForCastle(gameState.ActiveColor, piecePosition, newPiecePosition);
+                transitionGameState = manageSquares(transitionGameState, stateInfo, rookPositions.RookPos, rookPositions.NewRookPos);
+            }
+            if (stateInfo.IsEnPassant)
+            {
+                //remove the attacked pawn
+                var enPassantAttackedPawnPosition = gameState.ActiveColor == Color.White ? newPiecePosition - 8 : newPiecePosition + 8;
+                var enPassantAttackedPawnSquare = transitionGameState.Squares.GetSquare(enPassantAttackedPawnPosition);
+                enPassantAttackedPawnSquare.Piece = null;
+            }
+            _notationService.SetGameStateSnapshot(gameState, transitionGameState, stateInfo, piecePosition, newPiecePosition);
+            return (transitionGameState.ToString(), transitionGameState.PGN);
         }
     }
 }
