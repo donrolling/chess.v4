@@ -1,19 +1,32 @@
 ﻿let events = {
     init: () => {
         $(constants.selectors.fenSubmit).click(() => utilities.getFenAndUpdate());
+        $(constants.selectors.backBtn).click(() => events.onBackClick());        
         utilities.getFenAndUpdate();
     },
 
     onDragStart: (source, piece, position, orientation) => {
-        utilities.removeOldClasses();
+        document
+            .querySelectorAll(constants.selectors.attacking)
+            .forEach(a => utilities.removeClassName(a, constants.classes.attacking));
+        document
+            .querySelectorAll(constants.selectors.protecting)
+            .forEach(a => utilities.removeClassName(a, constants.classes.protecting));
         let squareAttacks = utilities.getSquareAttacks(source);
         utilities.highlightSquares(squareAttacks);
     },
 
     onDrop: (source, target, piece, newPos, oldPos, orientation) => {
+        if (gameObjects.freeze) {
+            if (gameObjects.freezeNotify < 2) {
+                alert('You are looking at the historic state of the board. New moves are frozen until you go back to the current state using the history panel.');
+                gameObjects.freezeNotify++;
+            }
+            return constants.methodResponses.snapback;
+        }
         let squareAttacks = utilities.getSquareAttacks(source);
         if (!squareAttacks.some(x => x.name === target)) {
-            return constants.snapback;
+            return constants.methodResponses.snapback;
         }
         // todo: piece promotion selection
         // constants.pieceTypes.Bishop....
@@ -22,7 +35,16 @@
     },
 
     onPGNClick: (e) => {
-        let index = e.target.getAttribute('data-index');
+        let index = e.target.getAttribute(constants.attributes.dataIndex);
+        let items = document.querySelectorAll(constants.selectors.item);
+        items.forEach(element => {
+            utilities.removeClassName(element, constants.classes.active);
+        });
+        utilities.addClassName(e.target, constants.classes.active);
+        gameService.goToMove(parseInt(index));
+    },
 
+    onBackClick: () => {
+        gameService.goBackOneMove();
     }
 };

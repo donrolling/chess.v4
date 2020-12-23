@@ -49,5 +49,22 @@ let gameService = {
                 utilities.setBoardState(gameObjects.gameState);
             }
         })();
+    },
+
+    goToMove: (index) => {
+        // if this is the most current move, then we're no longer frozen
+        if (gameObjects.gameState.history.length === index + 1) {
+            gameObjects.freeze = false;
+            gameObjects.freezeNotify = 0;
+        } else {
+            gameObjects.freeze = true;
+        }
+        let history = gameObjects.gameState.history[index];
+        document.querySelector(constants.selectors.fenInput).value = utilities.historyToFEN(history);
+        gameObjects.board = Chessboard(constants.classes.chessBoard, config);
+    },
+
+    goBackOneMove: () => {
+        gameService.goToMove(gameObjects.gameState.fullmoveNumber - 1);
     }
 };

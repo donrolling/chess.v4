@@ -1,10 +1,7 @@
 ﻿let constants = {
-    attacking: 'attacking',
-    chessBoard: 'chessBoard',
-    piece: 'piece',
-    protecting: 'protecting',
-    snapback: 'snapback',
-    square: 'square',
+    methodResponses: {
+        snapback: 'snapback'
+    },
 
     pieceTypes: {
         pawn: 0,
@@ -13,6 +10,10 @@
         rook: 3,
         queen: 4,
         king: 5
+    },
+
+    attributes: {
+        dataIndex: 'data-index'
     },
 
     http: {
@@ -29,9 +30,22 @@
         }
     },
 
+    classes: {
+        active: 'active',
+        items: 'items',
+        item: 'item',
+        number: 'number',
+        attacking: 'attacking',
+        chessBoard: 'chessBoard',
+        piece: 'piece',
+        protecting: 'protecting',
+        square: 'square'
+    },
+
     events: {
         onDragStart: 'onDragStart',
         onDrop: 'onDrop',
+        click: 'click',
     },
 
     selectors: {
@@ -43,7 +57,8 @@
         square: '.square-',
         history: '.history',
         items: '.items',
-        item: '.item'
+        item: '.item',
+        backBtn: '#backBtn'
     },
 
     urls: {

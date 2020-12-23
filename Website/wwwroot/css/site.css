@@ -21,8 +21,9 @@
 }
 
 .history {
-    overflow-x: no-display;
+    overflow-x: hidden;
     overflow-y: scroll;
+    width: 300px;
     height: 500px;
     background-color: #80808066;
     padding: 0 10px;
@@ -58,12 +59,21 @@ button {
 }
 
 .item {
-    display: inline;
-    margin-left: 5px;
+    float: left;
+    padding: 0 5px;
     cursor: pointer;
 }
 
-.item:first-child {
+.active {
+    background-color: #ca955c;
+}
+
+.number {
+    float: left;
+    margin-left: 5px;
+}
+
+.number:first-child {
     margin-left: 0;
 }
 

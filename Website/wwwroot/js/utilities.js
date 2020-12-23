@@ -13,13 +13,12 @@
         logging.log(squareElement.target);
         let square = document.querySelector(squareElement.target);
         logging.log(square);
-        let piece = square.data(constants.piece);
-        logging.log(piece);
+        let piece = square.data(constants.classes.piece);
         if (piece) {
             square = document.querySelector(squareElement.target).parentElement;
         }
         logging.log(square);
-        return square.data(constants.square);
+        return square.data(constants.classes.square);
     },
 
     getSquareAttacks: (square) => {
@@ -40,7 +39,7 @@
     highlightSquares: (attacks) => {
         for (let i = 0; i < attacks.length; i++) {
             let attack = attacks[i];
-            let squareClass = attack.isProtecting ? constants.protecting : constants.attacking;
+            let squareClass = attack.isProtecting ? constants.classes.protecting : constants.classes.attacking;
             let squareSelector = utilities.getSquareSelector(attack.name);
             var square = document.querySelector(squareSelector);
             square.className += ` ${ squareClass }`;
@@ -65,11 +64,6 @@
         }
     },    
 
-    removeOldClasses: () => {
-        document.querySelectorAll(constants.selectors.attacking).forEach(a => a.className = a.className.replace(constants.attacking, ''));
-        document.querySelectorAll(constants.selectors.protecting).forEach(a => a.className = a.className.replace(constants.protecting, ''));
-    },
-
     getParameterByName: (name, url = window.location.href) => {
         name = name.replace(/[\[\]]/g, '\\$&');
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -81,37 +75,81 @@
 
     setBoardState: (gameState) => {
         document.querySelector(constants.selectors.fenInput).value = gameState.fen;
-        logging.log({gameState: gameState});
         config.position = gameState.fen;
         gameObjects.gameState = gameState;
-        gameObjects.board = Chessboard(constants.chessBoard, config);
+        gameObjects.board = Chessboard(constants.classes.chessBoard, config);
         if (!config.draggable) {
             document
                 .querySelectorAll(constants.selectors.allSquares)
                 .forEach(a =>
-                    a.addEventListener('click', e => handlers.handleSquareClick(e))
+                    a.addEventListener(constants.events.click, e => handlers.handleSquareClick(e))
                 );
         }
         if (!gameObjects.gameState.history || gameObjects.gameState.history.length === 0) {
             return;
         }
-        let itemContainer = document.querySelector(constants.selectors.items);
-        let pgnItems = gameObjects.gameState.pgn.split(' ');
-        let contentList = [];
-        for (let i = 0; i < pgnItems.length; i++) {
-            let template = `<div class="item" data-index="${i}">${pgnItems[i]}</div>`;
-            contentList.push(template);
-        }
-        let pgnHtmls = contentList.join('');
-        let content = `${pgnHtmls}<div class="fen">${gameState.fen}</div>`;
 
+        utilities.setHistoryPanel(gameState.pgn);
+        
         // remove event listeners
-        utilities.removeEventListeners(constants.selectors.item, 'click', events.onPGNClick);
-
-        // modify content        
-        itemContainer.innerHTML = content;
+        utilities.removeEventListeners(constants.selectors.item, constants.events.click, events.onPGNClick);        
 
         // add event listeners
-        utilities.addEventListeners(constants.selectors.item, 'click', events.onPGNClick);
-    }
+        utilities.addEventListeners(constants.selectors.item, constants.events.click, events.onPGNClick);
+    },
+
+    removeClassName: (element, removeItem) => {
+        if (!element.className) {
+            element.className = '';
+        }
+        if (!removeItem) {
+            element.className = element.className;
+        }
+        var classNames = element.className.split(' ');
+        utilities.removeItemFromArray(classNames, removeItem);
+        element.className = classNames.join(' ');
+    },
+
+    addClassName: (element, addItem) => {
+        if (!element.className) {
+            element.className = addItem;
+        }
+        element.className = `${element.className} ${addItem}`;
+    },
+
+    removeItemFromArray: (xs, x) => {
+        let index = xs.indexOf(x);
+        if (index > -1) {
+            xs.splice(index, 1);          
+        }
+    },
+
+    historyToFEN: (history) => {
+        return `${history.piecePlacement} ${history.activeColor} ${history.castlingAvailability} ${history.enPassantTargetPosition} ${history.halfmoveClock} ${history.fullmoveNumber}`;
+    },
+    
+    setHistoryPanel: (pgn) => {
+        console.log(pgn);
+        if (!pgn) {
+            return;
+        }
+        let pgnItems = pgn.split(' ');
+        let contentList = [];
+        var pgnIndex = 0;
+        for (let i = 0; i < pgnItems.length; i++) {
+            let item = pgnItems[i];
+            if (item.includes('.')) {
+                let template = `<div class="${constants.classes.number}">${item}</div>`;
+                contentList.push(template);
+            } else {
+                let template = `<div class="${constants.classes.item}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`;
+                contentList.push(template);
+                pgnIndex++;
+            }
+        }
+        
+        // modify content
+        let itemContainer = document.querySelector(constants.selectors.items);
+        itemContainer.innerHTML = contentList.join('');
+    }  
 };

@@ -1,4 +1,6 @@
 ﻿let gameObjects = {
     board: {},
-    gameState: {}
+    gameState: {},
+    freeze: false,
+    freezeNotify: 0
 };
