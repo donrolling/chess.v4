@@ -10,14 +10,14 @@
     isNullOrEmpty: (x) => x === undefined || !x,
 
     getCurrentSquare: (squareElement) => {
-        logging.log(squareElement.target);
+        //logging.log(squareElement.target);
         let square = document.querySelector(squareElement.target);
-        logging.log(square);
+        //logging.log(square);
         let piece = square.data(constants.classes.piece);
         if (piece) {
             square = document.querySelector(squareElement.target).parentElement;
         }
-        logging.log(square);
+        //logging.log(square);
         return square.data(constants.classes.square);
     },
 
@@ -129,7 +129,6 @@
     },
     
     setHistoryPanel: (pgn) => {
-        console.log(pgn);
         if (!pgn) {
             return;
         }

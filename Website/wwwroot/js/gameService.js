@@ -24,6 +24,7 @@ let gameService = {
             Destination: destination,
             PiecePromotionType: piecePromotionType
         });
+        //logging.log(data);
         (async () => {
             let url = constants.urls.move;
             let response = await fetch(
@@ -45,7 +46,6 @@ let gameService = {
                 utilities.setBoardState(gameStateResult.result);
             } else {
                 // reset the board
-                console.log(gameStateResult.message);
                 utilities.setBoardState(gameObjects.gameState);
             }
         })();
@@ -56,15 +56,30 @@ let gameService = {
         if (gameObjects.gameState.history.length === index + 1) {
             gameObjects.freeze = false;
             gameObjects.freezeNotify = 0;
+            // reset the board
+            utilities.setBoardState(gameObjects.gameState);
+            return;
         } else {
             gameObjects.freeze = true;
         }
+
+        // get historical position
         let history = gameObjects.gameState.history[index];
-        document.querySelector(constants.selectors.fenInput).value = utilities.historyToFEN(history);
-        gameObjects.board = Chessboard(constants.classes.chessBoard, config);
+        let fen = utilities.historyToFEN(history);
+        // set the input text box
+        document.querySelector(constants.selectors.fenInput).value = fen;
+
+        // copy existing config...this isn't a real move, it is a fake move, so copy the existing config
+        let newConfig = {
+            position: fen,
+            draggable: false            
+        }
+        gameObjects.board = Chessboard(constants.classes.chessBoard, newConfig);
     },
 
     goBackOneMove: () => {
-        gameService.goToMove(gameObjects.gameState.fullmoveNumber - 1);
+        if (gameObjects.gameState.fullmoveNumber > 0) {
+            gameService.goToMove(gameObjects.gameState.fullmoveNumber - 1);
+        }
     }
 };
