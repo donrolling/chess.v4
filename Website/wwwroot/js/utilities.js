@@ -62,7 +62,7 @@
                 item.removeEventListener(event, handler);
             }
         }
-    },    
+    },
 
     getParameterByName: (name, url = window.location.href) => {
         name = name.replace(/[\[\]]/g, '\\$&');
@@ -134,7 +134,7 @@
         }
         let pgnItems = pgn.split(' ');
         let contentList = [];
-        var pgnIndex = 0;
+        var pgnIndex = 1;
         for (let i = 0; i < pgnItems.length; i++) {
             let item = pgnItems[i];
             if (item.includes('.')) {

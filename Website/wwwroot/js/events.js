@@ -1,7 +1,7 @@
 ﻿let events = {
     init: () => {
         $(constants.selectors.fenSubmit).click(() => utilities.getFenAndUpdate());
-        $(constants.selectors.backBtn).click(() => events.onBackClick());        
+        $(constants.selectors.backBtn).click(() => events.onBackClick());
         utilities.getFenAndUpdate();
     },
 

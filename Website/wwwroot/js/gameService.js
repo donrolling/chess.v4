@@ -53,7 +53,7 @@ let gameService = {
 
     goToMove: (index) => {
         // if this is the most current move, then we're no longer frozen
-        if (gameObjects.gameState.history.length === index + 1) {
+        if (gameObjects.gameState.history.length === index) {
             gameObjects.freeze = false;
             gameObjects.freezeNotify = 0;
             // reset the board
