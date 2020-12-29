@@ -75,18 +75,17 @@ namespace EngineTests.Tests.EngineTests
         [TestMethod]
         public void PGNMoveDifferentiation()
         {
-            //create a situation where the engine has to differentiate between two rooks of the same color on a single file
+            // create a situation where the engine has to differentiate between two rooks of the same color on a single file
             var fen = "4r3/N2R3p/1k2BPp1/8/8/2P5/PP3PPP/3R2K1 w - - 0 30";
             var gameStateResult = _gameStateService.Initialize(fen);
             Assert.IsTrue(gameStateResult.Success);
             var gameState = gameStateResult.Result;
-            var piece = new Piece(PieceType.Rook, Color.White);
-            //assert that two white rooks exist
+            // assert that two white rooks exist
             var rooks = gameState.Squares.Where(a =>
                                             a.Occupied && a.Piece.PieceType == PieceType.Rook
                                             && a.Piece.Color == Color.White);
             Assert.AreEqual(2, rooks.Count());
-            //assert that both white rooks have attacks
+            // assert that both white rooks have attacks
             var rookAttacks = gameState.Attacks.Where(a =>
                                             a.AttackingSquare.Piece.PieceType == PieceType.Rook
                                             && a.AttackingSquare.Piece.Color == Color.White);
@@ -97,9 +96,36 @@ namespace EngineTests.Tests.EngineTests
             }
             Logger.LogInformation(attackMessage.ToString());
             Assert.AreEqual(22, rookAttacks.Where(a => !a.IsProtecting).Count());
-            var pos = _pgnService.GetCurrentPositionFromPGNMove(gameState, piece, 43, "R1d6", false);
+            // this method is kinda wonky, but it is working for this one place that it is referenced.
+            var pos = _pgnService.GetCurrentPositionFromPGNMove(gameState, new Piece(PieceType.Rook, Color.White), 43, "R1d6", false);
             Assert.AreEqual(3, pos.Index);
-            //should make a test that asserts that this is check
+            // should make a test that asserts that this is check
+        }
+
+        // https://github.com/donrolling/chess.v4/issues/8
+        [TestMethod]
+        public void PGNNotationBug1()
+        {
+            var fen = "rnbqkbnr/ppp2ppp/8/3pp3/3PP3/8/PPP2PPP/RNBQKBNR w KQkq e6 0 3";
+            var gameStateResult = _gameStateService.Initialize(fen);
+            Assert.IsTrue(gameStateResult.Success);
+            var newGameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "f2", "f4");
+            Assert.IsTrue(newGameStateResult.Success);
+            var newGameState = newGameStateResult.Result;
+            Assert.AreEqual(newGameState.PGN, "3. f4");
+        }
+
+        // https://github.com/donrolling/chess.v4/issues/8
+        [TestMethod]
+        public void PGNNotationBug2()
+        {
+            var fen = "4r3/N2R3p/1k2BPp1/8/8/2P5/PP3PPP/3R2K1 w - - 0 30";
+            var gameStateResult = _gameStateService.Initialize(fen);
+            Assert.IsTrue(gameStateResult.Success);
+            var newGameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "d1", "d6");
+            Assert.IsTrue(newGameStateResult.Success);
+            var newGameState = newGameStateResult.Result;
+            Assert.AreEqual(newGameState.PGN, "30. R1d6");
         }
     }
 }

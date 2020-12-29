@@ -35,7 +35,7 @@ namespace Chess.v4.Engine.Service
             {
                 return getOriginationPositionForCastling(gameState, piece.Color);
             }
-            //adding !a.MayOnlyMoveHereIfOccupiedByEnemy fixed the test I was working on, but there may be a deeper issue here.
+            // adding !a.MayOnlyMoveHereIfOccupiedByEnemy fixed the test I was working on, but there may be a deeper issue here.
             var potentialSquares = gameState.Attacks.Where(a =>
                                                         a.Index == newPiecePosition
                                                         && (
@@ -46,7 +46,7 @@ namespace Chess.v4.Engine.Service
                                                     );
             if (!potentialSquares.Any())
             {
-                //this could be a pawn en passant
+                // this could be a pawn en passant
                 if (
                     piece.PieceType == PieceType.Pawn
                     && gameState.EnPassantTargetSquare != "-"
@@ -67,7 +67,7 @@ namespace Chess.v4.Engine.Service
             {
                 return potentialSquares.First().AttackingSquare;
             }
-            //differentiate
+            // differentiate
             var potentialPositions = from s in gameState.Squares
                                      join p in potentialSquares on s.Index equals p.AttackingSquare.Index
                                      where s.Piece.Identity == piece.Identity
@@ -77,13 +77,13 @@ namespace Chess.v4.Engine.Service
                 var msg = $"Attempting to differentiate. No squares found. PGN Move: { pgnMove }";
                 throw new Exception(msg);
             }
-            //x means capture and shouldn't be used in the equation below
+            // x means capture and shouldn't be used in the equation below
             var capture = isCapture(pgnMove);
             var check = isCheck(pgnMove);
 
-            //todo: refactor to eliminate redundancy
-            //look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
-            //this should only happen if there are two pieces of the same type that can attack here.
+            // todo: refactor to eliminate redundancy
+            // look at the beginning of the pgnMove string to determine which of the pieces are the one that should be moved.
+            // this should only happen if there are two pieces of the same type that can attack here.
             var newPgnMove = pgnMove.Replace("x", "").Replace("+", "");
             var moveLength = newPgnMove.Length;
             switch (moveLength)
@@ -92,14 +92,14 @@ namespace Chess.v4.Engine.Service
                     return pgnLength2(piece, potentialPositions, capture);
 
                 case 3:
-                    //this should be a pawn attack that can be made by two pawns
-                    //this can also be a pawn promotion
+                    // this should be a pawn attack that can be made by two pawns
+                    // this can also be a pawn promotion
                     return pgnLength3(potentialPositions, newPgnMove);
 
-                case 4: //this would be any other piece
+                case 4: // this would be any other piece
                     return pgnLength4(gameState, potentialPositions, newPgnMove);
 
-                case 5: //we have rank and file, so just find the piece. this should be very rare
+                case 5: // we have rank and file, so just find the piece. this should be very rare
                     return pgnLength5(gameState, newPgnMove);
 
                 default:
@@ -123,18 +123,18 @@ namespace Chess.v4.Engine.Service
             {
                 if (gameState.ActiveColor == Color.White)
                 {
-                    //this is a pawn move, not a bishop because a white bishop would be B, not b
+                    // this is a pawn move, not a bishop because a white bishop would be B, not b
                     pieceType = PieceType.Pawn;
                 }
                 else
                 {
-                    //the code above will think that this move is done by a bishop
-                    //so here we see if any pawn can do the job
-                    //the attacking pawn would have to be on the b file for confusion to occur here
-                    //****************************************************
-                    //I'm concerned that there might be a situation where the pgn move differentiates between
-                    //the pawn and bishop move, yet we haven't looked close enough.
-                    //should probably attempt to induce this scenario
+                    // the code above will think that this move is done by a bishop
+                    // so here we see if any pawn can do the job
+                    // the attacking pawn would have to be on the b file for confusion to occur here
+                    // ****************************************************
+                    // I'm concerned that there might be a situation where the pgn move differentiates between
+                    // the pawn and bishop move, yet we haven't looked close enough.
+                    // should probably attempt to induce this scenario
                     var bFile = this._orthogonalService.GetEntireFile(1);
                     var potentialPawnSquares = gameState.Attacks.Where(a =>
                                             a.Index == newPiecePosition
@@ -147,7 +147,7 @@ namespace Chess.v4.Engine.Service
                                         );
                     if (potentialPawnSquares.Any())
                     {
-                        //if there are pawn pieces that can fulfill here, then make the pieceType = Pawn
+                        // if there are pawn pieces that can fulfill here, then make the pieceType = Pawn
                         pieceType = PieceType.Pawn;
                     }
                 }
@@ -231,14 +231,17 @@ namespace Chess.v4.Engine.Service
 
         private string getPgnMove(char notationPiece, Piece piece, string coord, int startPos, int endPos, bool isCapture, GameState gameState)
         {
-            string captureMarker = isCapture ? "x" : string.Empty;
-            string pgnMove = getPGNMoveBeginState(notationPiece, coord, startPos, endPos, isCapture);
-            string result = string.Empty;
+            var captureMarker = isCapture ? "x" : string.Empty;
+            var pgnMove = getPGNMoveBeginState(notationPiece, coord, startPos, endPos, isCapture);
+            var result = string.Empty;
 
-            //figure out if additional information needs to be placed on the pgn move
+            // figure out if additional information needs to be placed on the pgn move
+            // this should only need to happen if the pieces are of the same type
+            var movingSquare = gameState.Squares.Where(a => a.Index == startPos).First();
             var otherSquaresOfThisTypeWithThisAttack = from s in gameState.Attacks
                                                        where s.Index == endPos
-                                                            && s.AttackingSquare.Index != startPos
+                                                            && s.AttackingSquare.Index != movingSquare.Index
+                                                            && s.AttackingSquare.Piece.PieceType == movingSquare.Piece.PieceType
                                                             && s.AttackingSquare.Piece.Color == gameState.ActiveColor
                                                        select s;
             if (otherSquaresOfThisTypeWithThisAttack.Count() <= 0)
@@ -253,7 +256,7 @@ namespace Chess.v4.Engine.Service
                 return result;
             }
 
-            //if other piece is on same the file of departure (if they differ); or
+            // if other piece is on same the file of departure (if they differ); or
             var movingPieceFile = NotationEngine.PositionToFileChar(startPos);
             var otherPieceFile = NotationEngine.PositionToFileChar(secondPiece.Index);
 
@@ -271,9 +274,10 @@ namespace Chess.v4.Engine.Service
             }
             else
             {
-                //the rank of departure (if the files are the same but the ranks differ)
-                var movingPieceRank = NotationEngine.PositionToRankInt(startPos);
-                var otherPieceRank = NotationEngine.PositionToRankInt(secondPiece.Index);
+                // the rank of departure (if the files are the same but the ranks differ)
+                // these are index = 0 rank/file, so add one for PGN output
+                var movingPieceRank = NotationEngine.PositionToRankInt(startPos) + 1;
+                var otherPieceRank = NotationEngine.PositionToRankInt(secondPiece.Index) + 1;
                 if (movingPieceRank != otherPieceRank)
                 {
                     result = string.Concat(pgnMove.Substring(0, 1), movingPieceRank, captureMarker, pgnMove.Substring(1, pgnMove.Length - 1));
@@ -281,9 +285,9 @@ namespace Chess.v4.Engine.Service
                 }
                 else
                 {
-                    //both the rank and file
-                    //(if neither alone is sufficient to identify the piece—which occurs only in rare cases where one or more pawns have promoted,
-                    //resulting in a player having three or more identical pieces able to reach the same square).
+                    // both the rank and file
+                    // (if neither alone is sufficient to identify the piece—which occurs only in rare cases where one or more pawns have promoted,
+                    // resulting in a player having three or more identical pieces able to reach the same square).
                     result = string.Concat(pgnMove.Substring(0, 1), movingPieceFile, movingPieceRank, captureMarker, pgnMove.Substring(1, 2));
                     return result;
                 }
@@ -361,12 +365,12 @@ namespace Chess.v4.Engine.Service
                 }
             }
 
-            //could be a pawn promotion
+            // could be a pawn promotion
             var pawnCapturePromotion = pawnCapturePromotionPattern.IsMatch(pgnMove);
             var pawnPromotion = pawnPromotionPattern.IsMatch(pgnMove);
             if (pawnCapturePromotion || pawnPromotion)
             {
-                //yeah, it is a pawn promotion
+                // yeah, it is a pawn promotion
                 promotedPiece = pgnMove.Last();
                 if (promotedPiece == '+' || promotedPiece == '#')
                 {
@@ -375,9 +379,9 @@ namespace Chess.v4.Engine.Service
                 var dest = pawnCapturePromotion ? pgnMove.Substring(2, 2) : pgnMove.Substring(0, 2);
                 return (NotationEngine.CoordinateToPosition(dest), promotedPiece, false);
             }
-            //probably just a regular move
+            // probably just a regular move
             pgnMove = pgnMove.Replace("x", "").Replace("+", "").Replace("#", "");
-            //not sure why I needed this
+            // not sure why I needed this
             var x = 2;
             if (pgnMove.Contains("="))
             {
@@ -440,7 +444,7 @@ namespace Chess.v4.Engine.Service
         private Square pgnLength3(IEnumerable<AttackedSquare> potentialPositions, string newPgnMove)
         {
             var ambiguityResolver = newPgnMove[0];
-            var files = this._orthogonalService.GetEntireFile(NotationEngine.FileToInt(ambiguityResolver)); //this will always be a file if this is a pawn
+            var files = this._orthogonalService.GetEntireFile(NotationEngine.FileToInt(ambiguityResolver)); // this will always be a file if this is a pawn
             var potentialSquares = potentialPositions.Where(a => files.Contains(a.AttackingSquare.Index)).ToList();
             if (potentialSquares.Count() > 1)
             {
@@ -452,13 +456,13 @@ namespace Chess.v4.Engine.Service
         private Square pgnLength4(GameState gameState, IEnumerable<AttackedSquare> potentialPositions, string newPgnMove)
         {
             var ambiguityResolver = newPgnMove[1];
-            var isRank = IsRank(ambiguityResolver); //this could be either a rank or a file
+            var isRank = IsRank(ambiguityResolver); // this could be either a rank or a file
             List<int> ambiguityResolutionSet;
             if (isRank)
             {
                 int rank = 0;
                 Int32.TryParse(ambiguityResolver.ToString(), out rank);
-                ambiguityResolutionSet = this._orthogonalService.GetEntireRank(rank - 1);//needs to be using zero-based rank offset
+                ambiguityResolutionSet = this._orthogonalService.GetEntireRank(rank - 1);// needs to be using zero-based rank offset
             }
             else
             {
