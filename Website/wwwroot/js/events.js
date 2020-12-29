@@ -6,6 +6,14 @@
     },
 
     onDragStart: (source, piece, position, orientation) => {
+        // logging.logDragStart(source, piece, position, orientation);
+        // protect against wrong side moves
+        if (
+            (piece[0] === 'w' && gameObjects.gameState.activeColor === 0)
+            || (piece[0] === 'b' && gameObjects.gameState.activeColor === 1)
+        ) {
+            return false;
+        }
         document
             .querySelectorAll(constants.selectors.attacking)
             .forEach(a => utilities.removeClassName(a, constants.classes.attacking));
