@@ -21,7 +21,7 @@ namespace Chess.v4.Engine.Service
 
         private static List<PieceType> _castlingPieces { get; set; } = new List<PieceType> { PieceType.Rook, PieceType.King };
 
-        public List<Square> GetSquaresFromFEN_Record(Snapshot fen)
+        public List<Square> GetSquares(Snapshot fen)
         {
             var squares = new List<Square>();
             var rows = fen.PiecePlacement.Split('/');

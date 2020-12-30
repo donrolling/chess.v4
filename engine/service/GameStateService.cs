@@ -42,7 +42,7 @@ namespace Chess.v4.Engine.Service
             {
                 OperationResult<GameState>.Fail("Bad fen.");
             }
-            return hydrateGameState(fenRecord);
+            return hydrateGameState(new GameState(fenRecord));
         }
 
         /// <summary>
@@ -137,14 +137,9 @@ namespace Chess.v4.Engine.Service
             return OperationResult<StateInfo>.Ok(moveInfo);
         }
 
-        private OperationResult<GameState> hydrateGameState(Snapshot fenRecord, string errorMessage = null)
+        private OperationResult<GameState> hydrateGameState(GameState gameState)
         {
-            if (!string.IsNullOrEmpty(errorMessage))
-            {
-                return OperationResult<GameState>.Fail(errorMessage);
-            }
-            var gameState = new GameState(fenRecord);
-            gameState.Squares = _notationService.GetSquaresFromFEN_Record(gameState);
+            gameState.Squares = _notationService.GetSquares(gameState);
             gameState.Attacks = _attackService.GetAttacks(gameState).ToList();
             gameState.StateInfo = _moveService.GetStateInfo(gameState);
             return OperationResult<GameState>.Ok(gameState);
@@ -161,7 +156,7 @@ namespace Chess.v4.Engine.Service
 
             //make the move
             var newGameState = GetNewGameState(gameState, piecePosition, stateInfo, newPiecePosition);
-
+            newGameState = hydrateGameState(newGameState).Result;
             //Setup new gamestate
             //var newGameStateResult = hydrateGameState(FenFactory.Create(newGameStateFENandPGN.fen));
             //if (newGameStateResult.Failure)
