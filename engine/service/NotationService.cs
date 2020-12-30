@@ -84,13 +84,19 @@ namespace Chess.v4.Engine.Service
             var pgnMove = stateInfo.IsPawnPromotion
                 ? _pgnService.SquarePairToPGNMove(oldGameState, oldGameState.ActiveColor, piecePosition, newPiecePosition, stateInfo.PawnPromotedTo)
                 : _pgnService.SquarePairToPGNMove(oldGameState, oldGameState.ActiveColor, piecePosition, newPiecePosition);
-            var separator = oldGameState.ActiveColor == Color.White
-                ? $" { fullmoveNumber }. "
-                : " ";
+            newGameState.PGNMoves.Add(pgnMove);
+            newGameState.PGN = getUpdatedPGN(newGameState, oldGameState.ActiveColor, fullmoveNumber, pgnMove);
+        }
+
+        private static string getUpdatedPGN(GameState newGameState, Color activeColor, int fullmoveNumber, string pgnMove)
+        {
+            var separator = activeColor == Color.White
+                            ? $" { fullmoveNumber }. "
+                            : " ";
             var pgn = string.IsNullOrEmpty(newGameState.PGN)
                 ? $"{ separator }{ pgnMove }"
                 : $"{ newGameState.PGN }{ separator }{ pgnMove }";
-            newGameState.PGN = pgn.Trim();
+            return pgn.Trim();
         }
 
         public void UpdateMatrix_PromotePiece(List<Square> squares, int newPiecePosition, Color pieceColor, char piecePromotedTo)

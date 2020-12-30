@@ -9,7 +9,6 @@ namespace Chess.v4.Models
         public List<Snapshot> History { get; set; } = new List<Snapshot>();
         public List<Square> Squares { get; set; } = new List<Square>();
         public StateInfo StateInfo { get; set; }
-        public string PGN { get; set; }
 
         public GameState()
         {

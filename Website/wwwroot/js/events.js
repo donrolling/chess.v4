@@ -43,12 +43,8 @@
     },
 
     onPGNClick: (e) => {
-        let index = e.target.getAttribute(constants.attributes.dataIndex);
-        let items = document.querySelectorAll(constants.selectors.item);
-        items.forEach(element => {
-            utilities.removeClassName(element, constants.classes.active);
-        });
-        utilities.addClassName(e.target, constants.classes.active);
+        let target = e.target;        
+        let index = target.getAttribute(constants.attributes.dataIndex);
         gameService.goToMove(parseInt(index));
     },
 

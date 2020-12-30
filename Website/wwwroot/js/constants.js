@@ -58,11 +58,13 @@
         history: '.history',
         items: '.items',
         item: '.item',
+        activeItem: '.item.active',
         backBtn: '#backBtn'
     },
 
     urls: {
         stateInfo: 'api/game/state-info?fen=',
-        move: 'api/game/move'
+        move: 'api/game/move',
+        goto: 'api/game/goto'
     }
 };

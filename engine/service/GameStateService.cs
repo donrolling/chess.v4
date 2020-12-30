@@ -152,11 +152,6 @@ namespace Chess.v4.Engine.Service
 
         private OperationResult<GameState> makeMove(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
         {
-            //store important stuff from old gamestate
-            var previousStateFEN = gameState.ToString();
-            var fenRecords = gameState.History.DeepCopy();
-            fenRecords.Add(FenFactory.Create(previousStateFEN));
-
             //verify that the move can be made
             var verifiedMove = verifyMove(gameState, piecePosition, newPiecePosition);
             if (verifiedMove.Failure)
@@ -165,17 +160,17 @@ namespace Chess.v4.Engine.Service
             }
 
             //make the move
-            var newGameStateFENandPGN = GetNewGameStateFENandPGN(gameState, piecePosition, stateInfo, newPiecePosition);
+            var newGameState = GetNewGameState(gameState, piecePosition, stateInfo, newPiecePosition);
 
             //Setup new gamestate
-            var newGameStateResult = hydrateGameState(FenFactory.Create(newGameStateFENandPGN.fen));
-            if (newGameStateResult.Failure)
-            {
-                throw new System.Exception(newGameStateResult.Message);
-            }
-            var newGameState = newGameStateResult.Result;
-            newGameState.PGN = newGameStateFENandPGN.pgn;
-            newGameState.History = fenRecords;
+            //var newGameStateResult = hydrateGameState(FenFactory.Create(newGameStateFENandPGN.fen));
+            //if (newGameStateResult.Failure)
+            //{
+            //    throw new System.Exception(newGameStateResult.Message);
+            //}
+            //var newGameState = newGameStateResult.Result;
+            //newGameState.PGN = newGameStateFENandPGN.pgn;
+            //newGameState.History = fenRecords;
             //make sure we moved out of check.
             if (gameState.StateInfo.IsCheck && newGameState.StateInfo.IsCheck)
             {
@@ -225,7 +220,7 @@ namespace Chess.v4.Engine.Service
             return OperationResult.Ok();
         }
 
-        private (string fen, string pgn) GetNewGameStateFENandPGN(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
+        private GameState GetNewGameState(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
         {
             var transitionGameState = manageSquares(gameState, stateInfo, piecePosition, newPiecePosition);
             if (stateInfo.IsCastle)
@@ -241,7 +236,13 @@ namespace Chess.v4.Engine.Service
                 enPassantAttackedPawnSquare.Piece = null;
             }
             _notationService.SetGameStateSnapshot(gameState, transitionGameState, stateInfo, piecePosition, newPiecePosition);
-            return (transitionGameState.ToString(), transitionGameState.PGN);
+
+            var fenRecords = gameState.History.DeepCopy();
+            var previousStateFEN = gameState.ToString();
+            fenRecords.Add(FenFactory.Create(previousStateFEN));
+            transitionGameState.History = fenRecords;
+
+            return transitionGameState;
         }
     }
 }

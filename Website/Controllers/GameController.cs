@@ -3,6 +3,7 @@ using Chess.v4.Models;
 using Common.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Omu.ValueInjecter;
+using Website.Factories;
 using Website.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -21,50 +22,51 @@ namespace Website
 
         [HttpGet]
         [Route("state-info")]
-        public OperationResult<GameStateDTO> GetStateInfo([FromQuery] string fen)
+        public OperationResult<GameStateResource> GetStateInfo([FromQuery] string fen)
         {
             var result = _gameStateService.Initialize(fen);
             if (result.Success)
             {
-                var gameStateDTO = ToGameStateDTO(result.Result);
-                return OperationResult<GameStateDTO>.Ok(gameStateDTO);
+                var gameStateResult = GameStateResourceFactory.ToGameStateResource(result.Result);
+                return OperationResult<GameStateResource>.Ok(gameStateResult.Result);
             }
             else
             {
-                return OperationResult<GameStateDTO>.Fail(result.Message);
+                return OperationResult<GameStateResource>.Fail(result.Message);
             }
         }
 
         [HttpPost]
         [Route("move")]
-        public OperationResult<GameStateDTO> MakeMove([FromBody] MoveRequest moveRequest)
+        public OperationResult<GameStateResource> MakeMove([FromBody] MoveRequestResource moveRequest)
         {
-            var gameState = ToGameState(moveRequest.GameState);
-            var result = _gameStateService.MakeMove(gameState, moveRequest.Beginning, moveRequest.Destination, moveRequest.PiecePromotionType);
+            var gameStateResult = GameStateResourceFactory.ToGameState(moveRequest.GameState);
+            var result = _gameStateService.MakeMove(gameStateResult.Result, moveRequest.Beginning, moveRequest.Destination, moveRequest.PiecePromotionType);
             if (result.Success)
             {
-                var gameStateDTO = ToGameStateDTO(result.Result);
-                return OperationResult<GameStateDTO>.Ok(gameStateDTO);
+                var gameStateResourceResult = GameStateResourceFactory.ToGameStateResource(result.Result);
+                return OperationResult<GameStateResource>.Ok(gameStateResourceResult.Result);
             }
             else
             {
-                return OperationResult<GameStateDTO>.Fail(result.Message);
+                return OperationResult<GameStateResource>.Fail(result.Message);
             }
         }
 
-        private static GameStateDTO ToGameStateDTO(GameState gameState)
+        [HttpPost]
+        [Route("goto")]
+        public OperationResult<GameStateResource> GoTo([FromBody] GoToMoveResource goToMoveResource)
         {
-            var gameStateDTO = new GameStateDTO();
-            gameStateDTO.InjectFrom(gameState);
-            gameStateDTO.FEN = gameState.ToString();
-            return gameStateDTO;
-        }
-
-        private static GameState ToGameState(GameStateDTO gameStateDTO)
-        {
-            var gameState = new GameState();
-            gameState.InjectFrom(gameStateDTO);
-            return gameState;
+            var gameStateResult = GameStateResourceFactory.ToGameState(goToMoveResource.GameState);
+            var result = GameStateResourceFactory.MoveToHistoryIndex(_gameStateService, gameStateResult.Result, goToMoveResource.HistoryIndex);
+            if (result.Success)
+            {
+                return OperationResult<GameStateResource>.Ok(result.Result);
+            }
+            else
+            {
+                return OperationResult<GameStateResource>.Fail(result.Message);
+            }
         }
     }
 }

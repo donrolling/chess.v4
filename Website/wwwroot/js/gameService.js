@@ -72,14 +72,47 @@ let gameService = {
         // copy existing config...this isn't a real move, it is a fake move, so copy the existing config
         let newConfig = {
             position: fen,
-            draggable: false            
+            draggable: false
         }
         gameObjects.board = Chessboard(constants.classes.chessBoard, newConfig);
+        
+        utilities.selectPgnItemByIndex(index);
     },
 
     goBackOneMove: () => {
-        if (gameObjects.gameState.fullmoveNumber > 0) {
-            gameService.goToMove(gameObjects.gameState.fullmoveNumber - 1);
+        let newIndex = 0; // beginning index
+        if (gameObjects.gameState.fullmoveNumber > 1) {
+            var activePGNItem = document.querySelector(constants.selectors.activeItem);
+            let index = parseInt(activePGNItem.getAttribute(constants.attributes.dataIndex));
+            newIndex = index - 1;
         }
+        let data = JSON.stringify({
+            GameState: gameObjects.gameState,
+            HistoryIndex: newIndex
+        });
+        (async () => {
+            let url = constants.urls.goto;
+            let response = await fetch(
+                url,
+                {
+                    headers: {
+                        'Accept': constants.http.contentTypes.applicationjson,
+                        'Content-Type': constants.http.contentTypes.applicationjson
+                    },
+                    method: constants.http.post,
+                    body: data
+                }
+            );
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            let gameStateResult = await response.json();
+            if (gameStateResult.success) {
+                utilities.setBoardState(gameStateResult.result);
+            } else {
+                // reset the board
+                utilities.setBoardState(gameObjects.gameState);
+            }
+        })();
     }
 };

@@ -42,14 +42,14 @@
             let squareClass = attack.isProtecting ? constants.classes.protecting : constants.classes.attacking;
             let squareSelector = utilities.getSquareSelector(attack.name);
             var square = document.querySelector(squareSelector);
-            square.className += ` ${ squareClass }`;
+            square.className += ` ${squareClass}`;
         }
     },
-    
-    addEventListeners: (selector, event, handler) =>  {
+
+    addEventListeners: (selector, event, handler) => {
         let items = document.querySelectorAll(selector);
         if (items) {
-            for (const item of items) {                
+            for (const item of items) {
                 item.addEventListener(event, handler);
             }
         }
@@ -58,7 +58,7 @@
     removeEventListeners: (selector, event, handler) => {
         let items = document.querySelectorAll(selector);
         if (items) {
-            for (const item of items) {                
+            for (const item of items) {
                 item.removeEventListener(event, handler);
             }
         }
@@ -85,14 +85,11 @@
                     a.addEventListener(constants.events.click, e => handlers.handleSquareClick(e))
                 );
         }
-        if (!gameObjects.gameState.history || gameObjects.gameState.history.length === 0) {
-            return;
-        }
 
         utilities.setHistoryPanel(gameState.pgn);
         
         // remove event listeners
-        utilities.removeEventListeners(constants.selectors.item, constants.events.click, events.onPGNClick);        
+        utilities.removeEventListeners(constants.selectors.item, constants.events.click, events.onPGNClick);
 
         // add event listeners
         utilities.addEventListeners(constants.selectors.item, constants.events.click, events.onPGNClick);
@@ -120,16 +117,19 @@
     removeItemFromArray: (xs, x) => {
         let index = xs.indexOf(x);
         if (index > -1) {
-            xs.splice(index, 1);          
+            xs.splice(index, 1);
         }
     },
 
     historyToFEN: (history) => {
         return `${history.piecePlacement} ${history.activeColor} ${history.castlingAvailability} ${history.enPassantTargetPosition} ${history.halfmoveClock} ${history.fullmoveNumber}`;
     },
-    
+
     setHistoryPanel: (pgn) => {
-        if (!pgn) {
+        logging.info({pgn: pgn});
+        if (!pgn) {// modify content
+            let itemContainer = document.querySelector(constants.selectors.items);
+            itemContainer.innerHTML = '';
             return;
         }
         let pgnItems = pgn.split(' ');
@@ -141,14 +141,34 @@
                 let template = `<div class="${constants.classes.number}">${item}</div>`;
                 contentList.push(template);
             } else {
-                let template = `<div class="${constants.classes.item}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`;
+                let template = i === pgnItems.length - 1
+                ? `<div class="${constants.classes.item} ${constants.classes.active}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`
+                : `<div class="${constants.classes.item}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`;
                 contentList.push(template);
                 pgnIndex++;
             }
         }
-        
+
         // modify content
         let itemContainer = document.querySelector(constants.selectors.items);
         itemContainer.innerHTML = contentList.join('');
-    }  
+    },
+
+    selectPgnItemByTarget: (target) => {
+        let index = target.getAttribute(constants.attributes.dataIndex);
+        let items = document.querySelectorAll(constants.selectors.item);
+        items.forEach(element => {
+            utilities.removeClassName(element, constants.classes.active);
+        });
+        utilities.addClassName(target, constants.classes.active);
+    },
+
+    selectPgnItemByIndex: (index) => {
+        let target = document.querySelector(`.items .item[data-index="${ index }"]`)
+        let items = document.querySelectorAll(constants.selectors.item);
+        items.forEach(element => {
+            utilities.removeClassName(element, constants.classes.active);
+        });
+        utilities.addClassName(target, constants.classes.active);
+    }
 };

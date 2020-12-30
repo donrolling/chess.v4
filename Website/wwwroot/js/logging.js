@@ -1,7 +1,7 @@
 ﻿let logging = {
-    logTest: () => console.log('test'),
+    info: (x) => console.log(x),
 
-    log: (x) => console.log(x),
+    error: (x) => console.error(x),
 
     logDragStart: (source, piece, position, orientation) =>
         console.log({

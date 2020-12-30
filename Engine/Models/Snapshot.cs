@@ -1,5 +1,6 @@
 ﻿using Chess.v4.Engine.Factory;
 using Chess.v4.Models.Enums;
+using System.Collections.Generic;
 
 namespace Chess.v4.Models
 {
@@ -58,6 +59,10 @@ namespace Chess.v4.Models
         //lowercase ("pnbrqk"). Empty squares are noted using digits 1 through 8 (the number of empty squares), and "/" separates ranks.
         public string PiecePlacement { get; set; }
 
+        public string PGN { get; set; }
+
+        public List<string> PGNMoves { get; set; } = new List<string>();
+        
         public override string ToString()
         {
             return FenFactory.Create(this);
