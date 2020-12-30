@@ -2,5 +2,6 @@
     board: {},
     gameState: {},
     freeze: false,
-    freezeNotify: 0
+    freezeNotify: 0,
+    pawnPromotionMoveInfo: {}
 };

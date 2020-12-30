@@ -24,7 +24,7 @@ let gameService = {
             Destination: destination,
             PiecePromotionType: piecePromotionType
         });
-        //logging.log(data);
+        logging.info(data);
         (async () => {
             let url = constants.urls.move;
             let response = await fetch(
@@ -46,6 +46,7 @@ let gameService = {
                 utilities.setBoardState(gameStateResult.result);
             } else {
                 // reset the board
+                logging.error(gameStateResult.message);
                 utilities.setBoardState(gameObjects.gameState);
             }
         })();

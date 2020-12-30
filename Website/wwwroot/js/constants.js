@@ -13,7 +13,8 @@
     },
 
     attributes: {
-        dataIndex: 'data-index'
+        dataIndex: 'data-index',
+        dataPiece: 'data-piece'
     },
 
     http: {
@@ -39,7 +40,9 @@
         chessBoard: 'chessBoard',
         piece: 'piece',
         protecting: 'protecting',
-        square: 'square'
+        square: 'square',
+        pawnPromotion: 'pawnPromotion',
+        hidden: 'hidden'
     },
 
     events: {
@@ -59,7 +62,9 @@
         items: '.items',
         item: '.item',
         activeItem: '.item.active',
-        backBtn: '#backBtn'
+        backBtn: '#backBtn',
+        pawnPromotion: '.pawnPromotion',
+        promotionChoice: '.promotionChoice'
     },
 
     urls: {

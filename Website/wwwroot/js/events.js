@@ -2,6 +2,7 @@
     init: () => {
         $(constants.selectors.fenSubmit).click(() => utilities.getFenAndUpdate());
         $(constants.selectors.backBtn).click(() => events.onBackClick());
+        $(constants.selectors.promotionChoice).click((e) => events.onPawnPromotionChoice(e));
         utilities.getFenAndUpdate();
     },
 
@@ -32,14 +33,21 @@
             }
             return constants.methodResponses.snapback;
         }
+
         let squareAttacks = utilities.getSquareAttacks(source);
         if (!squareAttacks.some(x => x.name === target)) {
             return constants.methodResponses.snapback;
         }
-        // todo: piece promotion selection
-        // constants.pieceTypes.Bishop....
-        let piecePromotionType = null;
-        gameService.move(source, target, piecePromotionType);
+
+        // logging.logDrop(source, target, piece, newPos, oldPos, orientation, null);
+        if (
+            (piece[0] === 'w' && gameObjects.gameState.activeColor === 1 && piece[1] === 'P' && target[1] == 8)
+            || (piece[0] === 'b' && gameObjects.gameState.activeColor === 0 && piece[1] === 'P' && target[1] == 1)
+        ) {
+            utilities.displayPawnPromotion(source, target);
+        } else {
+            gameService.move(source, target, null);
+        }
     },
 
     onPGNClick: (e) => {
@@ -50,5 +58,11 @@
 
     onBackClick: () => {
         gameService.goBackOneMove();
+    },
+
+    onPawnPromotionChoice: (e) => {   
+        let choice = e.target.getAttribute(constants.attributes.dataPiece);
+        gameService.move(gameObjects.pawnPromotionMoveInfo.source, gameObjects.pawnPromotionMoveInfo.target, parseInt(choice));
+        utilities.hidePawnPromotion();
     }
 };

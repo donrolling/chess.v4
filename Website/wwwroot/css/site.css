@@ -6,6 +6,7 @@
 .container {
     margin: auto;
     width: 650px;
+    position: relative;
 }
 
 .chessContainer {
@@ -80,4 +81,25 @@ button {
 .fen {
     display: block;
     margin-top: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.pawnPromotion {
+    width: 194px;
+    background-color: antiquewhite;
+    position: absolute;
+    top: 75px;
+    left: 125px;
+    z-index: 10;
+    border: 1px black solid;
+}
+
+.promotionChoice {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: black;
 }

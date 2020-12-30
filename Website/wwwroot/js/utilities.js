@@ -87,7 +87,7 @@
         }
 
         utilities.setHistoryPanel(gameState.pgn);
-        
+
         // remove event listeners
         utilities.removeEventListeners(constants.selectors.item, constants.events.click, events.onPGNClick);
 
@@ -126,7 +126,7 @@
     },
 
     setHistoryPanel: (pgn) => {
-        logging.info({pgn: pgn});
+        logging.info({ pgn: pgn });
         if (!pgn) {// modify content
             let itemContainer = document.querySelector(constants.selectors.items);
             itemContainer.innerHTML = '';
@@ -142,8 +142,8 @@
                 contentList.push(template);
             } else {
                 let template = i === pgnItems.length - 1
-                ? `<div class="${constants.classes.item} ${constants.classes.active}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`
-                : `<div class="${constants.classes.item}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`;
+                    ? `<div class="${constants.classes.item} ${constants.classes.active}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`
+                    : `<div class="${constants.classes.item}" ${constants.attributes.dataIndex}="${pgnIndex}">${item}</div>`;
                 contentList.push(template);
                 pgnIndex++;
             }
@@ -164,11 +164,28 @@
     },
 
     selectPgnItemByIndex: (index) => {
-        let target = document.querySelector(`.items .item[data-index="${ index }"]`)
+        let target = document.querySelector(`.items .item[data-index="${index}"]`)
         let items = document.querySelectorAll(constants.selectors.item);
         items.forEach(element => {
             utilities.removeClassName(element, constants.classes.active);
         });
         utilities.addClassName(target, constants.classes.active);
+    },
+
+    displayPawnPromotion: (source, target) => {
+        gameObjects.pawnPromotionMoveInfo = {
+            source: source,
+            target: target
+        };
+        gameObjects.freeze = true;
+        let ppui = document.querySelector(constants.selectors.pawnPromotion);
+        utilities.removeClassName(ppui, constants.classes.hidden);
+    },
+
+    hidePawnPromotion: () => {
+        gameObjects.pawnPromotionMoveInfo = null;
+        gameObjects.freeze = false;
+        let ppui = document.querySelector(constants.selectors.pawnPromotion);
+        utilities.addClassName(ppui, constants.classes.hidden);
     }
 };
