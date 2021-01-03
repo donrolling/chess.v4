@@ -1,7 +1,5 @@
-namespace utilities {
-    export class strings {
-        public static isNullOrEmpty(x: string): boolean { 
-            return x === undefined || !x;
-        }
+export class strings {
+    public static isNullOrEmpty(x: string): boolean { 
+        return x === undefined || !x;
     }
 }

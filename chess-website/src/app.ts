@@ -1,8 +1,14 @@
+import { BoardConfig } from "chessboardjs";
+import { gameObjects } from "./models/chessApp/gameObjects";
+import { gameService } from "./services/gameService";
+import { gameStateService } from "./services/gameStateService";
+import { pawnPromotion } from "./utilities/pawnPromotion";
+
 export class app {
     constructor() {
         console.log('App CTOR');
 
-        let gameObjects: models.gameObjects = {
+        let gameObjects: gameObjects = {
             board: null,
             gameState: null,
             pawnPromotionInfo: null,
@@ -10,26 +16,36 @@ export class app {
             freezeNotify: 0
         };
 
-        let config: models.config = {
+        let config: BoardConfig = {
             position: '',
             draggable: true
         };
 
-        let gameService = new services.gameService();
+        let _gameService = new gameService();
 
-        let gameStateService = new services.gameStateService(
+        let _gameStateService = new gameStateService(
             gameObjects,
             config,
-            gameService
+            _gameService
         );
 
         document
             .querySelector(constants.ui.selectors.fenSubmit)
-            ?.addEventListener(constants.ui.events.click, () => gameService.getFenAndUpdate());
+            ?.addEventListener(constants.ui.events.click, () => _gameStateService.getFenAndUpdate());
 
         document
             .querySelector(constants.ui.selectors.backBtn)
-            ?.addEventListener(constants.ui.events.click, () => gameService.goBackOneMove(gameObjects));
+            ?.addEventListener(constants.ui.events.click, async () => {
+                let response = await _gameService.goBackOneMove(gameObjects);
+                if (response.success) {
+                    _gameStateService.setBoardState(response.result);
+                } else {
+                    // reset the board
+                    if (gameObjects.gameState) {                        
+                        _gameStateService.setBoardState(gameObjects.gameState);
+                    }
+                }
+            });
 
         let promotionChoiceElement = document.querySelector(constants.ui.selectors.promotionChoice);
         if (promotionChoiceElement) {
@@ -45,18 +61,18 @@ export class app {
                     if (!promotionPieceType || !gameObjects.pawnPromotionInfo || !gameObjects.gameState) {
                         return;
                     }
-                    gameService.move(
+                    _gameService.move(
                         gameObjects.gameState,
                         gameObjects.pawnPromotionInfo.source, 
                         gameObjects.pawnPromotionInfo.target, 
                         promotionPieceType
                     );
-                    utilities.pawnPromotion.hidePawnPromotion(gameObjects);
+                    pawnPromotion.hidePawnPromotion(gameObjects);
                 }
             );
         }
 
         // start using any existing fen source, preferring the querystring
-        gameService.getAnyFenAndUpdate();
+        _gameStateService.getAnyFenAndUpdate();
     }
 }

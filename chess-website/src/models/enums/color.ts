@@ -1,6 +1,4 @@
-namespace models {
-    export enum color {
-        black,
-        white
-    }
+export enum color {
+    black,
+    white
 }

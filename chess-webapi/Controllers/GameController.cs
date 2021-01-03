@@ -19,7 +19,7 @@ namespace chess_webapi.Controllers
 
         [HttpGet]
         [Route("state-info")]
-        public OperationResult<GameStateResource> GetStateInfo([FromQuery] string fen)
+        public OperationResult<GameStateResource> StateInfo([FromQuery] string fen)
         {
             var result = _gameStateService.Initialize(fen);
             if (result.Success)
@@ -35,7 +35,7 @@ namespace chess_webapi.Controllers
 
         [HttpPost]
         [Route("move")]
-        public OperationResult<GameStateResource> MakeMove([FromBody] MoveRequestResource moveRequest)
+        public OperationResult<GameStateResource> Move([FromBody] MoveRequestResource moveRequest)
         {
             var gameStateResult = GameStateResourceFactory.ToGameState(moveRequest.GameState);
             var result = _gameStateService.MakeMove(gameStateResult.Result, moveRequest.Beginning, moveRequest.Destination, moveRequest.PiecePromotionType);

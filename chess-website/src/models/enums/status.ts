@@ -1,10 +1,8 @@
-namespace models {
-    export enum status {
-        Success,
-        Failure,
-        ItemNotFound,
-        Cancelled,
-        Aborted,
-        Expired
-    }
+export enum status {
+    Success,
+    Failure,
+    ItemNotFound,
+    Cancelled,
+    Aborted,
+    Expired
 }
