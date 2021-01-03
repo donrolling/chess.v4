@@ -1,0 +1,28 @@
+<div class="wrapper">
+    <div class="container">
+        <div class="pawnPromotion hidden">
+            <a href="#" class='promotionChoice' data-piece='4'>Queen</a>
+            <hr />
+            <a href="#" class='promotionChoice' data-piece='3'>Rook</a>
+            <hr />
+            <a href="#" class='promotionChoice' data-piece='2'>Bishop</a>
+            <hr />
+            <a href="#" class='promotionChoice' data-piece='1'>Knight</a>
+        </div>
+        <div class="chessContainer">
+            <div id="chessBoard" class="chessBoard"></div>
+            <div class="spacer20"></div>
+            <input id="FEN" class="fen" value="" />
+            @*<input id="FEN" class="fen" value="r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9" />*@
+            <div class="spacer20"></div>
+            <button id="fenSubmit">Submit</button>
+            <button id="backBtn">Back</button>
+        </div>
+        <div class="hud">
+            <div class="history">
+                <h5>History</h5>
+                <div class="items"></div>
+            </div>
+        </div>
+    </div>
+</div>
