@@ -1,7 +1,13 @@
+import { ChessBoard } from "chessboardjs";
+
+import { contentTypes } from "../constants/http/contentTypes";
+import { httpMethods } from "../constants/http/httpMethods";
+import { attributes } from "../constants/ui/attributes";
+import { classes } from "../constants/ui/classes";
+import { selectors } from "../constants/ui/selectors";
 import { gameObjects } from "../models/chessApp/gameObjects";
 import { gameStateResource } from "../models/chessEngine/gameStateResource";
 import { operationResult } from "../models/common/operationResult";
-import { dom } from "../utilities/dom";
 import { historyEngine } from "../utilities/historyEngine";
 import { logging } from "../utilities/logging";
 import { strings } from "../utilities/strings";
@@ -41,10 +47,10 @@ export class gameService {
             this.moveUrl,
             {
                 headers: {
-                    'Accept': constants.http.contentTypes.applicationjson,
-                    'Content-Type': constants.http.contentTypes.applicationjson
+                    'Accept': contentTypes.applicationjson,
+                    'Content-Type': contentTypes.applicationjson
                 },
-                method: constants.http.httpMethods.post,
+                method: httpMethods.post,
                 body: data
             }
         );
@@ -74,14 +80,17 @@ export class gameService {
         let history = gameObjects.gameState.history[index];
         let fen = historyEngine.historyToFEN(history);
         // set the input text box
-        //document.querySelector<HTMLElement>(constants.ui.selectors.fenInput).value = fen;
+        let fenInput = document.querySelector<HTMLInputElement>(selectors.fenInput);
+        if (fenInput) {
+            fenInput.value = fen;
+        }
 
         // copy existing config...this isn't a real move, it is a fake move, so copy the existing config
         let newConfig = {
             position: fen,
             draggable: false
         }
-        //gameObjects.board = Chessboard(constants.ui.classes.chessBoard, newConfig);
+        gameObjects.board = ChessBoard(classes.chessBoard, newConfig);
 
         historyEngine.selectPgnItemByIndex(index);
     }
@@ -93,11 +102,11 @@ export class gameService {
         }
         let newIndex = 0; // beginning index
         if (gameObjects.gameState.fullmoveNumber > 1) {
-            var activePGNItem = document.querySelector<HTMLElement>(constants.ui.selectors.activeItem);
+            var activePGNItem = document.querySelector<HTMLElement>(selectors.activeItem);
             if (!activePGNItem) {
                 return Promise.reject(new Error('activePGNItem was null'));
             }
-            let dataIndex = activePGNItem.getAttribute(constants.ui.attributes.dataIndex);
+            let dataIndex = activePGNItem.getAttribute(attributes.dataIndex);
             if (!dataIndex) {
                 return Promise.reject(new Error('dataIndex was null'));
             }
@@ -112,10 +121,10 @@ export class gameService {
             this.gotoUrl,
             {
                 headers: {
-                    'Accept': constants.http.contentTypes.applicationjson,
-                    'Content-Type': constants.http.contentTypes.applicationjson
+                    'Accept': contentTypes.applicationjson,
+                    'Content-Type': contentTypes.applicationjson
                 },
-                method: constants.http.httpMethods.post,
+                method: httpMethods.post,
                 body: data
             }
         );

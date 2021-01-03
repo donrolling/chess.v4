@@ -1,3 +1,5 @@
+import { events } from "../constants/ui/events";
+
 export class logging {
     public static info(x: any): void { 
         console.log(x);
@@ -9,7 +11,7 @@ export class logging {
 
     public static logDragStart(source: any, piece: any, position: any, orientation: any): void {
         console.log({
-            Event: constants.ui.events.onDragStart,
+            Event: events.onDragStart,
             Source: source,
             Piece: piece,
             //Position: Chessboard.objToFen(position),
@@ -19,7 +21,7 @@ export class logging {
 
     public static logDrop(source: any, target: any, piece: any, newPos: any, oldPos: any, orientation: any, squareAttacks: any): void {
         console.log({
-            Event: constants.ui.events.onDrop,
+            Event: events.onDrop,
             Source: source,
             Target: target,
             Piece: piece,

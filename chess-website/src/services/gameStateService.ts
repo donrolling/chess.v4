@@ -1,15 +1,21 @@
-import { attackedSquare } from "../models/chessEngine/attackedSquare";
-import { dom } from "../utilities/dom";
-import { pawnPromotion } from "../utilities/pawnPromotion";
-import { gameObjects } from "../models/chessApp/gameObjects";
-import { gameStateResource } from "../models/chessEngine/gameStateResource";
-import { gameService } from "./gameService";
-import { historyEngine } from "../utilities/historyEngine";
-import { eventlisteners } from "../utilities/listeners";
 import { BoardConfig } from "chessboardjs";
 import { ChessBoard } from "chessboardjs";
-import { strings } from "../utilities/strings";
+
+import { methodResponses } from "../constants/chess/methodResponses";
+import { attributes } from "../constants/ui/attributes";
+import { classes } from "../constants/ui/classes";
+import { events } from "../constants/ui/events";
+import { selectors } from "../constants/ui/selectors";
+import { gameObjects } from "../models/chessApp/gameObjects";
+import { attackedSquare } from "../models/chessEngine/attackedSquare";
+import { gameStateResource } from "../models/chessEngine/gameStateResource";
+import { dom } from "../utilities/dom";
+import { historyEngine } from "../utilities/historyEngine";
+import { eventlisteners } from "../utilities/listeners";
 import { logging } from "../utilities/logging";
+import { pawnPromotion } from "../utilities/pawnPromotion";
+import { strings } from "../utilities/strings";
+import { gameService } from "./gameService";
 
 export class gameStateService {
     constructor(
@@ -19,20 +25,20 @@ export class gameStateService {
     ) { }
 
     public setBoardState(gameState: gameStateResource): void {
-        let fenInputElement = document.querySelector<HTMLInputElement>(constants.ui.selectors.fenInput);
+        let fenInputElement = document.querySelector<HTMLInputElement>(selectors.fenInput);
         if (!fenInputElement) {
             return;
         }
         fenInputElement.value = gameState.fen;
         this.config.position = gameState.fen;
         this.gameObjects.gameState = gameState;
-        this.gameObjects.board = ChessBoard(constants.ui.classes.chessBoard, this.config);
+        this.gameObjects.board = ChessBoard(classes.chessBoard, this.config);
         if (!this.config.draggable) {
             document
-                .querySelectorAll(constants.ui.selectors.allSquares)
+                .querySelectorAll(selectors.allSquares)
                 .forEach(a =>
                     a.addEventListener(
-                        constants.ui.events.click,
+                        events.click,
                         e => this.handleSquareClick(e)
                     )
                 );
@@ -42,15 +48,15 @@ export class gameStateService {
 
         // remove event listeners
         eventlisteners.removeEventListeners(
-            constants.ui.selectors.item,
-            constants.ui.events.click,
+            selectors.item,
+            events.click,
             this.onPGNClick
         );
 
         // add event listeners
         eventlisteners.addEventListeners(
-            constants.ui.selectors.item,
-            constants.ui.events.click,
+            selectors.item,
+            events.click,
             this.onPGNClick
         );
     }
@@ -75,11 +81,11 @@ export class gameStateService {
             return false;
         }
         document
-            .querySelectorAll(constants.ui.selectors.attacking)
-            .forEach(a => dom.removeClassName(a, constants.ui.classes.attacking));
+            .querySelectorAll(selectors.attacking)
+            .forEach(a => dom.removeClassName(a, classes.attacking));
         document
-            .querySelectorAll(constants.ui.selectors.protecting)
-            .forEach(a => dom.removeClassName(a, constants.ui.classes.protecting));
+            .querySelectorAll(selectors.protecting)
+            .forEach(a => dom.removeClassName(a, classes.protecting));
         let squareAttacks = this.getSquareAttacks(source);
         this.highlightSquares(squareAttacks);
     }
@@ -94,12 +100,12 @@ export class gameStateService {
                 alert('You are looking at the historic state of the board. New moves are frozen until you go back to the current state using the history panel.');
                 this.gameObjects.freezeNotify++;
             }
-            return constants.chess.methodResponses.snapback;
+            return methodResponses.snapback;
         }
 
         let squareAttacks = this.getSquareAttacks(source);
         if (!squareAttacks.some(x => x.name === target)) {
-            return constants.chess.methodResponses.snapback;
+            return methodResponses.snapback;
         }
 
         // logging.logDrop(source, target, piece, newPos, oldPos, orientation, null);
@@ -132,7 +138,7 @@ export class gameStateService {
         if (!target) {
             return;
         }
-        let index = target.getAttribute(constants.ui.attributes.dataIndex);
+        let index = target.getAttribute(attributes.dataIndex);
         if (!index) {
             return;
         }
@@ -143,7 +149,7 @@ export class gameStateService {
     private highlightSquares(attacks: Array<any>): void {
         for (let i = 0; i < attacks.length; i++) {
             let attack = attacks[i];
-            let squareClass = attack.isProtecting ? constants.ui.classes.protecting : constants.ui.classes.attacking;
+            let squareClass = attack.isProtecting ? classes.protecting : classes.attacking;
             let squareSelector = dom.getSquareSelector(attack.name);
             var square = document.querySelector(squareSelector);
             if (square) {
@@ -170,7 +176,7 @@ export class gameStateService {
     }
 
     public getFenAndUpdate(): void {
-        let fenInput = document.querySelector<HTMLInputElement>(constants.ui.selectors.fenInput);
+        let fenInput = document.querySelector<HTMLInputElement>(selectors.fenInput);
         if (fenInput) {
             this.gameService.getGameStateInfo(fenInput.value);
         }

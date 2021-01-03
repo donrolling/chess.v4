@@ -1,3 +1,5 @@
+import { classes } from "../constants/ui/classes";
+import { selectors } from "../constants/ui/selectors";
 import { gameObjects } from "../models/chessApp/gameObjects";
 import { dom } from "./dom";
 
@@ -8,14 +10,14 @@ export class pawnPromotion {
             target: target
         };
         gameObjects.freeze = true;
-        let ppui = document.querySelector(constants.ui.selectors.pawnPromotion);
-        dom.removeClassName(ppui, constants.ui.classes.hidden);
+        let ppui = document.querySelector(selectors.pawnPromotion);
+        dom.removeClassName(ppui, classes.hidden);
     }
 
     public static hidePawnPromotion(gameObjects: gameObjects): void {
         gameObjects.pawnPromotionInfo = null;
         gameObjects.freeze = false;
-        let ppui = document.querySelector(constants.ui.selectors.pawnPromotion);
-        dom.addClassName(ppui, constants.ui.classes.hidden);
+        let ppui = document.querySelector(selectors.pawnPromotion);
+        dom.addClassName(ppui, classes.hidden);
     }
 }

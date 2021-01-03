@@ -1,3 +1,4 @@
+import { selectors } from "../constants/ui/selectors";
 import { arrays } from "./arrays";
 
 export class dom {
@@ -21,7 +22,7 @@ export class dom {
     }
 
     public static getSquareSelector(name: string): string {
-        return constants.ui.selectors.square + name
+        return selectors.square + name
     }
 
     public static getParameterByName(name: string): string {
@@ -38,11 +39,11 @@ export class dom {
     //     //logging.log(squareElement.target);
     //     let square = document.querySelector(squareElement.target);
     //     //logging.log(square);
-    //     let piece = square.data(constants.ui.classes.piece);
+    //     let piece = square.data(classes.piece);
     //     if (piece) {
     //         square = document.querySelector(squareElement.target).parentElement;
     //     }
     //     //logging.log(square);
-    //     return square.data(constants.ui.classes.square);
+    //     return square.data(classes.square);
     // }
 }

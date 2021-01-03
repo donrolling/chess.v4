@@ -1,48 +1,39 @@
 <html>
-    <head>
-        <link href="css/chessboard-1.0.0.css" media="all"  rel="stylesheet" />
-        <link href="css/site.css" media="all"  rel="stylesheet" />
-    </head>
-    <body>
-        <div class="wrapper">
-            <div class="container">
-                <div class="pawnPromotion hidden">
-                    <a href="#" class='promotionChoice' data-piece='4'>Queen</a>
-                    <hr />
-                    <a href="#" class='promotionChoice' data-piece='3'>Rook</a>
-                    <hr />
-                    <a href="#" class='promotionChoice' data-piece='2'>Bishop</a>
-                    <hr />
-                    <a href="#" class='promotionChoice' data-piece='1'>Knight</a>
-                </div>
-                <div class="chessContainer">
-                    <div id="chessBoard" class="chessBoard"></div>
-                    <div class="spacer20"></div>
-                    <input id="FEN" class="fen" value="" />
-                    @*<input id="FEN" class="fen" value="r1bqk2r/ppp2ppp/8/3P4/2Q1P3/6P1/PPP2P1P/R3KB1R w KQkq - 0 9" />*@
-                    <div class="spacer20"></div>
-                    <button id="fenSubmit">Submit</button>
-                    <button id="backBtn">Back</button>
-                </div>
-                <div class="hud">
-                    <div class="history">
-                        <h5>History</h5>
-                        <div class="items"></div>
-                    </div>
+
+<head>
+    <link href="css/chessboard-1.0.0.css" media="all" rel="stylesheet" />
+    <link href="css/site.css" media="all" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="pawnPromotion hidden">
+                <a href="#" class='promotionChoice' data-piece='4'>Queen</a>
+                <hr />
+                <a href="#" class='promotionChoice' data-piece='3'>Rook</a>
+                <hr />
+                <a href="#" class='promotionChoice' data-piece='2'>Bishop</a>
+                <hr />
+                <a href="#" class='promotionChoice' data-piece='1'>Knight</a>
+            </div>
+            <div class="chessContainer">
+                <div id="chessBoard" class="chessBoard"></div>
+                <div class="spacer20"></div>
+                <input id="FEN" class="fen" value="" />
+                <div class="spacer20"></div>
+                <button id="fenSubmit">Submit</button>
+                <button id="backBtn">Back</button>
+            </div>
+            <div class="hud">
+                <div class="history">
+                    <h5>History</h5>
+                    <div class="items"></div>
                 </div>
             </div>
         </div>
-    </body>
-    <script src="js/chessboard-1.0.0.js"></script>
-    <script type="systemjs-importmap">
-        {
-            "imports": {
-                "chess-app": "./js/dist/chess-app.js"
-            }
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/system.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/systemjs/dist/extras/amd.js"></script>
-    <!-- <script src="dist/chess-app.js"></script> -->
-    <script src="js/site.js"></script>
+    </div>
+</body>
+<script data-main="scripts/app" src="scripts/lib/require.js"></script>
+
 </html>

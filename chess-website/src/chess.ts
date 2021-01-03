@@ -1,10 +1,14 @@
 import { BoardConfig } from "chessboardjs";
+
+import { attributes } from "./constants/ui/attributes";
+import { events } from "./constants/ui/events";
+import { selectors } from "./constants/ui/selectors";
 import { gameObjects } from "./models/chessApp/gameObjects";
 import { gameService } from "./services/gameService";
 import { gameStateService } from "./services/gameStateService";
 import { pawnPromotion } from "./utilities/pawnPromotion";
 
-export class app {
+export class chess {
     constructor() {
         console.log('App CTOR');
 
@@ -29,31 +33,33 @@ export class app {
             _gameService
         );
 
-        document
-            .querySelector(constants.ui.selectors.fenSubmit)
-            ?.addEventListener(constants.ui.events.click, () => _gameStateService.getFenAndUpdate());
+        let fenSubmit = document.querySelector(selectors.fenSubmit);
+        if (fenSubmit) {
+            fenSubmit.addEventListener(events.click, () => _gameStateService.getFenAndUpdate());
+        }
 
-        document
-            .querySelector(constants.ui.selectors.backBtn)
-            ?.addEventListener(constants.ui.events.click, async () => {
+        let backBtn = document.querySelector(selectors.fenSubmit);
+        if (backBtn) {
+            backBtn.addEventListener(events.click, async () => {
                 let response = await _gameService.goBackOneMove(gameObjects);
                 if (response.success) {
                     _gameStateService.setBoardState(response.result);
                 } else {
                     // reset the board
-                    if (gameObjects.gameState) {                        
+                    if (gameObjects.gameState) {
                         _gameStateService.setBoardState(gameObjects.gameState);
                     }
                 }
             });
+        }
 
-        let promotionChoiceElement = document.querySelector(constants.ui.selectors.promotionChoice);
+        let promotionChoiceElement = document.querySelector(selectors.promotionChoice);
         if (promotionChoiceElement) {
             promotionChoiceElement.addEventListener(
-                constants.ui.events.click,
-                (e: Event) => { 
+                events.click,
+                (e: Event) => {
                     let element = e.target as HTMLElement;
-                    let choice = element.getAttribute(constants.ui.attributes.dataPiece);
+                    let choice = element.getAttribute(attributes.dataPiece);
                     if (!choice) {
                         return;
                     }
@@ -63,8 +69,8 @@ export class app {
                     }
                     _gameService.move(
                         gameObjects.gameState,
-                        gameObjects.pawnPromotionInfo.source, 
-                        gameObjects.pawnPromotionInfo.target, 
+                        gameObjects.pawnPromotionInfo.source,
+                        gameObjects.pawnPromotionInfo.target,
                         promotionPieceType
                     );
                     pawnPromotion.hidePawnPromotion(gameObjects);

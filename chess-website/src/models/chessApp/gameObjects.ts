@@ -1,4 +1,5 @@
 import { ChessBoardInstance } from "chessboardjs";
+
 import { gameStateResource } from "../chessEngine/gameStateResource";
 import { pawnPromotionInfo } from "./pawnPromotionInfo";
 
