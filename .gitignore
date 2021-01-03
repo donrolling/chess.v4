@@ -341,3 +341,5 @@ Tools/CodeGeneratorOutput/Database/Stored Procedures/
 Tools/CodeGeneratorOutput/Models/Entities/
 
 TestEmails/
+
+chess-website/dist/
