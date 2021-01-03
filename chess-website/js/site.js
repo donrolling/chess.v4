@@ -1,1 +1,5 @@
-﻿document.addEventListener('DOMContentLoaded', (event) => new app());
+﻿// document.addEventListener('DOMContentLoaded', (event) => {
+//     console.log('DOMContentLoaded');
+//     let app = new app();
+// });
+System.import('chess-app');

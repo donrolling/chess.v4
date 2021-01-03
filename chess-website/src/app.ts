@@ -1,5 +1,7 @@
 export class app {
     constructor() {
+        console.log('App CTOR');
+
         let gameObjects: models.gameObjects = {
             board: null,
             gameState: null,
