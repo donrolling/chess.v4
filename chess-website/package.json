@@ -13,9 +13,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "postbuild": "tools/build.sh",
-    "postbuildwin": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./tools/postbuild.ps1",
-    "dockerbuildwin": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./tools/dockerbuild.ps1"
+    "postbuild": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./tools/postbuild.ps1",
+    "dockerbuild": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./tools/dockerbuild.ps1"
   },
   "author": "Don Rolling",
   "license": "MIT",
