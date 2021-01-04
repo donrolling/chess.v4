@@ -4,8 +4,9 @@ WORKDIR /usr/src/app
 
 COPY package.json package-lock.json ./
 
-RUN npm install \
-    && npm run postbuild
+RUN npm install 
+#\
+#&& npm run postbuild
 
 COPY . .
 

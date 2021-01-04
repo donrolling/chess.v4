@@ -343,3 +343,5 @@ Tools/CodeGeneratorOutput/Models/Entities/
 TestEmails/
 
 chess-website/dist/
+
+chess-webapi/Logs/
