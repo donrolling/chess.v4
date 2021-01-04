@@ -1,19 +1,18 @@
 import { BoardConfig } from "chessboardjs";
-import { IConfig } from "config";
 
 import { attributes } from "./constants/ui/attributes";
 import { events } from "./constants/ui/events";
 import { selectors } from "./constants/ui/selectors";
 import { gameObjects } from "./models/chessApp/gameObjects";
+import { appsettings } from "./models/config/appsettings";
 import { gameService } from "./services/gameService";
 import { gameStateService } from "./services/gameStateService";
 import { pawnPromotion } from "./utilities/pawnPromotion";
 
 export class chess {
-    constructor(config: IConfig) {
+    constructor(appsettings: appsettings) {
         // config values
-        let baseurl: string = config.get('webapi.baseurl');
-        let _gameService = new gameService(baseurl);
+        let _gameService = new gameService(appsettings.webapi.baseurl);
 
         let gameObjects: gameObjects = {
             board: null,

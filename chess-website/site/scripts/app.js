@@ -7,7 +7,8 @@
     //never includes a ".js" extension since
     //the paths config could be for a directory.
     paths: {
-        app: '../app'
+        app: '../app',
+        text: 'requirejs-text/text'
     }
 });
 

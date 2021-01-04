@@ -12,10 +12,9 @@ define(["require", "exports", "./constants/ui/attributes", "./constants/ui/event
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.chess = void 0;
     class chess {
-        constructor(config) {
+        constructor(appsettings) {
             // config values
-            let baseurl = config.get('webapi.baseurl');
-            let _gameService = new gameService_1.gameService(baseurl);
+            let _gameService = new gameService_1.gameService(appsettings.webapi.baseurl);
             let gameObjects = {
                 board: null,
                 gameState: null,

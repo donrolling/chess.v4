@@ -1,0 +1,129 @@
+2021-01-03T23:07:13.8906702-06:00 [Debug] chess-engine-tests
+Microsoft.Extensions.Hosting.Internal.Host
+    Hosting starting
+2021-01-03T23:07:14.3486825-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Loaded hosting startup assembly "chess-webapi"
+2021-01-03T23:07:14.3577277-06:00 [Information] chess-engine-tests
+Microsoft.Hosting.Lifetime
+    Application started. Press Ctrl+C to shut down.
+2021-01-03T23:07:14.3672634-06:00 [Information] chess-engine-tests
+Microsoft.Hosting.Lifetime
+    Hosting environment: "Development"
+2021-01-03T23:07:14.3780731-06:00 [Information] chess-engine-tests
+Microsoft.Hosting.Lifetime
+    Content root path: "C:\Projects\Chess.v4\chess-webapi"
+2021-01-03T23:07:14.3781753-06:00 [Debug] chess-engine-tests
+Microsoft.Extensions.Hosting.Internal.Host
+    Hosting started
+2021-01-03T23:07:14.4407616-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger - -
+2021-01-03T23:07:14.4457374-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    Wildcard detected, all requests with hosts will be allowed.
+2021-01-03T23:07:14.4458346-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:14.5645958-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18086456105130524673"" disconnecting.
+2021-01-03T23:07:14.5647455-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger - - - 301 - - 110.3225ms
+2021-01-03T23:07:14.5773518-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger/index.html - -
+2021-01-03T23:07:14.5774246-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:14.7529674-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18230571301796315153"" disconnecting.
+2021-01-03T23:07:14.7531346-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger/index.html - - - 200 - text/html;charset=utf-8 131.5751ms
+2021-01-03T23:07:15.3583743-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger/swagger-ui.css - -
+2021-01-03T23:07:15.3584366-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:15.3685847-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger/swagger-ui-bundle.js - -
+2021-01-03T23:07:15.3687190-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:15.3704797-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger/swagger-ui-standalone-preset.js - -
+2021-01-03T23:07:15.3705348-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:15.4001249-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Range header's value is empty.
+2021-01-03T23:07:15.4001181-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Range header's value is empty.
+2021-01-03T23:07:15.4001418-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Range header's value is empty.
+2021-01-03T23:07:15.4433453-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Sending file. Request path: '"/swagger-ui-standalone-preset.js"'. Physical path: '"N/A"'
+2021-01-03T23:07:15.4433436-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Sending file. Request path: '"/swagger-ui.css"'. Physical path: '"N/A"'
+2021-01-03T23:07:15.4486421-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18230571301796315155"" disconnecting.
+2021-01-03T23:07:15.4743472-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18158513712053354522"" disconnecting.
+2021-01-03T23:07:15.4769401-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Sending file. Request path: '"/swagger-ui-bundle.js"'. Physical path: '"N/A"'
+2021-01-03T23:07:15.4837361-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger/swagger-ui.css - - - 200 142933 text/css 107.6073ms
+2021-01-03T23:07:15.4872635-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger/swagger-ui-standalone-preset.js - - - 200 311804 application/javascript 118.6814ms
+2021-01-03T23:07:15.5014554-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18086456105130524675"" disconnecting.
+2021-01-03T23:07:15.5087046-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger/swagger-ui-bundle.js - - - 200 986342 application/javascript 148.3793ms
+2021-01-03T23:07:15.6720674-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger/favicon-16x16.png - -
+2021-01-03T23:07:15.6723298-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:15.6724844-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Range header's value is empty.
+2021-01-03T23:07:15.6785074-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware
+    Sending file. Request path: '"/favicon-16x16.png"'. Physical path: '"N/A"'
+2021-01-03T23:07:15.6828190-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18086456105130524677"" disconnecting.
+2021-01-03T23:07:15.6841148-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger/favicon-16x16.png - - - 200 665 image/png 10.5982ms
+2021-01-03T23:07:15.8571687-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request starting HTTP/2 GET https://localhost:44366/swagger/v1/swagger.json - -
+2021-01-03T23:07:15.8572175-06:00 [Verbose] chess-engine-tests
+Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware
+    All hosts are allowed.
+2021-01-03T23:07:15.9738592-06:00 [Debug] chess-engine-tests
+Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer
+    Connection ID ""18302628891539275806"" disconnecting.
+2021-01-03T23:07:15.9783720-06:00 [Information] chess-engine-tests
+Microsoft.AspNetCore.Hosting.Diagnostics
+    Request finished HTTP/2 GET https://localhost:44366/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 122.0117ms
