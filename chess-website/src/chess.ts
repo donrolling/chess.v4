@@ -1,4 +1,5 @@
 import { BoardConfig } from "chessboardjs";
+import { IConfig } from "config";
 
 import { attributes } from "./constants/ui/attributes";
 import { events } from "./constants/ui/events";
@@ -9,8 +10,10 @@ import { gameStateService } from "./services/gameStateService";
 import { pawnPromotion } from "./utilities/pawnPromotion";
 
 export class chess {
-    constructor() {
-        console.log('App CTOR');
+    constructor(config: IConfig) {
+        // config values
+        let baseurl: string = config.get('webapi.baseurl');
+        let _gameService = new gameService(baseurl);
 
         let gameObjects: gameObjects = {
             board: null,
@@ -20,16 +23,14 @@ export class chess {
             freezeNotify: 0
         };
 
-        let config: BoardConfig = {
+        let boardConfig: BoardConfig = {
             position: '',
             draggable: true
         };
 
-        let _gameService = new gameService();
-
         let _gameStateService = new gameStateService(
             gameObjects,
-            config,
+            boardConfig,
             _gameService
         );
 

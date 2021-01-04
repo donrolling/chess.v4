@@ -1,0 +1,5 @@
+{
+    "webapi": {
+        "baseurl": "https://localhost:1000"
+    }
+}

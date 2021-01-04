@@ -17,11 +17,15 @@ export class gameService {
     private readonly moveUrl: string = 'api/game/move';
     private readonly gotoUrl: string = 'api/game/goto';
 
+    constructor(private readonly baseurl: string) {
+
+    }
+
     public async getGameStateInfo(fen: string)
         : Promise<operationResult<gameStateResource>> {
         let url = !strings.isNullOrEmpty(fen)
-            ? this.stateInfoUrl + fen
-            : this.stateInfoUrl;
+            ? this.baseurl + this.stateInfoUrl + fen
+            : this.baseurl + this.stateInfoUrl;
         let response = await fetch(url);
         if (!response.ok) {
             throw Error(response.statusText);
@@ -44,7 +48,7 @@ export class gameService {
         });
         logging.info(data);
         let response = await fetch(
-            this.moveUrl,
+            this.baseurl + this.moveUrl,
             {
                 headers: {
                     'Accept': contentTypes.applicationjson,
@@ -118,7 +122,7 @@ export class gameService {
             HistoryIndex: newIndex
         });
         let response = await fetch(
-            this.gotoUrl,
+            this.baseurl + this.gotoUrl,
             {
                 headers: {
                     'Accept': contentTypes.applicationjson,

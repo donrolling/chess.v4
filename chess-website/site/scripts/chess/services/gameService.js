@@ -12,7 +12,8 @@ define(["require", "exports", "chessboardjs", "../constants/http/contentTypes", 
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.gameService = void 0;
     class gameService {
-        constructor() {
+        constructor(baseurl) {
+            this.baseurl = baseurl;
             this.stateInfoUrl = 'api/game/state-info?fen=';
             this.moveUrl = 'api/game/move';
             this.gotoUrl = 'api/game/goto';
@@ -20,8 +21,8 @@ define(["require", "exports", "chessboardjs", "../constants/http/contentTypes", 
         getGameStateInfo(fen) {
             return __awaiter(this, void 0, void 0, function* () {
                 let url = !strings_1.strings.isNullOrEmpty(fen)
-                    ? this.stateInfoUrl + fen
-                    : this.stateInfoUrl;
+                    ? this.baseurl + this.stateInfoUrl + fen
+                    : this.baseurl + this.stateInfoUrl;
                 let response = yield fetch(url);
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -39,7 +40,7 @@ define(["require", "exports", "chessboardjs", "../constants/http/contentTypes", 
                     PiecePromotionType: piecePromotionType
                 });
                 logging_1.logging.info(data);
-                let response = yield fetch(this.moveUrl, {
+                let response = yield fetch(this.baseurl + this.moveUrl, {
                     headers: {
                         'Accept': contentTypes_1.contentTypes.applicationjson,
                         'Content-Type': contentTypes_1.contentTypes.applicationjson
@@ -107,7 +108,7 @@ define(["require", "exports", "chessboardjs", "../constants/http/contentTypes", 
                     GameState: gameObjects.gameState,
                     HistoryIndex: newIndex
                 });
-                let response = yield fetch(this.gotoUrl, {
+                let response = yield fetch(this.baseurl + this.gotoUrl, {
                     headers: {
                         'Accept': contentTypes_1.contentTypes.applicationjson,
                         'Content-Type': contentTypes_1.contentTypes.applicationjson

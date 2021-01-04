@@ -1,4 +1,5 @@
 define(function (require) {
-    let chessModule = require('./chess');
-    new chessModule.chess();
+    const chessModule = require('./chess');
+    const config = require('config');
+    new chessModule.chess(config);
 });

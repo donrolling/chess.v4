@@ -12,8 +12,10 @@ define(["require", "exports", "./constants/ui/attributes", "./constants/ui/event
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.chess = void 0;
     class chess {
-        constructor() {
-            console.log('App CTOR');
+        constructor(config) {
+            // config values
+            let baseurl = config.get('webapi.baseurl');
+            let _gameService = new gameService_1.gameService(baseurl);
             let gameObjects = {
                 board: null,
                 gameState: null,
@@ -21,12 +23,11 @@ define(["require", "exports", "./constants/ui/attributes", "./constants/ui/event
                 freeze: false,
                 freezeNotify: 0
             };
-            let config = {
+            let boardConfig = {
                 position: '',
                 draggable: true
             };
-            let _gameService = new gameService_1.gameService();
-            let _gameStateService = new gameStateService_1.gameStateService(gameObjects, config, _gameService);
+            let _gameStateService = new gameStateService_1.gameStateService(gameObjects, boardConfig, _gameService);
             let fenSubmit = document.querySelector(selectors_1.selectors.fenSubmit);
             if (fenSubmit) {
                 fenSubmit.addEventListener(events_1.events.click, () => _gameStateService.getFenAndUpdate());
