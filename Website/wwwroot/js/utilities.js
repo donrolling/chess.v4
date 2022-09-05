@@ -76,8 +76,13 @@
     setBoardState: (gameState) => {
         document.querySelector(constants.selectors.fenInput).value = gameState.fen;
         config.position = gameState.fen;
+        console.log(gameState);
         gameObjects.gameState = gameState;
         gameObjects.board = Chessboard(constants.classes.chessBoard, config);
+        if (gameState.stateInfo.isCheckmate || gameState.stateInfo.isDraw) {
+            gameObjects.freeze = true;
+            alert('Game Over!');
+        }
         if (!config.draggable) {
             document
                 .querySelectorAll(constants.selectors.allSquares)
