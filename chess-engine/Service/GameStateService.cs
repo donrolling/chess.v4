@@ -6,6 +6,7 @@ using chess_engine.Engine.Utility;
 using chess_engine.Models;
 using chess_engine.Models.Enums;
 using Common.Extensions;
+using Common.Factories;
 using Common.Responses;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace chess_engine.Engine.Service
             var fenRecord = FenFactory.Create(fen);
             if (fenRecord == null)
             {
-                OperationResult<GameState>.Fail("Bad fen.");
+                OperationResultFactory.Fail<GameState>("Bad fen.");
             }
             return hydrateGameState(new GameState(fenRecord));
         }
@@ -67,7 +68,7 @@ namespace chess_engine.Engine.Service
             var stateInfo = this.getStateInfo(gameState, piecePosition, newPiecePosition, piecePromotionType);
             if (stateInfo.Failure)
             {
-                return OperationResult<GameState>.Fail(stateInfo.Message);
+                return OperationResultFactory.Fail<GameState>(stateInfo.Message);
             }
             return this.makeMove(gameState, piecePosition, stateInfo.Result, newPiecePosition);
         }
@@ -115,32 +116,32 @@ namespace chess_engine.Engine.Service
             var square = gameState.Squares.GetSquare(piecePosition);
             if (!square.Occupied)
             {
-                return OperationResult<StateInfo>.Fail("Square was empty.");
+                return OperationResultFactory.Fail<StateInfo>("Square was empty.");
             }
             if (square.Piece.Color != gameState.ActiveColor)
             {
-                return OperationResult<StateInfo>.Fail("Wrong team.");
+                return OperationResultFactory.Fail<StateInfo>("Wrong team.");
             }
             var moveInfoResult = _moveService.GetStateInfo(gameState, piecePosition, newPiecePosition);
             if (moveInfoResult.Failure)
             {
-                return OperationResult<StateInfo>.Fail(moveInfoResult.Message);
+                return OperationResultFactory.Fail<StateInfo>(moveInfoResult.Message);
             }
             var moveInfo = moveInfoResult.Result;
             if (moveInfo.IsPawnPromotion)
             {
                 if (!piecePromotionType.HasValue)
                 {
-                    return OperationResult<StateInfo>.Fail("Must provide pawn promotion piece type in order to promote a pawn.");
+                    return OperationResultFactory.Fail<StateInfo>("Must provide pawn promotion piece type in order to promote a pawn.");
                 }
                 moveInfo.PawnPromotedTo = piecePromotionType.Value;
             }
             //var putsOwnKingInCheck = false;
             if (moveInfo.IsCheck)
             {
-                return OperationResult<StateInfo>.Fail("Must move out of check. Must not move into check.");
+                return OperationResultFactory.Fail<StateInfo>("Must move out of check. Must not move into check.");
             }
-            return OperationResult<StateInfo>.Ok(moveInfo);
+            return OperationResultFactory.Ok<StateInfo>(moveInfo);
         }
 
         private OperationResult<GameState> hydrateGameState(GameState gameState)
@@ -148,7 +149,7 @@ namespace chess_engine.Engine.Service
             gameState.Squares = _notationService.GetSquares(gameState);
             gameState.Attacks = _attackService.GetAttacks(gameState).ToList();
             gameState.StateInfo = _moveService.GetStateInfo(gameState);
-            return OperationResult<GameState>.Ok(gameState);
+            return OperationResultFactory.Ok<StateInfo>(gameState);
         }
 
         private OperationResult<GameState> makeMove(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
