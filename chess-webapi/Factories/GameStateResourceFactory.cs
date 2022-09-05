@@ -4,6 +4,7 @@ using Common.Responses;
 using Omu.ValueInjecter;
 using System.Linq;
 using chess_webapi.Models;
+using Common.Factories;
 
 namespace chess_webapi.Factories
 {
@@ -13,7 +14,7 @@ namespace chess_webapi.Factories
         {
             var gameState = new GameState();
             gameState.InjectFrom(gameStateResource);
-            return OperationResult<GameState>.Ok(gameState);
+            return OperationResultFactory.Ok(gameState);
         }
 
         public static OperationResult<GameStateResource> ToGameStateResource(GameState gameState)
@@ -21,7 +22,7 @@ namespace chess_webapi.Factories
             var gameStateResource = new GameStateResource();
             gameStateResource.InjectFrom(gameState);
             gameStateResource.FEN = gameState.ToString();
-            return OperationResult<GameStateResource>.Ok(gameStateResource);
+            return OperationResultFactory.Ok(gameStateResource);
         }
 
         public static OperationResult<GameStateResource> MoveToHistoryIndex(IGameStateService gameStateService, GameState gameState, int historyIndex)
@@ -31,13 +32,13 @@ namespace chess_webapi.Factories
                 return ToGameStateResource(gameStateService.Initialize().Result);
             }
             if (gameState.History.Count < historyIndex)
-            {
-                return OperationResult<GameStateResource>.Fail("Index was lower than history count.");
+			{
+				return OperationResultFactory.Fail<GameStateResource>("Index was lower than history count.");
             }
             var initialFen = gameState.History.FirstOrDefault();
             if (initialFen == null)
             {
-                return OperationResult<GameStateResource>.Fail("Couldn't find initial position.");
+                return OperationResultFactory.Fail<GameStateResource>("Couldn't find initial position.");
             }
             var newGameState =  playFromHistoryToAPoint(gameStateService, gameState, historyIndex, initialFen);
             return ToGameStateResource(newGameState.Result);
@@ -52,10 +53,10 @@ namespace chess_webapi.Factories
                 nextGameState = gameStateService.MakeMove(nextGameState.Result, pgnMove);
                 if (nextGameState.Failure)
                 {
-                    return OperationResult<GameState>.Fail($"Couldn't make the moves that were recorded. { nextGameState.Message }");
+                    return OperationResultFactory.Fail<GameState>($"Couldn't make the moves that were recorded. { nextGameState.Message }");
                 }
             }
-            return OperationResult<GameState>.Ok(nextGameState.Result);
+            return OperationResultFactory.Ok(nextGameState.Result);
         }
     }
 }

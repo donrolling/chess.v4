@@ -3,7 +3,7 @@ using chess_engine.Engine.Interfaces;
 using chess_engine.Engine.Utility;
 using chess_engine.Models;
 using chess_engine.Models.Enums;
-
+using Common.Factories;
 using Common.Responses;
 using Microsoft.Extensions.Logging;
 using System;
@@ -34,7 +34,7 @@ namespace chess_engine.Engine.Service
             }
             else
             {
-                return OperationResult<StateInfo>.Fail(isValidCastleAttempt.Message);
+                return OperationResultFactory.Fail<StateInfo>(isValidCastleAttempt.Message);
             }
 
             stateInfo.IsPawnPromotion = this.isPawnPromotion(oldSquare, newPiecePosition);
@@ -65,7 +65,7 @@ namespace chess_engine.Engine.Service
                 }
             }
 
-            return OperationResult<StateInfo>.Ok(stateInfo);
+            return OperationResultFactory.Ok(stateInfo);
         }
 
         public StateInfo GetStateInfo(GameState gameState)
@@ -210,28 +210,28 @@ namespace chess_engine.Engine.Service
             //if not a castle, then no validation needed.
             if (!isCastleAttempt)
             {
-                return OperationResult<bool>.Ok(isCastleAttempt);
+                return OperationResultFactory.Ok(isCastleAttempt);
             }
 
             var castleInfo = checkCastleAvailability(gameState, destination, piece);
             if (!castleInfo.CastleAvailability)
             {
-                return OperationResult<bool>.Fail("Castling is not available.");
+                return OperationResultFactory.Fail<bool>("Castling is not available.");
             }
 
             //validate the move
             if (gameState.StateInfo.IsCheck)
             {
-                return OperationResult<bool>.Fail("Can't castle out of check.");
+                return OperationResultFactory.Fail<bool>("Can't castle out of check.");
             }
 
             var castleThroughCheck = CastlingEngine.DetermineCastleThroughCheck(gameState, square.Index, castleInfo.RookPosition);
             if (castleThroughCheck)
             {
-                return OperationResult<bool>.Fail("Can't castle through check.");
+                return OperationResultFactory.Fail<bool>("Can't castle through check.");
             }
 
-            return OperationResult<bool>.Ok(isCastleAttempt);
+            return OperationResultFactory.Ok(isCastleAttempt);
         }
 
         //public bool IsCheckmate(GameState gameState, Square enemyKingPosition, IEnumerable<AttackedSquare> whiteAttacks, IEnumerable<AttackedSquare> blackAttacks) {

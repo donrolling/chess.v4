@@ -75,7 +75,7 @@ namespace Common.Factories
             return OperationResultFactory.Create<T>(OperationResultFactory.Ok(Status.Success, message), result);
         }
 
-        public static OperationResult<T> Ok<T>(T result, Status status = Status.Success, string message = "")
+        public static OperationResult<T> Ok<T>(T result, Status status, string message = "")
         {
             return OperationResultFactory.Create<T>(OperationResultFactory.Ok(status, message), result);
         }

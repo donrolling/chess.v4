@@ -4,6 +4,7 @@ using Common.Responses;
 using Microsoft.AspNetCore.Mvc;
 using chess_webapi.Factories;
 using chess_webapi.Models;
+using Common.Factories;
 
 namespace chess_webapi.Controllers
 {
@@ -25,11 +26,11 @@ namespace chess_webapi.Controllers
             if (result.Success)
             {
                 var gameStateResult = GameStateResourceFactory.ToGameStateResource(result.Result);
-                return OperationResult<GameStateResource>.Ok(gameStateResult.Result);
+                return OperationResultFactory.Ok(gameStateResult.Result);
             }
             else
             {
-                return OperationResult<GameStateResource>.Fail(result.Message);
+                return OperationResultFactory.Fail<GameStateResource>(result.Message);
             }
         }
 
@@ -42,11 +43,11 @@ namespace chess_webapi.Controllers
             if (result.Success)
             {
                 var gameStateResourceResult = GameStateResourceFactory.ToGameStateResource(result.Result);
-                return OperationResult<GameStateResource>.Ok(gameStateResourceResult.Result);
+                return OperationResultFactory.Ok(gameStateResourceResult.Result);
             }
             else
-            {
-                return OperationResult<GameStateResource>.Fail(result.Message);
+			{
+				return OperationResultFactory.Fail<GameStateResource>(result.Message);
             }
         }
 
@@ -58,11 +59,11 @@ namespace chess_webapi.Controllers
             var result = GameStateResourceFactory.MoveToHistoryIndex(_gameStateService, gameStateResult.Result, goToMoveResource.HistoryIndex);
             if (result.Success)
             {
-                return OperationResult<GameStateResource>.Ok(result.Result);
+                return OperationResultFactory.Ok(result.Result);
             }
             else
             {
-                return OperationResult<GameStateResource>.Fail(result.Message);
+                return OperationResultFactory.Fail<GameStateResource>(result.Message);
             }
         }
     }

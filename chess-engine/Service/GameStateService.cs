@@ -141,7 +141,7 @@ namespace chess_engine.Engine.Service
             {
                 return OperationResultFactory.Fail<StateInfo>("Must move out of check. Must not move into check.");
             }
-            return OperationResultFactory.Ok<StateInfo>(moveInfo);
+            return OperationResultFactory.Ok(moveInfo);
         }
 
         private OperationResult<GameState> hydrateGameState(GameState gameState)
@@ -149,7 +149,7 @@ namespace chess_engine.Engine.Service
             gameState.Squares = _notationService.GetSquares(gameState);
             gameState.Attacks = _attackService.GetAttacks(gameState).ToList();
             gameState.StateInfo = _moveService.GetStateInfo(gameState);
-            return OperationResultFactory.Ok<StateInfo>(gameState);
+            return OperationResultFactory.Ok(gameState);
         }
 
         private OperationResult<GameState> makeMove(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
@@ -158,7 +158,7 @@ namespace chess_engine.Engine.Service
             var verifiedMove = verifyMove(gameState, piecePosition, newPiecePosition);
             if (verifiedMove.Failure)
             {
-                return OperationResult<GameState>.Fail(verifiedMove.Message);
+                return OperationResultFactory.Fail<GameState>(verifiedMove.Message);
             }
 
             //make the move
@@ -180,18 +180,18 @@ namespace chess_engine.Engine.Service
                 {
                     if (newGameState.StateInfo.IsWhiteCheck)
                     {
-                        return OperationResult<GameState>.Fail("King must move out of check.");
+                        return OperationResultFactory.Fail<GameState>("King must move out of check.");
                     }
                 }
                 else
                 {
                     if (newGameState.StateInfo.IsBlackCheck)
                     {
-                        return OperationResult<GameState>.Fail("King must move out of check.");
+                        return OperationResultFactory.Fail<GameState>("King must move out of check.");
                     }
                 }
             }
-            return OperationResult<GameState>.Ok(newGameState);
+            return OperationResultFactory.Ok(newGameState);
         }
 
         private OperationResult verifyMove(GameState gameState, int piecePosition, int newPiecePosition)
@@ -200,7 +200,7 @@ namespace chess_engine.Engine.Service
             var attacks = gameState.Attacks.GetPositionAttacksOnPosition(piecePosition, newPiecePosition);
             if (!attacks.Any())
             {
-                return OperationResult.Fail($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+                return OperationResultFactory.Fail($"Can't find an attack by this piece ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
             }
             var badPawnAttacks = attacks.Where(a =>
                                             a.AttackingSquare.Index == piecePosition
@@ -216,10 +216,10 @@ namespace chess_engine.Engine.Service
                     || newPiecePosition != NotationEngine.CoordinateToPosition(gameState.EnPassantTargetSquare)
                 )
                 {
-                    return OperationResult.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
+                    return OperationResultFactory.Fail($"This piece can only move here if the new square is occupied. ({ oldSquare.Index } : { oldSquare.Piece.PieceType }) on this position ({ newPiecePosition }).");
                 }
             }
-            return OperationResult.Ok();
+            return OperationResultFactory.Ok();
         }
 
         private GameState GetNewGameState(GameState gameState, int piecePosition, StateInfo stateInfo, int newPiecePosition)
