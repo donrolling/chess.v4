@@ -153,46 +153,46 @@ namespace Chess.v4.Engine.Service
         //	//there were no friendlies to save the king, checkmate is true
         //	return true;
         //}
-        public bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare)
-        {
-            if (enPassantTargetSquare == "-")
-            {
-                return false;
-            }
-            var piece = square.Piece;
-            if (piece.PieceType != PieceType.Pawn) { return false; } //only pawns can perform en passant
-            var enPassantPosition = NotationEngine.CoordinateToPosition(enPassantTargetSquare);
-            if (enPassantPosition != newPiecePosition) { return false; } //if we're not moving to the en passant position, this is not en passant
-            var moveDistance = Math.Abs(square.Index - newPiecePosition);
-            if (!new List<int> { 7, 9 }.Contains(moveDistance)) { return false; } //is this a diagonal move?
-            if (piece.Color == Color.Black && square.Index < newPiecePosition) { return false; } //black can't move up
-            if (piece.Color == Color.White && square.Index > newPiecePosition) { return false; } //white can't move down
-            return true;
-        }
+        //public bool IsEnPassant(Square square, int newPiecePosition, string enPassantTargetSquare)
+        //{
+        //    if (enPassantTargetSquare == "-")
+        //    {
+        //        return false;
+        //    }
+        //    var piece = square.Piece;
+        //    if (piece.PieceType != PieceType.Pawn) { return false; } //only pawns can perform en passant
+        //    var enPassantPosition = NotationEngine.CoordinateToPosition(enPassantTargetSquare);
+        //    if (enPassantPosition != newPiecePosition) { return false; } //if we're not moving to the en passant position, this is not en passant
+        //    var moveDistance = Math.Abs(square.Index - newPiecePosition);
+        //    if (!new List<int> { 7, 9 }.Contains(moveDistance)) { return false; } //is this a diagonal move?
+        //    if (piece.Color == Color.Black && square.Index < newPiecePosition) { return false; } //black can't move up
+        //    if (piece.Color == Color.White && square.Index > newPiecePosition) { return false; } //white can't move down
+        //    return true;
+        //}
 
-        //	//fix enemyKingAttacks. trying to figure out the moves that the king can make
-        //	var enemyKingAttacks = squares;
-        public bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheck, Color activeColor, int kingSquare)
-        {
-            if (attacksThatCheck == null || !attacksThatCheck.Any())
-            {
-                return false;
-            }
-            if (attacksThatCheck.Count() > 1)
-            {
-                //if there are more than one, then this is real
-                return true;
-            }
-            var key = attacksThatCheck.First().Index;
-            var attackingPiece = squares.GetPiece(key);
-            //this code is here to remove the possibility that the king is said to be in check by an enemy pawn when he is directly in front of the pawn
-            if (attackingPiece.PieceType == PieceType.Pawn)
-            {
-                var onSameFile = (key % 8) == (kingSquare % 8) ? true : false;
-                return !onSameFile;
-            }
-            return true;
-        }
+        ////	//fix enemyKingAttacks. trying to figure out the moves that the king can make
+        ////	var enemyKingAttacks = squares;
+        //public bool IsRealCheck(List<Square> squares, IEnumerable<AttackedSquare> attacksThatCheck, Color activeColor, int kingSquare)
+        //{
+        //    if (attacksThatCheck == null || !attacksThatCheck.Any())
+        //    {
+        //        return false;
+        //    }
+        //    if (attacksThatCheck.Count() > 1)
+        //    {
+        //        //if there are more than one, then this is real
+        //        return true;
+        //    }
+        //    var key = attacksThatCheck.First().Index;
+        //    var attackingPiece = squares.GetPiece(key);
+        //    //this code is here to remove the possibility that the king is said to be in check by an enemy pawn when he is directly in front of the pawn
+        //    if (attackingPiece.PieceType == PieceType.Pawn)
+        //    {
+        //        var onSameFile = (key % 8) == (kingSquare % 8) ? true : false;
+        //        return !onSameFile;
+        //    }
+        //    return true;
+        //}
 
         //	var friendlyAttacks = (activeColor == Color.White ? whiteAttacks : blackAttacks);
         //	var opponentAttacks = (activeColor == Color.White ? blackAttacks : whiteAttacks);
@@ -242,17 +242,18 @@ namespace Chess.v4.Engine.Service
         //	}
         //	//make sure that he cannot move
         //	var kingHasEscape = false;
-        public bool IsValidPawnMove(Square currentSquare, List<Square> squares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant)
-        {
-            var isDiagonalMove = DiagonalEngine.IsDiagonal(currentSquare.Index, newPiecePosition);
-            if (!isDiagonalMove)
-            {
-                return true;
-            }
-            var pieceToCapture = squares.GetSquare(newPiecePosition).Piece;
-            var isCapture = pieceToCapture != null;
-            return isCapture || isEnPassant;
-        }
+
+        //public bool IsValidPawnMove(Square currentSquare, List<Square> squares, Color color, int piecePosition, int newPiecePosition, bool isEnPassant)
+        //{
+        //    var isDiagonalMove = DiagonalEngine.IsDiagonal(currentSquare.Index, newPiecePosition);
+        //    if (!isDiagonalMove)
+        //    {
+        //        return true;
+        //    }
+        //    var pieceToCapture = squares.GetSquare(newPiecePosition).Piece;
+        //    var isCapture = pieceToCapture != null;
+        //    return isCapture || isEnPassant;
+        //}
 
         private (bool CastleAvailability, int RookPosition) checkCastleAvailability(GameState gameState, int destination, Piece piece)
         {

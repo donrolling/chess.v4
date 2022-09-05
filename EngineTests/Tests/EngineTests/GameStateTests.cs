@@ -94,7 +94,7 @@ namespace EngineTests.Tests.EngineTests
             //1. e4 c5 2. Nc3 b5
             gameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "b7", "b5");
             Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
-            Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq b6 0 3", gameStateResult.Result.ToString());
+            Assert.AreEqual("rnbqkbnr/p2ppppp/8/1pp5/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq - 0 3", gameStateResult.Result.ToString());
             //1. e4 c5 2. Nc3 b5 3. b3
             gameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "b2", "b3");
             Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
@@ -132,13 +132,13 @@ namespace EngineTests.Tests.EngineTests
             gameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "e2", "e4");
             Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
             Assert.IsTrue(gameStateResult.Result.Squares.GetPiece(28).Identity == 'P');
-            Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", gameStateResult.Result.ToString());
+            Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1", gameStateResult.Result.ToString());
             //1. e4 c5
             //testing fullmove number
             gameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "c7", "c5");
             Assert.IsTrue(gameStateResult.Success, gameStateResult.Message);
             Assert.IsTrue(gameStateResult.Result.Squares.GetPiece(34).Identity == 'p');
-            Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", gameStateResult.Result.ToString());
+            Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2", gameStateResult.Result.ToString());
             //1. e4 c5 2. Nc3
             //testing the halfmove clock
             gameStateResult = _gameStateService.MakeMove(gameStateResult.Result, "b1", "c3");

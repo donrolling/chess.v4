@@ -76,13 +76,13 @@ namespace Chess.v4.Engine.Service
         public OperationResult<GameState> MakeMove(GameState gameState, string pgnMove)
         {
             var pair = _pgnService.PGNMoveToSquarePair(gameState, pgnMove);
-            //todo: what about piece promotion?
-            if (pair.promotedPiece == '-')
+            if (pair.promotedPiece != '-')
             {
-                return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition);
+                // todo: what about piece promotion?
+                var promotedPieceType = NotationEngine.GetPieceTypeFromCharacter(pair.promotedPiece);
+                return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition, promotedPieceType);
             }
-            var promotedPieceType = NotationEngine.GetPieceTypeFromCharacter(pair.promotedPiece);
-            return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition, promotedPieceType);
+            return this.MakeMove(gameState, pair.piecePosition, pair.newPiecePosition);
         }
 
         private static GameState manageSquares(GameState gameState, StateInfo stateInfo, int piecePosition, int newPiecePosition)
