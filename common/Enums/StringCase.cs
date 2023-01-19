@@ -1,8 +1,8 @@
 ﻿namespace Common.Enums
 {
-    public enum StringCase
-    {
-        PascalCase,
-        LowerCamelCase
-    }
+	public enum StringCase
+	{
+		PascalCase,
+		LowerCamelCase
+	}
 }

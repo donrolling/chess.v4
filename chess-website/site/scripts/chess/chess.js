@@ -11,6 +11,7 @@ define(["require", "exports", "./constants/ui/attributes", "./constants/ui/event
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.chess = void 0;
+    dfasdfasdf;
     class chess {
         constructor(appsettings) {
             // config values

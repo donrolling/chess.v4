@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chess-engine", "chess-engine\chess-engine.csproj", "{794CEF45-EC09-4744-94ED-D24A033E6643}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chess-engine-tests", "chess
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chess-webapi", "chess-webapi\chess-webapi.csproj", "{13A72607-133A-4E1C-BABB-7EC80BAC3CF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "common\common.csproj", "{611BBD95-8B21-42E9-80FA-C0ECD9CA08C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "common", "common\common.csproj", "{611BBD95-8B21-42E9-80FA-C0ECD9CA08C1}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E1D16EB9-9D04-44BB-9C4C-7437B5627076}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{611BBD95-8B21-42E9-80FA-C0ECD9CA08C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{611BBD95-8B21-42E9-80FA-C0ECD9CA08C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{611BBD95-8B21-42E9-80FA-C0ECD9CA08C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D16EB9-9D04-44BB-9C4C-7437B5627076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D16EB9-9D04-44BB-9C4C-7437B5627076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D16EB9-9D04-44BB-9C4C-7437B5627076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D16EB9-9D04-44BB-9C4C-7437B5627076}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  chess-webapi:
+    image: ${DOCKER_REGISTRY-}chesswebapi
+    build:
+      context: .
+      dockerfile: chess-webapi/Dockerfile

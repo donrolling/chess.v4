@@ -1,7 +1,6 @@
 namespace chess_engine.Models
 {
-    public class AppSettings
-    {
-
-    }
+	public class AppSettings
+	{
+	}
 }
