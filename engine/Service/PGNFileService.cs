@@ -1,12 +1,11 @@
-﻿using chess_engine.Engine.Interfaces;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
+﻿namespace engine.Service;
 
-using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.RegularExpressions;
-
-namespace chess_engine.Engine.Service;
+using engine.Models.Enums;
+using Interfaces;
+using Microsoft.Extensions.Logging;
+using Models;
 
 public class PGNFileService : IPGNFileService
 {

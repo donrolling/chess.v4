@@ -1,6 +1,6 @@
-using chess_engine.Models;
+namespace engine.Interfaces;
 
-namespace chess_engine.Engine.Interfaces;
+using Models;
 
 public interface INotationService
 {

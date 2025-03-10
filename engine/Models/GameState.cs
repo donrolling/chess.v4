@@ -1,6 +1,6 @@
-﻿using chess_engine.Engine.Factory;
+﻿namespace engine.Models;
 
-namespace chess_engine.Models;
+using Factory;
 
 public class GameState : Snapshot
 {

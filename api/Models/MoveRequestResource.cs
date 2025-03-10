@@ -1,12 +1,11 @@
-﻿using chess_engine.Models.Enums;
+﻿namespace api.Models;
 
-namespace chess_webapi.Models
+using engine.Models.Enums;
+
+public class MoveRequestResource
 {
-	public class MoveRequestResource
-	{
-		public GameStateResource GameState { get; set; }
-		public string Beginning { get; set; }
-		public string Destination { get; set; }
-		public PieceType? PiecePromotionType { get; set; }
-	}
+	public GameStateResource GameState { get; set; }
+	public string Beginning { get; set; }
+	public string Destination { get; set; }
+	public PieceType? PiecePromotionType { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Common.Extensions;
+﻿namespace common.Extensions;
 
 using System.Text.Json;
 

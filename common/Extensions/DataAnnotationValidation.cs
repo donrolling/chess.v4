@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿namespace common.Extensions;
 
-namespace Common.Extensions;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 public static class DataAnnotationValidation
 {

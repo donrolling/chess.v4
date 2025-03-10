@@ -1,7 +1,7 @@
-using Common.Enums;
-using Common.Responses;
+namespace common.Factories;
 
-namespace Common.Factories;
+using Enums;
+using Responses;
 
 public static class OperationResultFactory
 {

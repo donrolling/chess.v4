@@ -1,7 +1,7 @@
-﻿using chess_engine.Engine.Factory;
-using chess_engine.Models.Enums;
+﻿namespace engine.Models;
 
-namespace chess_engine.Models;
+using Enums;
+using Factory;
 
 /// <summary>
 /// Definition

@@ -1,7 +1,7 @@
-﻿using chess_engine.Models;
-using System.Text;
+﻿namespace engine.Interfaces;
 
-namespace chess_engine.Engine.Interfaces;
+using System.Text;
+using Models;
 
 public interface IPGNFileService
 {

@@ -1,7 +1,7 @@
-﻿using chess_engine.Models;
-using chess_engine.Models.Enums;
+﻿namespace engine.Interfaces;
 
-namespace chess_engine.Engine.Interfaces;
+using engine.Models.Enums;
+using Models;
 
 public interface ICheckmateService
 {

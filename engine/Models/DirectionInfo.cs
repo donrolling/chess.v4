@@ -1,6 +1,6 @@
-﻿using chess_engine.Models.Enums;
+﻿namespace engine.Models;
 
-namespace chess_engine.Engine.Models;
+using engine.Models.Enums;
 
 public class DirectionInfo
 {

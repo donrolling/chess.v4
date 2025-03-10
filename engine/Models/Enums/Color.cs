@@ -1,4 +1,4 @@
-﻿namespace chess_engine.Models.Enums;
+﻿namespace engine.Models.Enums;
 
 public enum Color
 {

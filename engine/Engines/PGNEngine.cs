@@ -1,7 +1,7 @@
-﻿using chess_engine.Models.Enums;
-using System.Text.RegularExpressions;
+﻿namespace engine.Engines;
 
-namespace chess_engine.Engine.Utility;
+using System.Text.RegularExpressions;
+using engine.Models.Enums;
 
 public static class PGNEngine
 {

@@ -1,4 +1,4 @@
-﻿namespace Common.IO;
+﻿namespace common.IO;
 
 using System.Text.Json;
 

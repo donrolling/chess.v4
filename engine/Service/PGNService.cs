@@ -1,11 +1,11 @@
-using chess_engine.Engine.Extensions;
-using chess_engine.Engine.Interfaces;
-using chess_engine.Engine.Utility;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
-using System.Text.RegularExpressions;
+namespace engine.Service;
 
-namespace chess_engine.Engine.Service;
+using System.Text.RegularExpressions;
+using engine.Models.Enums;
+using Engines;
+using Extensions;
+using Interfaces;
+using Models;
 
 // Pawn promotions are notated by appending an "=" to the destination square, followed by the piece the pawn is promoted to.
 // "e8=Q". If the move is a checking move, the plus sign "+" is also appended;

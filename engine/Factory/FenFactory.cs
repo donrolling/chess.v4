@@ -1,8 +1,8 @@
-﻿using chess_engine.Engine.Utility;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
+﻿namespace engine.Factory;
 
-namespace chess_engine.Engine.Factory;
+using engine.Models.Enums;
+using Engines;
+using Models;
 
 public static class FenFactory
 {

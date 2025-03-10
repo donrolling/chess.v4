@@ -1,7 +1,7 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
+﻿namespace common.Extensions;
 
-namespace Common.Extensions;
+using System.Text;
+using System.Text.RegularExpressions;
 
 public static class StringFormatting
 {

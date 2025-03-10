@@ -1,4 +1,4 @@
-﻿namespace Common.Enums;
+﻿namespace common.Enums;
 
 public enum StatusDetail
 {

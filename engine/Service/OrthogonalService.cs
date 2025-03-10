@@ -1,10 +1,10 @@
-﻿using chess_engine.Engine.Interfaces;
-using chess_engine.Engine.Reference;
-using chess_engine.Engine.Utility;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
+﻿namespace engine.Service;
 
-namespace chess_engine.Engine.Service;
+using engine.Models.Enums;
+using Engines;
+using Interfaces;
+using Models;
+using Reference;
 
 public class OrthogonalService : IOrthogonalService
 {

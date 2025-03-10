@@ -1,8 +1,8 @@
-﻿using chess_engine.Engine.Extensions;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
+﻿namespace engine.Engines;
 
-namespace chess_engine.Engine.Utility;
+using engine.Models.Enums;
+using Extensions;
+using Models;
 
 public static class CastlingEngine
 {

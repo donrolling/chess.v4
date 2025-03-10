@@ -1,6 +1,6 @@
-﻿using Common.Enums;
+﻿namespace common.Responses;
 
-namespace Common.Responses;
+using Enums;
 
 public class OperationResult<T> : OperationResult
 {

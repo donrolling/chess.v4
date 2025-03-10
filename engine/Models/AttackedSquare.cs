@@ -1,4 +1,4 @@
-﻿namespace chess_engine.Models;
+﻿namespace engine.Models;
 
 public class AttackedSquare : Square
 {

@@ -1,10 +1,10 @@
-﻿using chess_engine.Engine.Extensions;
-using chess_engine.Engine.Interfaces;
-using chess_engine.Engine.Utility;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
+﻿namespace engine.Service;
 
-namespace chess_engine.Engine.Service;
+using engine.Models.Enums;
+using Engines;
+using Extensions;
+using Interfaces;
+using Models;
 
 public class CheckmateService : ICheckmateService
 {

@@ -1,5 +1,8 @@
-﻿using chess_engine.Models;
-using System.Text;
+﻿using System.Text;
+
+namespace engine.Extensions;
+
+using Models;
 
 public static class GameExtensions
 {

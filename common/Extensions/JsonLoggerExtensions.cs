@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿namespace common.Extensions;
+
 using System.Text;
-
-namespace Common.Extensions;
-
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 public static class JsonLoggerExtensions
 {

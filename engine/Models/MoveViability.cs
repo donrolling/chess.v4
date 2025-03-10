@@ -1,6 +1,4 @@
-﻿using chess_engine.Models;
-
-namespace chess_engine.Engine.Models;
+﻿namespace engine.Models;
 
 public class MoveViability
 {

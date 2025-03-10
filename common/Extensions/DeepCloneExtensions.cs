@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
+﻿namespace common.Extensions;
 
-namespace Common.Extensions;
+using System.Text.Json;
 
 /// <summary>
 /// Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx

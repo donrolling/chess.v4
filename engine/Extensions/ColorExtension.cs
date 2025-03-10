@@ -1,6 +1,6 @@
-﻿using chess_engine.Models.Enums;
+﻿namespace engine.Extensions;
 
-namespace chess_engine.Engine.Extensions;
+using engine.Models.Enums;
 
 public static class ColorExtensions
 {

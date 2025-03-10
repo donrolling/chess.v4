@@ -1,6 +1,6 @@
-﻿using chess_engine.Models.Enums;
+﻿namespace engine.Models;
 
-namespace chess_engine.Models;
+using Enums;
 
 public class StateInfo
 {

@@ -1,8 +1,8 @@
-﻿using chess_engine.Models;
-using chess_engine.Models.Enums;
-using Common.Responses;
+﻿namespace engine.Interfaces;
 
-namespace chess_engine.Engine.Interfaces;
+using common.Responses;
+using engine.Models.Enums;
+using Models;
 
 public interface IMoveService
 {

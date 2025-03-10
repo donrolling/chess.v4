@@ -1,15 +1,15 @@
-using chess_engine.Engine.Extensions;
-using chess_engine.Engine.Factory;
-using chess_engine.Engine.Interfaces;
-using chess_engine.Engine.Reference;
-using chess_engine.Engine.Utility;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
-using Common.Extensions;
-using Common.Factories;
-using Common.Responses;
+namespace engine.Service;
 
-namespace chess_engine.Engine.Service;
+using common.Extensions;
+using common.Factories;
+using common.Responses;
+using engine.Models.Enums;
+using Engines;
+using Extensions;
+using Factory;
+using Interfaces;
+using Models;
+using Reference;
 
 /// <summary>
 /// There is a guiding principle here. Don't edit the GameState object anywhere but here.

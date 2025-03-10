@@ -1,6 +1,6 @@
-﻿using chess_engine.Models.Enums;
+﻿namespace engine.Reference;
 
-namespace chess_engine.Engine.Reference;
+using engine.Models.Enums;
 
 public static class GeneralReference
 {
