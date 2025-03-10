@@ -39,7 +39,7 @@ public static class FileIOEngine
 		File.WriteAllText($"{CurrentDirectory}\\{relativePath}", content);
 	}
 
-	public static T? ReadJSONConfig<T>(string relativePath, string node, bool errorIfEmptyNode = false)
+	public static T ReadJSONConfig<T>(string relativePath, string node, bool errorIfEmptyNode = false)
 		where T : class
 	{
 		var fileContents = ReadAllText(relativePath);

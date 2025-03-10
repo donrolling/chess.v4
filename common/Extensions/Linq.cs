@@ -7,7 +7,7 @@ public static class Linq
 		IEnumerable<TB> b,
 		Func<TA, TK> selectKeyA,
 		Func<TB, TK> selectKeyB,
-		IEqualityComparer<TK>? comparer
+		IEqualityComparer<TK> comparer
 	)
 	{
 		return a.Where(aItem => !b.Select(bItem => selectKeyB(bItem)).Contains(selectKeyA(aItem), comparer));
