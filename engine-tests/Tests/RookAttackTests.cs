@@ -1,38 +1,37 @@
-﻿using chess_engine.Engine.Interfaces;
-using chess_engine.Models.Enums;
-using chess_engine_tests.Application;
-using chess_engine_tests.Utility;
+﻿namespace tests.Tests;
+
+using System.Linq;
+using Application;
+using engine.Interfaces;
+using engine.Models.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
+using Utility;
 
-namespace chess_engine_tests.Tests
+[TestClass]
+public class RookAttackTests : TestBase
 {
-	[TestClass]
-	public class RookAttackTests : TestBase
+	private readonly IAttackService _attackService;
+	private readonly IGameStateService _gameStateService;
+	private readonly IMoveService _moveService;
+
+	public RookAttackTests()
 	{
-		private readonly IAttackService _attackService;
-		private readonly IGameStateService _gameStateService;
-		private readonly IMoveService _moveService;
+		_attackService = ServiceProvider.GetService<IAttackService>();
+		_gameStateService = ServiceProvider.GetService<IGameStateService>();
+		_moveService = ServiceProvider.GetService<IMoveService>();
+	}
 
-		public RookAttackTests()
+	[TestMethod]
+	public void WhiteRookAttacksEmptyBoardFromD4()
+	{
+		var fen = "7k/8/8/8/3R4/8/8/7K b - - 0 32";
+		var gameState = TestUtility.GetGameState(_gameStateService, fen);
+		var whiteRookAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Index == 27).ToList();
+		var allSquareIndexs = new int[] { 24, 25, 26, 28, 29, 30, 31, 59, 51, 43, 35, 19, 11, 3 };
+		foreach (var x in allSquareIndexs)
 		{
-			_attackService = ServiceProvider.GetService<IAttackService>();
-			_gameStateService = ServiceProvider.GetService<IGameStateService>();
-			_moveService = ServiceProvider.GetService<IMoveService>();
-		}
-
-		[TestMethod]
-		public void WhiteRookAttacksEmptyBoardFromD4()
-		{
-			var fen = "7k/8/8/8/3R4/8/8/7K b - - 0 32";
-			var gameState = TestUtility.GetGameState(_gameStateService, fen);
-			var whiteRookAttacks = gameState.Attacks.Where(a => a.AttackingSquare.Index == 27).ToList();
-			var allSquareIndexs = new int[] { 24, 25, 26, 28, 29, 30, 31, 59, 51, 43, 35, 19, 11, 3 };
-			foreach (var x in allSquareIndexs)
-			{
-				TestUtility.ListContainsSquare(whiteRookAttacks, PieceType.Rook, x);
-			}
+			TestUtility.ListContainsSquare(whiteRookAttacks, PieceType.Rook, x);
 		}
 	}
 }

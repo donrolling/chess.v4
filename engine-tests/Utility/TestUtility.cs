@@ -1,55 +1,54 @@
-﻿using chess_engine.Engine.Extensions;
-using chess_engine.Engine.Interfaces;
-using chess_engine.Engine.Reference;
-using chess_engine.Models;
-using chess_engine.Models.Enums;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿namespace tests.Utility;
+
 using System.Collections.Generic;
 using System.Linq;
+using engine.Extensions;
+using engine.Interfaces;
+using engine.Models;
+using engine.Models.Enums;
+using engine.Reference;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace chess_engine_tests.Utility
+internal class TestUtility
 {
-	internal class TestUtility
+	internal static GameState GetGameState(IGameStateService gameStateService, string fen = "")
 	{
-		internal static GameState GetGameState(IGameStateService gameStateService, string fen = "")
+		if (string.IsNullOrEmpty(fen))
 		{
-			if (string.IsNullOrEmpty(fen))
-			{
-				fen = GeneralReference.Starting_FEN_Position;
-			}
-			var gamestateResult = gameStateService.Initialize(fen);
-			Assert.IsTrue(gamestateResult.Success);
-			var gamestate = gamestateResult.Result;
-			return gamestate;
+			fen = GeneralReference.Starting_FEN_Position;
 		}
+		var gamestateResult = gameStateService.Initialize(fen);
+		Assert.IsTrue(gamestateResult.Success);
+		var gamestate = gamestateResult.Result;
+		return gamestate;
+	}
 
-		internal static void ListContainsSquare(List<AttackedSquare> attacks, PieceType pieceType, int x)
-		{
-			var msg = $"{pieceType} should be able to attack square: {x}";
-			var square = attacks.GetSquareMaybe(x);
-			Assert.IsNotNull(square, msg);
-		}
+	internal static void ListContainsSquare(List<AttackedSquare> attacks, PieceType pieceType, int x)
+	{
+		var msg = $"{pieceType} should be able to attack square: {x}";
+		var square = attacks.GetSquareMaybe(x);
+		Assert.IsNotNull(square, msg);
+	}
 
-		internal static void ListContainsSquares(List<AttackedSquare> attacks, List<int> squares, PieceType pieceType)
-		{
-			var found = from a in attacks
-						join s in squares on a.Index equals s
-						select s;
-			var notFound = squares.Except(found);
-			var nf = string.Join(",", notFound.Select(n => n.ToString()).ToArray());
-			var msg = $"{pieceType} should be able to attack squares: {nf}";
-			Assert.IsFalse(notFound.Any(), msg);
-		}
+	internal static void ListContainsSquares(List<AttackedSquare> attacks, List<int> squares, PieceType pieceType)
+	{
+		var found = from a in attacks
+			join s in squares on a.Index equals s
+			select s;
+		var notFound = squares.Except(found);
+		var nf = string.Join(",", notFound.Select(n => n.ToString()).ToArray());
+		var msg = $"{pieceType} should be able to attack squares: {nf}";
+		Assert.IsFalse(notFound.Any(), msg);
+	}
 
-		internal static void ListContainsSquares(List<Square> diagonalLine, List<int> squares)
-		{
-			var found = from a in diagonalLine
-						join s in squares on a.Index equals s
-						select s;
-			var notFound = squares.Except(found);
-			var nf = string.Join(",", notFound.Select(n => n.ToString()).ToArray());
-			var msg = $"List should contian squares: {nf}";
-			Assert.IsFalse(notFound.Any(), msg);
-		}
+	internal static void ListContainsSquares(List<Square> diagonalLine, List<int> squares)
+	{
+		var found = from a in diagonalLine
+			join s in squares on a.Index equals s
+			select s;
+		var notFound = squares.Except(found);
+		var nf = string.Join(",", notFound.Select(n => n.ToString()).ToArray());
+		var msg = $"List should contian squares: {nf}";
+		Assert.IsFalse(notFound.Any(), msg);
 	}
 }
