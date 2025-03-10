@@ -1,12 +1,11 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum PieceType
 {
-	public enum PieceType
-	{
-		Pawn,
-		Knight,
-		Bishop,
-		Rook,
-		Queen,
-		King
-	}
+	Pawn,
+	Knight,
+	Bishop,
+	Rook,
+	Queen,
+	King
 }

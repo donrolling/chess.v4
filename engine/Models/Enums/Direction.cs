@@ -1,19 +1,18 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum Direction
 {
-	public enum Direction
-	{
-		Invalid,
+	Invalid,
 
-		// toward black side
-		Forward,
+	// toward black side
+	Forward,
 
-		// toward white side
-		Backward,
+	// toward white side
+	Backward,
 
-		// toward white right side
-		Right,
+	// toward white right side
+	Right,
 
-		// toward white left side
-		Left
-	}
+	// toward white left side
+	Left
 }

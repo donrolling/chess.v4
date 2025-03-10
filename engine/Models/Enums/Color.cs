@@ -1,8 +1,7 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum Color
 {
-	public enum Color
-	{
-		Black,
-		White
-	}
+	Black,
+	White
 }

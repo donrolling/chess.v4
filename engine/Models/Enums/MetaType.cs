@@ -1,21 +1,20 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum MetaType
 {
-	public enum MetaType
-	{
-		Event,
-		Site,
-		Date,
-		Round,
-		White,
-		Black,
-		Result,
-		WhiteElo,
-		BlackElo,
-		ECO,
-		ID,
-		Filename,
-		Annotator,
-		Source,
-		Remark
-	}
+	Event,
+	Site,
+	Date,
+	Round,
+	White,
+	Black,
+	Result,
+	WhiteElo,
+	BlackElo,
+	ECO,
+	ID,
+	Filename,
+	Annotator,
+	Source,
+	Remark
 }

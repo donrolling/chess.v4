@@ -1,11 +1,10 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum DiagonalDirection
 {
-	public enum DiagonalDirection
-	{
-		Invalid,
-		UpLeft,
-		UpRight,
-		DownLeft,
-		DownRight
-	}
+	Invalid,
+	UpLeft,
+	UpRight,
+	DownLeft,
+	DownRight
 }

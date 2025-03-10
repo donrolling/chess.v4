@@ -1,8 +1,7 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum DiagonalDirectionFromFileNumber
 {
-	public enum DiagonalDirectionFromFileNumber
-	{
-		Left,
-		Right
-	}
+	Left,
+	Right
 }

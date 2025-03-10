@@ -1,8 +1,7 @@
-﻿namespace chess_engine.Models.Enums
+﻿namespace chess_engine.Models.Enums;
+
+public enum DiagonalDirectionFromRankNumber
 {
-	public enum DiagonalDirectionFromRankNumber
-	{
-		Up,
-		Down
-	}
+	Up,
+	Down
 }

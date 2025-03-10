@@ -1,26 +1,25 @@
 ﻿using chess_engine.Models;
 using System.Text;
 
-namespace chess_engine.Engine.Interfaces
+namespace chess_engine.Engine.Interfaces;
+
+public interface IPGNFileService
 {
-	public interface IPGNFileService
-	{
-		string CurrentDirectory { get; }
+	string CurrentDirectory { get; }
 
-		string ConvertToPGN(GameMetaData metaData);
+	string ConvertToPGN(GameMetaData metaData);
 
-		void DisplayPGNFileHeader(GameMetaData metaData);
+	void DisplayPGNFileHeader(GameMetaData metaData);
 
-		string GetBaseEnvironmentPath(string directory);
+	string GetBaseEnvironmentPath(string directory);
 
-		StringBuilder GetGameHeader(GameMetaData gameMetaData);
+	StringBuilder GetGameHeader(GameMetaData gameMetaData);
 
-		string GetPGNFilePath(string filename);
+	string GetPGNFilePath(string filename);
 
-		GameMetaData ParsePGNData(string input);
+	GameMetaData ParsePGNData(string input);
 
-		GameMetaData ReadPGNFromFile(string fullpath);
+	GameMetaData ReadPGNFromFile(string fullpath);
 
-		void SaveFile(string filename, string data);
-	}
+	void SaveFile(string filename, string data);
 }
